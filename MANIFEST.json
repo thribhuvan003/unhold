@@ -309,6 +309,12 @@
         "date": "2026-06-21",
         "decision": "Primary production deploy: Vercel Hobby (free). vercel.json crons trimmed to daily-only (reminders + rankings) because Hobby rejects */15 and */5 schedules at deploy. functionFailoverRegions removed (Enterprise-only). regions bom1 single region for Hobby. tick and jobs/process via external scheduler (cron-job.org). Netlify unholdd credits exhausted.",
         "spec_ref": "docs/DEPLOY_VERCEL_HOBBY.md"
+      },
+      {
+        "id": "ADR-CONSENT-001",
+        "date": "2026-06-21",
+        "decision": "CONSENT-GRANT-GAP closed as a small interstitial fix outside the numbered slice sequence (not added to slice-orchestration.json) rather than folded into slice-13, since it was a pre-existing slice-10/12 gap, not slice-13 scope. DisclaimerModal's second AI-consent checkbox defaults unchecked (opt-in, matching Block F's own wording) - owner explicitly declined to make it opt-out-by-default.",
+        "spec_ref": ".claude/session/consent-wiring/plan.md"
       }
     ],
     "blockers": [
@@ -349,7 +355,19 @@
         "status": "open",
         "blocker": "SECURITY_AUDITOR FAIL on slice-12 (Verifier OCR): the cross_border_ai consent text (disclaimers.ts Block F) was written for text/JSON classification and never mentions sending images/scanned documents/ID photos to a third-party AI provider. Confirmed no fuller wording exists anywhere in BUILD_SPEC.md (line 275 only lists the consent_type enum name).",
         "impact": "Sending raw evidence images (pan_card, bank_statement, aadhaar_masked) to NVIDIA for OCR is a materially bigger ask than current consent covers. Blocks slice-12 IMPLEMENTER start.",
-        "resolution": "Owner must approve new/amended disclaimer wording or a new consent type before IMPLEMENTER proceeds. Proposed wording presented in chat, awaiting explicit sign-off - not unilaterally decided since Blocks A-H are verbatim-per-spec, not paraphrasable."
+        "resolution": "Owner must approve new/amended disclaimer wording or a new consent type before IMPLEMENTER proceeds. Proposed wording presented in chat, awaiting explicit sign-off - not unilaterally decided since Blocks A-H are verbatim-per-spec, not paraphrasable.",
+        "note": "Status left as recorded by the prior session. Owner did approve amended Block F wording (used in slice-12's shipped disclaimers.ts and verified there) - this entry's status field appears stale and may warrant a separate cleanup pass; not changed here since it's outside the consent-wiring task scope."
+      },
+      {
+        "id": "CONSENT-GRANT-GAP",
+        "date": "2026-06-21",
+        "status": "resolved",
+        "blocker": "ai_ocr_processing and cross_border_ai consent types were checked via hasGrantedConsent in slice-12's Verifier OCR runner (and slice-10's INTAKE/DRAFTER LLM paths) but were never grantable anywhere in the product UI - DisclaimerModal only rendered Block B, and POST /api/v1/cases only ever recorded case_data_processing consent.",
+        "impact": "OCR/LLM paths always fell back to human-review/rule-engine in production - safe behavior, but meant slice-12's shipped feature could never actually run end-to-end for any real user.",
+        "resolution": "Closed via the consent-wiring interstitial fix (full PLANNER->IMPLEMENTER->REVIEWER->VERIFIER loop, owner-approved plan, 0 review issues, all 5 gates green). DisclaimerModal now shows Block F with a second optional unchecked-by-default checkbox; POST /api/v1/cases conditionally records cross_border_ai + ai_ocr_processing when checked. hasGrantedConsent(caseId, 'ai_ocr_processing') can now return true in production.",
+        "resolved_at": "2026-06-21",
+        "commit": "473efb0",
+        "artifacts": ".claude/session/consent-wiring/{plan.md,review-round-1.json,verification.json,summary.md}"
       }
     ],
     "spec_gaps": []
