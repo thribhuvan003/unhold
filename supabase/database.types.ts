@@ -774,6 +774,14 @@ export type Database = {
         Args: Record<string, never>;
         Returns: undefined;
       };
+      refresh_bank_score_snapshot: {
+        Args: {
+          p_bank_id: string;
+          p_snapshot_date?: string;
+          p_methodology_version?: string;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       actor_type: 'user' | 'guest' | 'agent' | 'operator' | 'system' | 'cron';

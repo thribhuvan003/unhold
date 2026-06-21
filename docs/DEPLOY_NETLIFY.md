@@ -32,6 +32,7 @@ Schedule HTTP POST with header `Authorization: Bearer $CRON_SECRET`:
 | `/api/v1/internal/cron/tick` | `*/15 * * * *` |
 | `/api/v1/internal/jobs/process` | `*/5 * * * *` |
 | `/api/v1/internal/cron/reminders` | `30 3 * * *` (09:00 IST) |
+| `/api/v1/internal/cron/rankings` | `30 20 * * *` (02:00 IST) |
 
 Use [Upstash QStash](https://console.upstash.com) or [cron-job.org](https://cron-job.org).
 

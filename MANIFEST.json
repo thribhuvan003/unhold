@@ -1,16 +1,16 @@
 {
   "version": "1.0.0",
   "project": "lienliberator",
-  "phase": 1,
+  "phase": 2,
   "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
-  "active_slice": "phase-1-complete",
-  "harness_state": "phase_exit_verified",
+  "active_slice": "slice-12",
+  "harness_state": "idle",
   "last_agent": "VERIFIER",
   "fix_round": 0,
   "max_fix_rounds": 5,
   "orchestration_config": "config/harness/slice-orchestration.json",
   "started_at": "2026-06-20T00:00:00.000Z",
-  "updated_at": "2026-06-21T11:14:00Z",
+  "updated_at": "2026-06-21T08:02:01Z",
   "slices": [
     {
       "id": "slice-01",
@@ -152,20 +152,107 @@
       "verified_at": "2026-06-21T04:52:45Z",
       "pr_branch": null,
       "session_dir": ".claude/session/slice-11"
+    },
+    {
+      "id": "slice-12",
+      "number": 12,
+      "title": "Verifier OCR runner",
+      "status": "pending",
+      "depends_on": [
+        "slice-09",
+        "slice-03"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-12"
+    },
+    {
+      "id": "slice-13",
+      "number": 13,
+      "title": "Evidence bundle PDF",
+      "status": "pending",
+      "depends_on": [
+        "slice-12"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-13"
+    },
+    {
+      "id": "slice-14",
+      "number": 14,
+      "title": "Bundle to proof-gate integration",
+      "status": "pending",
+      "depends_on": [
+        "slice-13",
+        "slice-08"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-14"
+    },
+    {
+      "id": "slice-15",
+      "number": 15,
+      "title": "Razorpay checkout + webhook",
+      "status": "pending",
+      "depends_on": [
+        "slice-10"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-15"
+    },
+    {
+      "id": "slice-16",
+      "number": 16,
+      "title": "Rankings cron",
+      "status": "verified",
+      "depends_on": [
+        "slice-09"
+      ],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-21T08:02:01Z",
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-16"
+    },
+    {
+      "id": "slice-17",
+      "number": 17,
+      "title": "Ops dashboard expansion",
+      "status": "pending",
+      "depends_on": [
+        "slice-11"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-17"
+    },
+    {
+      "id": "slice-18",
+      "number": 18,
+      "title": "SEO pages",
+      "status": "pending",
+      "depends_on": [],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-18"
     }
   ],
   "verification": {
-    "last_run_at": "2026-06-21T05:39:42Z",
+    "last_run_at": "2026-06-21T08:02:01Z",
     "typecheck": 0,
     "lint": 0,
     "unit_tests": 0,
-    "contract_tests": 0,
-    "golden_tests": 0,
-    "e2e_smoke": 0,
     "verify_no_auto_send": 0,
-    "slice_gates": "phase-exit",
-    "passed": true,
-    "note": "All gates green on real runs: typecheck, lint, unit (98), contract (18), golden, no-auto-send, e2e:smoke (6/6 @smoke). Commit 8d6ef58. Sandbox without bundled Playwright: opt-in PLAYWRIGHT_CHROME_CHANNEL=chrome (see ENV-001 resolution_note)."
+    "slice_gates": "slice-16",
+    "passed": true
   },
   "review": {
     "last_round": 0,

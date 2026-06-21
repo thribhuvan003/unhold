@@ -8,6 +8,7 @@
   "functions": {
     "app/api/v1/internal/cron/tick/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/internal/cron/reminders/route.ts": { "maxDuration": 300, "memory": 1024 },
+    "app/api/v1/internal/cron/rankings/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/internal/jobs/process/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/cases/*/evidence/bundle/route.ts": { "maxDuration": 120, "memory": 1024 },
     "app/api/v1/**/route.ts": { "maxDuration": 60, "memory": 512 }
@@ -15,6 +16,7 @@
   "crons": [
     { "path": "/api/v1/internal/cron/tick", "schedule": "*/15 * * * *" },
     { "path": "/api/v1/internal/cron/reminders", "schedule": "30 3 * * *" },
+    { "path": "/api/v1/internal/cron/rankings", "schedule": "30 20 * * *" },
     { "path": "/api/v1/internal/jobs/process", "schedule": "*/5 * * * *" }
   ],
   "headers": [

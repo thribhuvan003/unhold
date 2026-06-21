@@ -59,7 +59,9 @@ export async function authorizeCronJob(
 
   const bucket =
     options?.bucket ??
-    (cronName === 'reminders' ? dayBucketIst(new Date()) : floorTo15MinBucket(new Date()));
+    (['reminders', 'rankings'].includes(cronName)
+      ? dayBucketIst(new Date())
+      : floorTo15MinBucket(new Date()));
 
   const lockAcquired = await acquireCronLock(
     cronName,

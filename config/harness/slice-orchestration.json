@@ -473,6 +473,155 @@
           "bash scripts/harness/run-slice.sh --verify-phase-exit"
         ]
       }
+    },
+    {
+      "id": "slice-12",
+      "number": 12,
+      "title": "Verifier OCR runner",
+      "week": 7,
+      "depends_on": ["slice-09", "slice-03"],
+      "spec_refs": ["BUILD_SPEC_AGENTS.md §1/§2/§4", "BUILD_SPEC.md §16 trap #21"],
+      "scope_files": [
+        "lib/agents/verifier/runner.ts",
+        "lib/agents/tools/handlers.ts",
+        "tests/unit/agents/verifier.test.ts"
+      ],
+      "forbidden_in_slice": ["auto-advance on low confidence", "send_email"],
+      "acceptance_criteria": [
+        "run_vision_ocr tool implemented (currently allowlist-only, no handler)",
+        "runVerifierJob wired into lib/agents/runner.ts like runIntakeJob/runDrafterJob",
+        "confidence >=0.85 auto-accept else human_gate (enqueueHumanGate)",
+        "forgery_risk always routes to human review, never silently accepted",
+        "OCR-extracted text redacted (Aadhaar/PAN/account -> last-4) before persist or LLM use",
+        "TODO(spec): confirm NVIDIA MiniMax-M3 vision/image-input support before this slice starts in earnest"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm test:unit", "pnpm verify:no-auto-send"]
+      }
+    },
+    {
+      "id": "slice-13",
+      "number": 13,
+      "title": "Evidence bundle PDF",
+      "week": 7,
+      "depends_on": ["slice-12"],
+      "spec_refs": ["BUILD_SPEC.md §5.4/§7", "BUILD_SPEC_LOOPS.md §3.2/§8.1"],
+      "scope_files": [
+        "lib/agents/evidence/runner.ts",
+        "app/api/v1/cases/[id]/evidence/bundle/route.ts"
+      ],
+      "forbidden_in_slice": ["send_email", "auto_send"],
+      "acceptance_criteria": [
+        "Generates SHA-256-sealed PDF bundle from verified evidence using evidence.bundle_id + audit_seals (already in migration 008)",
+        "TODO(spec): PDF rendering library not yet chosen by owner; no IMPLEMENTER until approved (ADR-P2-003)",
+        "Copy/download-only — no auto-send"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm test:unit", "pnpm verify:no-auto-send"]
+      }
+    },
+    {
+      "id": "slice-14",
+      "number": 14,
+      "title": "Bundle to proof-gate integration",
+      "week": 8,
+      "depends_on": ["slice-13", "slice-08"],
+      "spec_refs": ["BUILD_SPEC.md §4.3"],
+      "scope_files": ["lib/escalations/proof-gates.ts"],
+      "forbidden_in_slice": ["new gate framework — extend existing proof-gates.ts only"],
+      "acceptance_criteria": [
+        "Bundle completeness + verifier confidence wired into existing L1->L3 gates",
+        "No new gate framework introduced"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm test:unit", "pnpm verify:no-auto-send"]
+      }
+    },
+    {
+      "id": "slice-15",
+      "number": 15,
+      "title": "Razorpay checkout + webhook",
+      "week": 8,
+      "depends_on": ["slice-10"],
+      "spec_refs": ["BUILD_SPEC.md §11 trap #25", "BUILD_SPEC_LOOPS.md Razorpay webhook section"],
+      "scope_files": [
+        "lib/payments/razorpay.ts",
+        "app/api/v1/payments/checkout/route.ts",
+        "app/api/v1/internal/webhooks/razorpay/route.ts"
+      ],
+      "forbidden_in_slice": ["webhook calling transition_case() or touching escalation proof gates"],
+      "acceptance_criteria": [
+        "Webhook verifies RAZORPAY_WEBHOOK_SECRET HMAC signature before trusting payload",
+        "Webhook writes ONLY fee_agreements (tier unlock) — never case.status, never proof gates (SEC-9, non-negotiable)",
+        "Idempotent on replayed Razorpay event IDs"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm test:contract", "pnpm verify:no-auto-send"]
+      }
+    },
+    {
+      "id": "slice-16",
+      "number": 16,
+      "title": "Rankings cron",
+      "week": 7,
+      "depends_on": ["slice-09"],
+      "spec_refs": ["BUILD_SPEC.md §4.5", "BUILD_SPEC.md §15"],
+      "scope_files": [
+        "app/api/v1/internal/cron/rankings/route.ts",
+        "lib/api/cron-auth.ts",
+        "supabase/database.types.ts",
+        "vercel.json",
+        "tests/contract/rankings-cron.test.ts"
+      ],
+      "forbidden_in_slice": ["new lib/rankings/ TS module duplicating SQL pressure-score math", "bypassing is_public/k-anonymity CHECK constraint"],
+      "acceptance_criteria": [
+        "POST /internal/cron/rankings uses authorizeCronJob (Bearer CRON_SECRET + Redis lock), same pattern as tick/reminders",
+        "Uses a day bucket (not the 15-min default) so the lock actually prevents duplicate same-day runs",
+        "Calls refresh_bank_score_snapshot per active bank, then refresh_leaderboard_mv",
+        "Partial per-bank failure does not fail the whole batch (returns 200 + bank_errors array)",
+        "vercel.json rankings cron entry restored at 30 20 * * * (02:00 IST)"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm test:unit", "pnpm test:contract", "pnpm verify:no-auto-send"]
+      }
+    },
+    {
+      "id": "slice-17",
+      "number": 17,
+      "title": "Ops dashboard expansion",
+      "week": 9,
+      "depends_on": ["slice-11"],
+      "spec_refs": ["BUILD_SPEC.md §13"],
+      "scope_files": [
+        "app/ops/dashboard/page.tsx",
+        "app/api/v1/ops/metrics/route.ts",
+        "components/ops/MetricsPanel.tsx"
+      ],
+      "forbidden_in_slice": ["bypassing requireOperator auth"],
+      "acceptance_criteria": [
+        "TODO(spec): exact metrics scope undefined by BUILD_SPEC; owner decided minimal (gate backlog, case counts, cron health) — confirm before IMPLEMENTER starts",
+        "Operator-JWT-gated like existing /ops/queue, same lib/ops/operator-auth.ts"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm test:contract", "pnpm verify:no-auto-send"]
+      }
+    },
+    {
+      "id": "slice-18",
+      "number": 18,
+      "title": "SEO pages",
+      "week": 9,
+      "depends_on": [],
+      "spec_refs": ["BUILD_SPEC.md §13 (near-silent)", "docs/FRONTEND_POLICY.md"],
+      "scope_files": ["app/(marketing)/*", "lib/seo/metadata.ts"],
+      "forbidden_in_slice": ["public leaderboard pages — those are Phase 3 per BUILD_SPEC.md §13, not Phase 2"],
+      "acceptance_criteria": [
+        "Owner decided: static landing/help/sitemap pages — explicitly NOT the public leaderboard",
+        "No case data or PII on any public page"
+      ],
+      "verification": {
+        "commands": ["pnpm typecheck", "pnpm lint", "pnpm verify:no-auto-send"]
+      }
     }
   ],
   "resume_rules": {
