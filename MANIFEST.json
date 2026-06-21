@@ -4,13 +4,13 @@
   "phase": 1,
   "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
   "active_slice": "phase-1-complete",
-  "harness_state": "verifying",
+  "harness_state": "phase_exit_verified",
   "last_agent": "VERIFIER",
   "fix_round": 0,
   "max_fix_rounds": 5,
   "orchestration_config": "config/harness/slice-orchestration.json",
   "started_at": "2026-06-20T00:00:00.000Z",
-  "updated_at": "2026-06-21T05:39:42Z",
+  "updated_at": "2026-06-21T11:14:00Z",
   "slices": [
     {
       "id": "slice-01",
@@ -158,10 +158,14 @@
     "last_run_at": "2026-06-21T05:39:42Z",
     "typecheck": 0,
     "lint": 0,
-    "unit_tests": null,
+    "unit_tests": 0,
+    "contract_tests": 0,
+    "golden_tests": 0,
+    "e2e_smoke": 0,
     "verify_no_auto_send": 0,
-    "slice_gates": "slice-11",
-    "passed": true
+    "slice_gates": "phase-exit",
+    "passed": true,
+    "note": "All gates green on real runs: typecheck, lint, unit (98), contract (18), golden, no-auto-send, e2e:smoke (6/6 @smoke). Commit 8d6ef58. Sandbox without bundled Playwright: opt-in PLAYWRIGHT_CHROME_CHANNEL=chrome (see ENV-001 resolution_note)."
   },
   "review": {
     "last_round": 0,
@@ -188,6 +192,30 @@
         "date": "2026-06-20",
         "decision": "Migrations 001-010 copied from workspace supabase/; agent_role UPPERCASE per SQL canonical",
         "spec_ref": "slice-01 plan.md"
+      },
+      {
+        "id": "ADR-004",
+        "date": "2026-06-21",
+        "decision": "playwright.config.ts opt-in PLAYWRIGHT_CHROME_CHANNEL env drives system Chrome when bundled Playwright binary unavailable; default unchanged for CI/machines with working playwright install",
+        "spec_ref": "ENV-001 resolution, commit 8d6ef58"
+      },
+      {
+        "id": "ADR-P2-001",
+        "date": "2026-06-21",
+        "decision": "Phase 2 slices 12-18 proposed (Verifier OCR, PDF bundle, bundle/proof-gate integration, Razorpay, rankings cron, ops dashboard expansion, SEO pages). slice-16 (rankings cron) recommended to ship first/standalone since it closes an existing Track A deploy gap (vercel.json already schedules a cron route that does not exist yet).",
+        "spec_ref": ".claude/session/phase-2-kickoff/plan.md"
+      },
+      {
+        "id": "ADR-P2-002",
+        "date": "2026-06-21",
+        "decision": "VERIFIER OCR agent design (slice-12) is blocked pending confirmation of whether NVIDIA MiniMax-M3 supports vision/image input - prompts/product/VERIFIER.md predates the NVIDIA swap and assumes Sonnet-style vision.",
+        "spec_ref": ".claude/session/phase-2-kickoff/plan.md §5.1"
+      },
+      {
+        "id": "ADR-P2-003",
+        "date": "2026-06-21",
+        "decision": "No PDF rendering library chosen yet for slice-13 (evidence bundle PDF) - BUILD_SPEC is silent; needs owner approval before adding any new dependency per CLAUDE.md §5.2.",
+        "spec_ref": ".claude/session/phase-2-kickoff/plan.md §5.2"
       }
     ],
     "blockers": [
@@ -211,6 +239,16 @@
         "resolution": "Fix verify_phase_exit() to capture the gate exit code the same way verify_slice() does, e.g. `ec=\"$(run_command_gate e2e_smoke \"pnpm test:e2e:smoke\")\"; [[ \"$ec\" == \"0\" ]] || fail ...`. Flagged to project owner; not fixed in this pass since scripts/harness/* is harness tooling outside slice 02-11 scope.",
         "status": "resolved",
         "resolved_at": "2026-06-21"
+      },
+      {
+        "id": "GAP-001",
+        "date": "2026-06-21",
+        "status": "resolved",
+        "blocker": "vercel.json schedules a cron at /api/v1/internal/cron/rankings (30 20 * * * = 02:00 IST) but app/api/v1/internal/cron/rankings/route.ts does not exist in the codebase.",
+        "impact": "Would 404 on every nightly invocation if deployed as-is. Confirmed independently by DEVOPS_ENGINEER and BACKEND_ENGINEER specialists.",
+        "resolution": "Owner to choose: remove the cron entry from vercel.json until slice-16 ships, or approve a minimal stub route now. See .claude/session/deploy/plan.md §3.",
+        "resolved_at": "2026-06-21",
+        "resolution_note": "Owner chose to remove the rankings cron entry (and its functions-block config) from vercel.json rather than stub it. Will restore both when slice-16 (rankings cron) ships."
       }
     ],
     "spec_gaps": []
