@@ -13,6 +13,7 @@ const insertCaseMock = vi.fn();
 const selectCasesMock = vi.fn();
 const insertActionMock = vi.fn();
 const bankSelectMock = vi.fn();
+const insertConsentMock = vi.fn();
 
 function thenable<T>(value: T): Promise<T> {
   return Promise.resolve(value);
@@ -51,6 +52,9 @@ vi.mock('@/lib/supabase/admin', () => ({
       if (table === 'action_logs') {
         return { insert: insertActionMock };
       }
+      if (table === 'consent_records') {
+        return { insert: () => ({ select: () => ({ single: insertConsentMock }) }) };
+      }
       return {};
     },
   }),
@@ -74,6 +78,7 @@ describe('cases CRUD contract', () => {
   beforeEach(() => {
     resetRateLimitMemory();
     insertActionMock.mockResolvedValue({ error: null });
+    insertConsentMock.mockResolvedValue({ data: { id: 'consent-1' }, error: null });
     bankSelectMock.mockResolvedValue({ data: { id: bankId }, error: null });
     insertCaseMock.mockResolvedValue({
       data: {
@@ -130,13 +135,31 @@ describe('cases CRUD contract', () => {
         'Content-Type': 'application/json',
         'Idempotency-Key': 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
       },
-      body: JSON.stringify({ bank_slug: 'state-bank-of-india' }),
+      body: JSON.stringify({ bank_slug: 'state-bank-of-india', consent_accepted: true }),
     });
     const response = await POST(request);
     const json = await response.json();
     expect(response.status).toBe(201);
     expect(caseResponseSchema.safeParse(json).success).toBe(true);
     expect(json.public_id).toMatch(/^LL-\d+$/);
+    expect(insertConsentMock).toHaveBeenCalled();
+  });
+
+  it('POST /cases rejects missing consent_accepted', async () => {
+    insertCaseMock.mockClear();
+    const request = guestRequest('http://localhost/api/v1/cases', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      },
+      body: JSON.stringify({ bank_slug: 'state-bank-of-india' }),
+    });
+    const response = await POST(request);
+    const json = await response.json();
+    expect(response.status).toBe(400);
+    expect(errorEnvelopeSchema.safeParse(json).success).toBe(true);
+    expect(insertCaseMock).not.toHaveBeenCalled();
   });
 
   it('GET /cases lists guest-owned cases', async () => {
@@ -155,7 +178,7 @@ describe('cases CRUD contract', () => {
         'Content-Type': 'application/json',
         'Idempotency-Key': key,
       },
-      body: JSON.stringify({ bank_slug: 'state-bank-of-india' }),
+      body: JSON.stringify({ bank_slug: 'state-bank-of-india', consent_accepted: true }),
     });
     await POST(req1);
     insertCaseMock.mockClear();

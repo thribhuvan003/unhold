@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { DisclaimerModal } from '@/components/legal/DisclaimerModal';
 
 export default function GuestReportPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   async function startGuestIntake() {
     setLoading(true);
@@ -30,6 +32,7 @@ export default function GuestReportPage() {
           freeze_reason: 'cyber_upi_chain',
           victim_role: 'innocent_receiver',
           intake_json: { source: 'guest_report' },
+          consent_accepted: true,
         }),
       });
       const caseJson = await caseRes.json();
@@ -51,13 +54,21 @@ export default function GuestReportPage() {
       <p className="text-slate-700">Under 30 seconds. No account required. Data stored in Supabase — not localStorage.</p>
       <button
         type="button"
-        onClick={() => void startGuestIntake()}
+        onClick={() => setShowDisclaimer(true)}
         disabled={loading}
         className="min-h-[44px] rounded bg-[#1F6B8A] px-5 font-medium text-white disabled:opacity-60"
       >
         {loading ? 'Starting…' : 'Start my case'}
       </button>
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      <DisclaimerModal
+        open={showDisclaimer}
+        onDecline={() => setShowDisclaimer(false)}
+        onAccept={async () => {
+          setShowDisclaimer(false);
+          await startGuestIntake();
+        }}
+      />
     </section>
   );
 }

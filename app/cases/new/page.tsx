@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { DisclaimerModal } from '@/components/legal/DisclaimerModal';
 
 export default function NewCasePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   async function createCase() {
     setLoading(true);
@@ -30,6 +32,7 @@ export default function NewCasePage() {
           bank_slug: 'state-bank-of-india',
           freeze_reason: 'cyber_upi_chain',
           victim_role: 'innocent_receiver',
+          consent_accepted: true,
         }),
       });
       const json = await res.json();
@@ -49,12 +52,20 @@ export default function NewCasePage() {
       <button
         type="button"
         disabled={loading}
-        onClick={() => void createCase()}
+        onClick={() => setShowDisclaimer(true)}
         className="min-h-[44px] rounded bg-[#E67E00] px-5 text-white disabled:opacity-60"
       >
         {loading ? 'Creating…' : 'Create case'}
       </button>
       {error ? <p className="text-red-700">{error}</p> : null}
+      <DisclaimerModal
+        open={showDisclaimer}
+        onDecline={() => setShowDisclaimer(false)}
+        onAccept={async () => {
+          setShowDisclaimer(false);
+          await createCase();
+        }}
+      />
     </section>
   );
 }

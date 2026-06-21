@@ -11,6 +11,7 @@ import {
   type IntakeClassificationOutput,
 } from '@/lib/agents/schemas';
 import { validateIntakeOutput } from '@/lib/agents/validators';
+import { hasGrantedConsent } from '@/lib/consent/record';
 import { createUserActionsFromIntake } from '@/lib/user-actions/create';
 import { appendSwarmEvent } from '@/lib/swarm/append-event';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -60,6 +61,10 @@ export async function loadIntakeClassifierInput(
 
 async function classifyWithLlm(input: IntakeClassifierInput): Promise<IntakeClassificationOutput> {
   if (!isNvidiaLlmConfigured()) {
+    return classifyIntakeFromRules(input);
+  }
+
+  if (!(await hasGrantedConsent(input.case_id, 'cross_border_ai'))) {
     return classifyIntakeFromRules(input);
   }
 

@@ -11,6 +11,7 @@ import { createCaseSchema } from '@/lib/validation/api-schemas';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { Json } from '@/supabase/database.types';
 import { appendActionLog } from '@/lib/action-logs/append';
+import { recordConsent } from '@/lib/consent/record';
 import { ApiError } from '@/lib/api/errors';
 import {
   getRequestId,
@@ -86,6 +87,14 @@ export async function POST(request: NextRequest) {
       action: 'case.created',
       payload: { public_id: created.public_id, bank_slug: parsed.data.bank_slug },
       requestId,
+    });
+
+    await recordConsent({
+      consent_type: 'case_data_processing',
+      granted: true,
+      case_id: created.id,
+      user_id: auth.userId,
+      guest_session_id: auth.userId ? null : auth.guestSessionId,
     });
 
     const payload = serializeCase(created);

@@ -9,6 +9,7 @@ import {
   type LetterDraftOutput,
 } from '@/lib/agents/schemas';
 import { validateDrafterOutput } from '@/lib/agents/validators';
+import { hasGrantedConsent } from '@/lib/consent/record';
 import { createUserAction } from '@/lib/user-actions/create';
 import { appendSwarmEvent } from '@/lib/swarm/append-event';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -133,6 +134,7 @@ async function draftWithLlm(
   ctx: DrafterCaseContext,
 ): Promise<LetterDraftOutput | null> {
   if (!isNvidiaLlmConfigured()) return null;
+  if (!(await hasGrantedConsent(ctx.case_id, 'cross_border_ai'))) return null;
 
   const model = routeModel('DRAFTER', {
     agent_cost_usd: 0,
