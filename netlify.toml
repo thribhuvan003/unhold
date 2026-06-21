@@ -1,0 +1,20 @@
+# Unhold (lienliberator) — Netlify deploy
+# Vercel was the original target (vercel.json); this file is the Netlify equivalent.
+# Crons in vercel.json do NOT run here — schedule via Upstash QStash or cron-job.org.
+
+[build]
+  command = "pnpm install --frozen-lockfile && pnpm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Netlify reads packageManager from package.json (pnpm@10.12.1)
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Mirrors vercel.json /healthz rewrite
+[[redirects]]
+  from = "/healthz"
+  to = "/api/v1/health"
+  status = 200
