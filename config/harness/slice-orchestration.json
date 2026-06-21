@@ -513,7 +513,7 @@
       "forbidden_in_slice": ["send_email", "auto_send"],
       "acceptance_criteria": [
         "Generates SHA-256-sealed PDF bundle from verified evidence using evidence.bundle_id + audit_seals (already in migration 008)",
-        "TODO(spec): PDF rendering library not yet chosen by owner; no IMPLEMENTER until approved (ADR-P2-003)",
+        "Uses pdf-lib@1.17.1 (owner-approved, already in package.json — ADR-P2-003 resolved)",
         "Copy/download-only — no auto-send"
       ],
       "verification": {

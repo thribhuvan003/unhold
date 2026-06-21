@@ -301,8 +301,8 @@
       {
         "id": "ADR-P2-003",
         "date": "2026-06-21",
-        "decision": "No PDF rendering library chosen yet for slice-13 (evidence bundle PDF) - BUILD_SPEC is silent; needs owner approval before adding any new dependency per CLAUDE.md §5.2.",
-        "spec_ref": ".claude/session/phase-2-kickoff/plan.md §5.2"
+        "decision": "RESOLVED: owner approved pdf-lib@1.17.1 for slice-13 (evidence bundle PDF). Already present in package.json dependencies - not a new/pending dependency as of the slice-13 PLANNER pass.",
+        "spec_ref": ".claude/session/slice-13/plan.md §3"
       },
       {
         "id": "ADR-DEPLOY-001",
