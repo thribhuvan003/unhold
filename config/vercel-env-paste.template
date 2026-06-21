@@ -1,0 +1,124 @@
+# ═══════════════════════════════════════════════════════════════════
+# VERCEL ENV — copy KEY names into Vercel dashboard (Production)
+# Site: https://unholdd.vercel.app
+# ═══════════════════════════════════════════════════════════════════
+#
+# HOW TO USE:
+# 1. Vercel → Project unholdd → Settings → Environment Variables
+# 2. Add each KEY below (left column) — paste YOUR value (not this file's placeholders)
+# 3. Scope: Production (and Preview if you want)
+# 4. Deployments → Redeploy after ALL vars saved
+#
+# NEVER commit this file with real secrets filled in.
+# NEVER use the same key for NVIDIA and Supermemory — different services, different keys.
+#
+# DELETE these if you added them (wrong names — app ignores them):
+#   SUPABASE_SECRET_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, SUPABASE_JWKS_URL
+#
+# ═══════════════════════════════════════════════════════════════════
+# A) APP (required)
+# ═══════════════════════════════════════════════════════════════════
+
+NEXT_PUBLIC_APP_URL=https://unholdd.vercel.app
+NEXT_PUBLIC_APP_ENV=production
+
+# ═══════════════════════════════════════════════════════════════════
+# B) SUPABASE (required) — from Supabase → Settings → API
+# ═══════════════════════════════════════════════════════════════════
+
+NEXT_PUBLIC_SUPABASE_URL=PASTE_SUPABASE_PROJECT_URL
+# Example shape: https://xxxxxxxx.supabase.co
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY=PASTE_SUPABASE_ANON_OR_PUBLISHABLE_KEY
+# Label in dashboard: "anon" "public" or sb_publishable_...
+
+SUPABASE_SERVICE_ROLE_KEY=PASTE_SUPABASE_SERVICE_ROLE_OR_SECRET_KEY
+# Label: "service_role" or sb_secret_... — NEVER prefix with NEXT_PUBLIC_
+
+# ═══════════════════════════════════════════════════════════════════
+# C) AUTH + CRON (required)
+# ═══════════════════════════════════════════════════════════════════
+
+GUEST_JWT_SECRET=PASTE_NEW_SECRET_MIN_32_CHARS
+# Generate: openssl rand -base64 32
+
+CRON_SECRET=PASTE_NEW_SECRET_MIN_32_CHARS
+# Generate: openssl rand -base64 32 — same value you use in cron-job.org header
+
+# ═══════════════════════════════════════════════════════════════════
+# D) NVIDIA LLM — MiniMax-M3 (required for intake/drafter/verifier agents)
+# NOT Supermemory. NOT Supabase. Starts with nvapi-
+# Get from: https://build.nvidia.com → API key
+# ═══════════════════════════════════════════════════════════════════
+
+NVIDIA_API_KEY=PASTE_NVIDIA_NVAPI_KEY_ONLY
+# ⚠️  This is ONLY for NVIDIA Integrate / MiniMax-M3. Do NOT paste Supermemory key here.
+
+NVIDIA_API_BASE_URL=https://integrate.api.nvidia.com/v1/chat/completions
+NVIDIA_MODEL=minimaxai/minimax-m3
+AGENT_COST_CAP_USD=2.00
+AGENT_MAX_CONCURRENT=3
+
+# ═══════════════════════════════════════════════════════════════════
+# E) UPSTASH REDIS (required — cron locks + rate limits)
+# From: https://console.upstash.com → your Redis → REST API
+# ═══════════════════════════════════════════════════════════════════
+
+UPSTASH_REDIS_REST_URL=PASTE_UPSTASH_REST_URL
+UPSTASH_REDIS_REST_TOKEN=PASTE_UPSTASH_REST_TOKEN
+
+# ═══════════════════════════════════════════════════════════════════
+# F) RANKINGS SAFETY (required for prod)
+# ═══════════════════════════════════════════════════════════════════
+
+LEADERBOARD_MIN_SAMPLE=5
+LEADERBOARD_PUBLIC_ENABLED=false
+
+# ═══════════════════════════════════════════════════════════════════
+# G) SUPERMEMORY (optional Phase 1 — Claude harness memory only)
+# DIFFERENT key from NVIDIA_API_KEY. Different dashboard entirely.
+# Get from: https://supermemory.ai (or your cloud endpoint)
+# Skip entire section G if not using cloud Supermemory yet.
+# ═══════════════════════════════════════════════════════════════════
+
+SUPERMEMORY_API_KEY=PASTE_SUPERMEMORY_KEY_NOT_NVIDIA
+# ⚠️  NOT nvapi-... — this is Supermemory's own API key.
+
+SUPERMEMORY_BASE_URL=PASTE_SUPERMEMORY_CLOUD_URL
+# NOT https://integrate.api.nvidia.com — e.g. your Supermemory cloud base URL
+
+# ═══════════════════════════════════════════════════════════════════
+# H) OBSERVABILITY (optional — skip for MVP)
+# ═══════════════════════════════════════════════════════════════════
+
+# LANGFUSE_PUBLIC_KEY=
+# LANGFUSE_SECRET_KEY=
+# LANGFUSE_BASE_URL=https://cloud.langfuse.com
+# SENTRY_DSN=
+# NEXT_PUBLIC_SENTRY_DSN=
+
+# ═══════════════════════════════════════════════════════════════════
+# I) PHASE 2 ONLY — DO NOT SET ON VERCEL YET
+# ═══════════════════════════════════════════════════════════════════
+
+# RAZORPAY_KEY_ID=
+# RAZORPAY_KEY_SECRET=
+# RAZORPAY_WEBHOOK_SECRET=
+# RESEND_API_KEY=
+# RESEND_FROM_EMAIL=
+# NEXT_PUBLIC_POSTHOG_KEY=
+# POSTHOG_API_KEY=
+
+# ═══════════════════════════════════════════════════════════════════
+# QUICK CHECK AFTER REDEPLOY
+# ═══════════════════════════════════════════════════════════════════
+# curl -i -X POST https://unholdd.vercel.app/api/v1/guest/sessions
+# → expect HTTP 200 and JSON with guest_session_id
+#
+# Supabase → Auth → URL config:
+#   Site URL: https://unholdd.vercel.app
+#   Redirect URLs: https://unholdd.vercel.app/**
+#
+# cron-job.org (POST, header Authorization: Bearer <CRON_SECRET>):
+#   /api/v1/internal/cron/tick          every 15 min
+#   /api/v1/internal/jobs/process       every 5 min

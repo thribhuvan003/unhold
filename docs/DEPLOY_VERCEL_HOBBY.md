@@ -39,7 +39,7 @@ Claude: do **not** restore `*/15` or `*/5` entries to `vercel.json` without owne
 1. [vercel.com](https://vercel.com) → Import `thribhuvan003/unhold`
 2. Plan: **Hobby** (not Pro)
 3. **Root directory:** `lienliberator`
-4. Environment variables — exact names from `.env.example` (see `docs/DEPLOY_NETLIFY.md` env table; names are identical)
+4. Environment variables — **`config/vercel-env-paste.template`** + **`config/VERCEL_ENV_KEYS.md`** (NVIDIA_API_KEY ≠ SUPERMEMORY_API_KEY)
 5. Deploy → set `NEXT_PUBLIC_APP_URL` to the `*.vercel.app` URL → redeploy once
 6. Supabase → Authentication → Site URL + Redirect URLs → your Vercel URL
 
