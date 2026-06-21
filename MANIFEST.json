@@ -196,14 +196,19 @@
         "date": "2026-06-21",
         "blocker": "Playwright chromium_headless_shell-1169 binary unavailable in this sandbox (download stalls repeatedly); page.goto()-based e2e specs (tests/e2e/guest-intake.spec.ts, slice-11 scope) cannot run here.",
         "impact": "slice-08 verified on typecheck+lint+test:unit+the in-scope mark-sent.spec.ts (request-only, no browser, 2/2 passing)+verify:no-auto-send; the 3 failing tests belong to slice-11 scope and are an environment limitation, not a code defect.",
-        "resolution": "Re-run pnpm test:e2e:smoke on a machine/CI with working Playwright browsers before final phase-exit sign-off."
+        "resolution": "Re-run pnpm test:e2e:smoke on a machine/CI with working Playwright browsers before final phase-exit sign-off.",
+        "status": "open",
+        "attempts": 6,
+        "latest_note": "6th attempt (chromium-headless-shell specific, smaller 79.8MiB download) got further than the bundled chromium installs - download completed and extraction began (libEGL.dylib written) - but still stalled with zero CPU progress afterward. Consistent across both the bundled chromium target and the headless-shell-only target: download always completes, post-download step (extraction/finalization) never does. Likely a sandbox-specific filesystem/subprocess restriction, not a network issue. Needs to be resolved outside this sandbox."
       },
       {
         "id": "ENV-002",
         "date": "2026-06-21",
         "blocker": "scripts/harness/run-slice.sh verify_phase_exit() (line 302) calls run_command_gate via `... >/dev/null || fail` without capturing its echoed exit code through command substitution. run_command_gate ends with `echo \"$ec\"`, so the function itself always returns bash exit status 0 regardless of the wrapped commands actual exit code — the || fail branch can never trigger.",
         "impact": "--verify-phase-exit prints \"Phase 1 exit criteria met\" even when pnpm test:e2e:smoke genuinely fails (confirmed: 3 failing tests, exit code 1, yet phase-exit reported success). This is a false-positive in the harness verifier itself, not a product code defect. Contrast with verify_slice() which correctly captures via `ec=\"$(run_command_gate ...)\"`.",
-        "resolution": "Fix verify_phase_exit() to capture the gate exit code the same way verify_slice() does, e.g. `ec=\"$(run_command_gate e2e_smoke \"pnpm test:e2e:smoke\")\"; [[ \"$ec\" == \"0\" ]] || fail ...`. Flagged to project owner; not fixed in this pass since scripts/harness/* is harness tooling outside slice 02-11 scope."
+        "resolution": "Fix verify_phase_exit() to capture the gate exit code the same way verify_slice() does, e.g. `ec=\"$(run_command_gate e2e_smoke \"pnpm test:e2e:smoke\")\"; [[ \"$ec\" == \"0\" ]] || fail ...`. Flagged to project owner; not fixed in this pass since scripts/harness/* is harness tooling outside slice 02-11 scope.",
+        "status": "resolved",
+        "resolved_at": "2026-06-21"
       }
     ],
     "spec_gaps": []

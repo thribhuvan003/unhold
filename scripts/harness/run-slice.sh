@@ -299,7 +299,9 @@ verify_phase_exit() {
 
   if [[ -f "$ROOT/package.json" ]]; then
     if jq -e '.scripts["test:e2e:smoke"]' "$ROOT/package.json" >/dev/null; then
-      run_command_gate "e2e_smoke" "pnpm test:e2e:smoke" >/dev/null || fail "Phase exit E2E smoke failed"
+      local e2e_ec
+      e2e_ec="$(run_command_gate "e2e_smoke" "pnpm test:e2e:smoke")"
+      [[ "$e2e_ec" == "0" ]] || fail "Phase exit E2E smoke failed (exit $e2e_ec)"
     else
       warn "test:e2e:smoke not configured yet — stub pass"
     fi
