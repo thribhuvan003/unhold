@@ -10,7 +10,7 @@ export default function NewCasePage() {
   const [error, setError] = useState<string | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
-  async function createCase() {
+  async function createCase(aiConsentAccepted: boolean) {
     setLoading(true);
     setError(null);
     try {
@@ -33,6 +33,7 @@ export default function NewCasePage() {
           freeze_reason: 'cyber_upi_chain',
           victim_role: 'innocent_receiver',
           consent_accepted: true,
+          ai_consent_accepted: aiConsentAccepted,
         }),
       });
       const json = await res.json();
@@ -61,9 +62,9 @@ export default function NewCasePage() {
       <DisclaimerModal
         open={showDisclaimer}
         onDecline={() => setShowDisclaimer(false)}
-        onAccept={async () => {
+        onAccept={async (aiConsentAccepted) => {
           setShowDisclaimer(false);
-          await createCase();
+          await createCase(aiConsentAccepted);
         }}
       />
     </section>

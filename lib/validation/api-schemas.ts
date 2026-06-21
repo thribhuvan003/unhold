@@ -78,6 +78,7 @@ export const transitionEventSchema = z.enum([
 export const createCaseSchema = z.object({
   bank_slug: z.string().min(1),
   consent_accepted: z.literal(true),
+  ai_consent_accepted: z.boolean().optional().default(false),
   freeze_reason: freezeReasonSchema.optional(),
   freeze_type: freezeTypeSchema.optional(),
   victim_role: victimRoleSchema.optional(),

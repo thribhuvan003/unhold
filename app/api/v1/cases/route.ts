@@ -97,6 +97,23 @@ export async function POST(request: NextRequest) {
       guest_session_id: auth.userId ? null : auth.guestSessionId,
     });
 
+    if (parsed.data.ai_consent_accepted) {
+      await recordConsent({
+        consent_type: 'cross_border_ai',
+        granted: true,
+        case_id: created.id,
+        user_id: auth.userId,
+        guest_session_id: auth.userId ? null : auth.guestSessionId,
+      });
+      await recordConsent({
+        consent_type: 'ai_ocr_processing',
+        granted: true,
+        case_id: created.id,
+        user_id: auth.userId,
+        guest_session_id: auth.userId ? null : auth.guestSessionId,
+      });
+    }
+
     const payload = serializeCase(created);
     await completeIdempotentRequest('cases:create', idempotencyKey, 201, payload);
     const response = jsonSuccess(payload, { status: 201 });

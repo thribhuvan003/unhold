@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { INTAKE_DISCLAIMER } from '@/lib/constants/disclaimers';
+import { AI_PROCESSING_DISCLAIMER, INTAKE_DISCLAIMER } from '@/lib/constants/disclaimers';
 import { ConsentCheckbox } from '@/components/legal/ConsentCheckbox';
 
 type DisclaimerModalProps = {
   open: boolean;
-  onAccept: () => void | Promise<void>;
+  onAccept: (aiConsentAccepted: boolean) => void | Promise<void>;
   onDecline?: () => void;
 };
 
 export function DisclaimerModal({ open, onAccept, onDecline }: DisclaimerModalProps) {
   const [accepted, setAccepted] = useState(false);
+  const [aiConsent, setAiConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   if (!open) return null;
@@ -20,7 +21,7 @@ export function DisclaimerModal({ open, onAccept, onDecline }: DisclaimerModalPr
     if (!accepted) return;
     setSubmitting(true);
     try {
-      await onAccept();
+      await onAccept(aiConsent);
     } finally {
       setSubmitting(false);
     }
@@ -45,6 +46,18 @@ export function DisclaimerModal({ open, onAccept, onDecline }: DisclaimerModalPr
             label="I have read and agree to the above. I understand LienLiberator is not a law firm and does not guarantee outcomes."
             checked={accepted}
             onChange={setAccepted}
+          />
+        </div>
+
+        <p className="mt-4 text-sm leading-relaxed text-slate-700">{AI_PROCESSING_DISCLAIMER}</p>
+
+        <div className="mt-4">
+          <ConsentCheckbox
+            id="ai-processing-consent"
+            label="I consent to AI processing of my case data and documents, including by providers outside India (optional)."
+            checked={aiConsent}
+            onChange={setAiConsent}
+            required={false}
           />
         </div>
 

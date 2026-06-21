@@ -53,7 +53,12 @@ vi.mock('@/lib/supabase/admin', () => ({
         return { insert: insertActionMock };
       }
       if (table === 'consent_records') {
-        return { insert: () => ({ select: () => ({ single: insertConsentMock }) }) };
+        return {
+          insert: (row: unknown) => {
+            insertConsentMock(row);
+            return { select: () => ({ single: () => thenable({ data: { id: 'consent-1' }, error: null }) }) };
+          },
+        };
       }
       return {};
     },
@@ -78,7 +83,7 @@ describe('cases CRUD contract', () => {
   beforeEach(() => {
     resetRateLimitMemory();
     insertActionMock.mockResolvedValue({ error: null });
-    insertConsentMock.mockResolvedValue({ data: { id: 'consent-1' }, error: null });
+    insertConsentMock.mockClear();
     bankSelectMock.mockResolvedValue({ data: { id: bankId }, error: null });
     insertCaseMock.mockResolvedValue({
       data: {
@@ -142,7 +147,32 @@ describe('cases CRUD contract', () => {
     expect(response.status).toBe(201);
     expect(caseResponseSchema.safeParse(json).success).toBe(true);
     expect(json.public_id).toMatch(/^LL-\d+$/);
-    expect(insertConsentMock).toHaveBeenCalled();
+    expect(insertConsentMock).toHaveBeenCalledTimes(1);
+    expect(insertConsentMock).toHaveBeenCalledWith(
+      expect.objectContaining({ consent_type: 'case_data_processing' }),
+    );
+  });
+
+  it('POST /cases also records cross_border_ai and ai_ocr_processing when ai_consent_accepted is true', async () => {
+    const request = guestRequest('http://localhost/api/v1/cases', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': 'ffffffff-ffff-4fff-8fff-ffffffffffff',
+      },
+      body: JSON.stringify({
+        bank_slug: 'state-bank-of-india',
+        consent_accepted: true,
+        ai_consent_accepted: true,
+      }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    expect(insertConsentMock).toHaveBeenCalledTimes(3);
+    const consentTypes = insertConsentMock.mock.calls.map(
+      (call) => (call[0] as { consent_type: string }).consent_type,
+    );
+    expect(consentTypes).toEqual(['case_data_processing', 'cross_border_ai', 'ai_ocr_processing']);
   });
 
   it('POST /cases rejects missing consent_accepted', async () => {

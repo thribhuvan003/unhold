@@ -10,7 +10,7 @@ export default function GuestReportPage() {
   const [error, setError] = useState<string | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
-  async function startGuestIntake() {
+  async function startGuestIntake(aiConsentAccepted: boolean) {
     setLoading(true);
     setError(null);
     try {
@@ -33,6 +33,7 @@ export default function GuestReportPage() {
           victim_role: 'innocent_receiver',
           intake_json: { source: 'guest_report' },
           consent_accepted: true,
+          ai_consent_accepted: aiConsentAccepted,
         }),
       });
       const caseJson = await caseRes.json();
@@ -64,9 +65,9 @@ export default function GuestReportPage() {
       <DisclaimerModal
         open={showDisclaimer}
         onDecline={() => setShowDisclaimer(false)}
-        onAccept={async () => {
+        onAccept={async (aiConsentAccepted) => {
           setShowDisclaimer(false);
-          await startGuestIntake();
+          await startGuestIntake(aiConsentAccepted);
         }}
       />
     </section>
