@@ -20,14 +20,16 @@ Ensure runnable infrastructure per BUILD_SPEC §15–§17.
 
 ---
 
-## vercel.json crons (canonical)
+## vercel.json crons (canonical BUILD_SPEC §15)
 
 | Path | Schedule | Purpose |
 |------|----------|---------|
 | `/api/v1/internal/cron/tick` | */15 | `runBatchCaseTicks` |
 | `/api/v1/internal/cron/reminders` | 09:00 IST | Day-bucket reminders |
-| `/api/v1/internal/cron/rankings` | weekly | pressure_score refresh |
+| `/api/v1/internal/cron/rankings` | 02:00 IST | pressure_score refresh |
 | `/api/v1/internal/jobs/process` | */5 | `processAgentJobs` |
+
+**Vercel Hobby deploy:** only daily crons live in `vercel.json`; tick + jobs via external scheduler. See `docs/DEPLOY_VERCEL_HOBBY.md` (ADR-DEPLOY-001). Do not re-add frequent crons without Pro or owner approval.
 
 Region: `bom1` per vercel.json
 

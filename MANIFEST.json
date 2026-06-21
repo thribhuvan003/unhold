@@ -303,6 +303,12 @@
         "date": "2026-06-21",
         "decision": "No PDF rendering library chosen yet for slice-13 (evidence bundle PDF) - BUILD_SPEC is silent; needs owner approval before adding any new dependency per CLAUDE.md §5.2.",
         "spec_ref": ".claude/session/phase-2-kickoff/plan.md §5.2"
+      },
+      {
+        "id": "ADR-DEPLOY-001",
+        "date": "2026-06-21",
+        "decision": "Primary production deploy: Vercel Hobby (free). vercel.json crons trimmed to daily-only (reminders + rankings) because Hobby rejects */15 and */5 schedules at deploy. tick and jobs/process invoked via external scheduler (cron-job.org) POST with CRON_SECRET. Vercel Pro not required for hosting. Netlify unholdd credits exhausted.",
+        "spec_ref": "docs/DEPLOY_VERCEL_HOBBY.md"
       }
     ],
     "blockers": [

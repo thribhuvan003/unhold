@@ -14,10 +14,8 @@
     "app/api/v1/**/route.ts": { "maxDuration": 60, "memory": 512 }
   },
   "crons": [
-    { "path": "/api/v1/internal/cron/tick", "schedule": "*/15 * * * *" },
     { "path": "/api/v1/internal/cron/reminders", "schedule": "30 3 * * *" },
-    { "path": "/api/v1/internal/cron/rankings", "schedule": "30 20 * * *" },
-    { "path": "/api/v1/internal/jobs/process", "schedule": "*/5 * * * *" }
+    { "path": "/api/v1/internal/cron/rankings", "schedule": "30 20 * * *" }
   ],
   "headers": [
     {

@@ -1,4 +1,10 @@
-# Deploy on Netlify (owner runbook)
+# Deploy runbooks (owner)
+
+**Primary deploy (2026-06):** [DEPLOY_VERCEL_HOBBY.md](./DEPLOY_VERCEL_HOBBY.md) — Vercel Hobby free + external crons.
+
+---
+
+# Deploy on Netlify (owner runbook — paused: credits exhausted)
 
 Unhold was built for Vercel (`vercel.json`). Netlify uses `netlify.toml` + OpenNext adapter instead.
 

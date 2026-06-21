@@ -211,13 +211,14 @@ E2E opt-in fallback (sandbox / no bundled Playwright):
 ACKNOWLEDGED STATE (do not re-litigate)
 ═══════════════════════════════════════════════════════════════
 
-- Repo: 8d6ef58 — Phase 1 exit genuinely verified
-- harness_state: phase_exit_verified | verification.passed: true
-- All gates green on real runs: typecheck, lint, unit (98), contract (18), golden, no-auto-send, e2e:smoke (6/6 @smoke)
-- ENV-001: resolved_workaround — opt-in PLAYWRIGHT_CHROME_CHANNEL=chrome in playwright.config.ts; default unchanged for CI
-- ENV-002: resolved — verify_phase_exit() captures exit code correctly
-- Track A (ship-verify): DONE — do not re-run unless regression
-- Next: deploy (L6) + Phase 2 kickoff (Track B)
+- Repo: main — Phase 1 exit verified; slice-16 verified; active_slice: slice-12
+- DEPLOY TARGET: Vercel Hobby (free) — see docs/DEPLOY_VERCEL_HOBBY.md (read before touching vercel.json crons)
+- Netlify unholdd.netlify.app: credits exhausted — do not use until refilled
+- vercel.json crons: DAILY ONLY (reminders + rankings) for Hobby; tick */15 + jobs */5 via cron-job.org external POST
+- Vercel Pro NOT required for deploy — only for built-in frequent crons
+- Prod 500 guest/sessions: owner env fix — .claude/session/prod-health/plan.md
+- MiniMax-M3 vision: owner confirmed YES for slice-12
+- Next: owner Vercel Hobby deploy (L6) → slice-12 IMPLEMENTER when prod up
 
 Model: Sonnet 4.6 1M default. Opus 4.8 if same blocker fails twice.
 
@@ -225,9 +226,10 @@ Model: Sonnet 4.6 1M default. Opus 4.8 if same blocker fails twice.
 CROSS-LAYER FLOW — DEPLOY (Track A — owner/L6 priority)
 ═══════════════════════════════════════════════════════════════
 
+Read docs/DEPLOY_VERCEL_HOBBY.md first. Do NOT re-add */15 or */5 to vercel.json on Hobby.
 L1 DEVOPS_ENGINEER + SECURITY_AUDITOR (parallel) → deploy checklist
-L2 PLANNER → .claude/session/deploy/plan.md + owner-runbook.md
-Owner runs: pnpm owner:deploy:prod + Supabase link/push + Vercel env vars
+Owner: Vercel Hobby import + env vars + cron-job.org for tick/jobs
+Optional: pnpm owner:deploy:prod after Vercel CLI linked
 
 E2E in sandbox without bundled Playwright (opt-in only):
   PLAYWRIGHT_CHROME_CHANNEL=chrome pnpm test:e2e:smoke
