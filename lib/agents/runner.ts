@@ -2,6 +2,7 @@ import 'server-only';
 
 import { runDrafterJob } from '@/lib/agents/drafter/runner';
 import { runIntakeJob } from '@/lib/agents/intake/runner';
+import { runVerifierJob } from '@/lib/agents/verifier/runner';
 import {
   EscalatorSuggestionOutputSchema,
   IntakeClassificationOutputSchema,
@@ -35,6 +36,9 @@ export async function runAgentJob(job: AgentJobRow): Promise<AgentRunResult> {
   }
   if (job.job_type === 'draft_letter') {
     return runDrafterJob(job);
+  }
+  if (job.job_type === 'verifier_extract') {
+    return runVerifierJob(job);
   }
 
   const schema = OUTPUT_SCHEMA_BY_JOB[job.job_type];

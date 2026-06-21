@@ -22,7 +22,7 @@ export const DISCLAIMER_BLOCKS = {
   E: `Bank rankings on LienLiberator are based on anonymized user-reported outcomes. They are not official RBI data, regulatory ratings, or bank endorsements. Sample sizes below five cases are not shown publicly.`,
 
   /** F — AI: may process outside India with consent */
-  F: `LienLiberator uses AI to classify cases and draft letters. With your consent, case data may be processed by AI providers outside India. You may withdraw AI consent at any time; withdrawal does not delete prior audit logs.`,
+  F: `LienLiberator uses AI to classify cases, verify uploaded documents (including scanned IDs and bank statements), and draft letters. With your consent, case data — including document images — may be processed by AI providers outside India. You may withdraw AI consent at any time; withdrawal does not delete prior audit logs.`,
 
   /** G — Evidence: don't upload passwords; own docs only */
   G: `Upload only documents you own or are authorized to share. Never upload net-banking passwords, UPI PINs, OTPs, or full Aadhaar. Mask government ID numbers to last four digits where possible.`,

@@ -3,14 +3,14 @@
   "project": "lienliberator",
   "phase": 2,
   "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
-  "active_slice": "slice-12",
+  "active_slice": "slice-13",
   "harness_state": "idle",
   "last_agent": "VERIFIER",
   "fix_round": 0,
   "max_fix_rounds": 5,
   "orchestration_config": "config/harness/slice-orchestration.json",
   "started_at": "2026-06-20T00:00:00.000Z",
-  "updated_at": "2026-06-21T08:02:01Z",
+  "updated_at": "2026-06-21T08:31:12Z",
   "slices": [
     {
       "id": "slice-01",
@@ -157,13 +157,13 @@
       "id": "slice-12",
       "number": 12,
       "title": "Verifier OCR runner",
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "slice-09",
         "slice-03"
       ],
-      "started_at": null,
-      "verified_at": null,
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-21T08:31:12Z",
       "pr_branch": null,
       "session_dir": ".claude/session/slice-12"
     },
@@ -246,12 +246,12 @@
     }
   ],
   "verification": {
-    "last_run_at": "2026-06-21T08:02:01Z",
+    "last_run_at": "2026-06-21T08:31:12Z",
     "typecheck": 0,
     "lint": 0,
     "unit_tests": 0,
     "verify_no_auto_send": 0,
-    "slice_gates": "slice-16",
+    "slice_gates": "slice-12",
     "passed": true
   },
   "review": {
@@ -336,6 +336,14 @@
         "resolution": "Owner to choose: remove the cron entry from vercel.json until slice-16 ships, or approve a minimal stub route now. See .claude/session/deploy/plan.md §3.",
         "resolved_at": "2026-06-21",
         "resolution_note": "Owner chose to remove the rankings cron entry (and its functions-block config) from vercel.json rather than stub it. Will restore both when slice-16 (rankings cron) ships."
+      },
+      {
+        "id": "SEC-001",
+        "date": "2026-06-21",
+        "status": "open",
+        "blocker": "SECURITY_AUDITOR FAIL on slice-12 (Verifier OCR): the cross_border_ai consent text (disclaimers.ts Block F) was written for text/JSON classification and never mentions sending images/scanned documents/ID photos to a third-party AI provider. Confirmed no fuller wording exists anywhere in BUILD_SPEC.md (line 275 only lists the consent_type enum name).",
+        "impact": "Sending raw evidence images (pan_card, bank_statement, aadhaar_masked) to NVIDIA for OCR is a materially bigger ask than current consent covers. Blocks slice-12 IMPLEMENTER start.",
+        "resolution": "Owner must approve new/amended disclaimer wording or a new consent type before IMPLEMENTER proceeds. Proposed wording presented in chat, awaiting explicit sign-off - not unilaterally decided since Blocks A-H are verbatim-per-spec, not paraphrasable."
       }
     ],
     "spec_gaps": []

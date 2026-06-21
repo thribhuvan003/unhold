@@ -9,10 +9,10 @@
 | Field | Value |
 |-------|-------|
 | Agent | VERIFIER |
-| Model | Sonnet + vision |
+| Model | NVIDIA `minimaxai/minimax-m3` (native multimodal — text/image/video input, confirmed via NVIDIA NIM docs) |
 | Output schema | `VerifierResultOutput` |
 | Confidence auto-accept | ≥ 0.85 |
-| Human gate | < 0.85, `forgery_risk: true`, amount mismatch >10% |
+| Human gate | < 0.85, `forgery_risk: true`, amount mismatch >10%, unsupported file format (PDF) |
 
 ---
 
@@ -27,6 +27,14 @@ You extract structured fields from freeze evidence images (SMS screenshots, lien
 3. If OCR amount differs from user `frozen_amount_paise` by >10% → `human_review_required: true` + mismatch entry.
 4. `forgery_risk: true` blocks evidence bundle — never auto-advance to escalation.
 5. Never delete evidence.
+6. PDF evidence is skipped entirely (NVIDIA's vision input supports GIF/JPG/JPEG/PNG only,
+   not PDF) — forced to human review, no LLM call, per BUILD_SPEC trap #21 ("human verify v1").
+7. Critical (defense-in-depth, SEC-2): the model must never echo a full Aadhaar/PAN/account
+   number in any field, even if visible in the image — mask to last 4 digits itself.
+   `lib/redaction/pii.ts` also redacts every free-text extracted field server-side as a
+   second layer (`bank_name`, `freeze_type`, `date_detected`) — `ncrp_id` is the one
+   exception, since it has a real format constraint (exactly 14 digits) that blanket
+   digit-masking would corrupt.
 
 ---
 
@@ -45,6 +53,15 @@ You extract structured fields from freeze evidence images (SMS screenshots, lien
 - `POST .../evidence/{eid}/confirm` → `runCaseTick({ type: 'evidence_confirm', evidence_id })`
 - Job type: `verifier_extract`
 - Idempotency: `verifier:{evidence_id}:{sha256_prefix}`
+
+## Consent gate
+
+Checks `hasGrantedConsent(case_id, 'ai_ocr_processing')` before downloading the evidence
+file or calling NVIDIA — same fail-safe pattern as INTAKE/DRAFTER's `cross_border_ai`
+check. **As of slice-12, nothing in the product UI grants `ai_ocr_processing` consent
+yet** (the disclaimer modal at case creation only shows Block B, not the amended Block F),
+so this currently always fails safe to no-OCR/human-review. Wiring up the actual consent
+grant + UI disclosure is tracked as a follow-up, not part of slice-12's scope.
 
 ---
 
