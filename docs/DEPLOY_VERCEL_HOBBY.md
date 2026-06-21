@@ -28,7 +28,9 @@ Claude: do **not** restore `*/15` or `*/5` entries to `vercel.json` without owne
 | `/api/v1/internal/cron/reminders` | `30 3 * * *` | 09:00 IST daily |
 | `/api/v1/internal/cron/rankings` | `30 20 * * *` | 02:00 IST daily (slice-16 route exists) |
 
-**Unchanged:** `functions` block, `regions` (`bom1`), security `headers`, `/healthz` rewrite.
+**Removed:** `functionFailoverRegions: ["sin1"]` — **Enterprise-only** (passive failover). Hobby deploy fails with *"passive regions is restricted to the Enterprise plan"* if present.
+
+**Unchanged:** `functions` block, `regions: ["bom1"]` (single region — Hobby limit; close to Supabase ap-south-1), security `headers`, `/healthz` rewrite.
 
 **Routes still exist** — only Vercel's *scheduler* was trimmed. Tick and jobs/process must be invoked by an **external** POST with `Authorization: Bearer $CRON_SECRET`.
 
@@ -71,6 +73,7 @@ Then external tick/jobs schedulers become optional duplicates — remove them to
 ## Claude rules
 
 - **Do not** tell owner Pro is required for deploy on Hobby.
+- **Do not** re-add `functionFailoverRegions` — Enterprise only.
 - **Do not** re-add frequent crons to `vercel.json` on Hobby without ADR + owner approval.
 - **Do** cite this file when REVIEWER/DEVOPS questions cron config.
 - Netlify `netlify.toml` remains for reference; **primary deploy target is Vercel Hobby** until owner changes ADR.

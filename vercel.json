@@ -4,7 +4,6 @@
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
   "regions": ["bom1"],
-  "functionFailoverRegions": ["sin1"],
   "functions": {
     "app/api/v1/internal/cron/tick/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/internal/cron/reminders/route.ts": { "maxDuration": 300, "memory": 1024 },

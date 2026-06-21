@@ -307,7 +307,7 @@
       {
         "id": "ADR-DEPLOY-001",
         "date": "2026-06-21",
-        "decision": "Primary production deploy: Vercel Hobby (free). vercel.json crons trimmed to daily-only (reminders + rankings) because Hobby rejects */15 and */5 schedules at deploy. tick and jobs/process invoked via external scheduler (cron-job.org) POST with CRON_SECRET. Vercel Pro not required for hosting. Netlify unholdd credits exhausted.",
+        "decision": "Primary production deploy: Vercel Hobby (free). vercel.json crons trimmed to daily-only (reminders + rankings) because Hobby rejects */15 and */5 schedules at deploy. functionFailoverRegions removed (Enterprise-only). regions bom1 single region for Hobby. tick and jobs/process via external scheduler (cron-job.org). Netlify unholdd credits exhausted.",
         "spec_ref": "docs/DEPLOY_VERCEL_HOBBY.md"
       }
     ],
