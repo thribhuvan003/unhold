@@ -19,7 +19,20 @@ export default defineConfig({
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
     trace: 'on-first-retry',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Opt-in: drive an already-installed system browser (e.g. Google Chrome)
+        // instead of Playwright's own bundled binary, for sandboxes where the
+        // bundled chromium/chromium-headless-shell download cannot complete.
+        ...(process.env.PLAYWRIGHT_CHROME_CHANNEL
+          ? { channel: process.env.PLAYWRIGHT_CHROME_CHANNEL }
+          : {}),
+      },
+    },
+  ],
   webServer: process.env.CI
     ? undefined
     : {

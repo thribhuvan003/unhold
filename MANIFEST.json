@@ -4,13 +4,13 @@
   "phase": 1,
   "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
   "active_slice": "phase-1-complete",
-  "harness_state": "slice_complete",
+  "harness_state": "verifying",
   "last_agent": "VERIFIER",
   "fix_round": 0,
   "max_fix_rounds": 5,
   "orchestration_config": "config/harness/slice-orchestration.json",
   "started_at": "2026-06-20T00:00:00.000Z",
-  "updated_at": "2026-06-21T04:52:45Z",
+  "updated_at": "2026-06-21T05:39:42Z",
   "slices": [
     {
       "id": "slice-01",
@@ -155,13 +155,13 @@
     }
   ],
   "verification": {
-    "last_run_at": "2026-06-21T04:52:28Z",
+    "last_run_at": "2026-06-21T05:39:42Z",
     "typecheck": 0,
     "lint": 0,
     "unit_tests": null,
     "verify_no_auto_send": 0,
     "slice_gates": "slice-11",
-    "passed": false
+    "passed": true
   },
   "review": {
     "last_round": 0,
@@ -197,9 +197,11 @@
         "blocker": "Playwright chromium_headless_shell-1169 binary unavailable in this sandbox (download stalls repeatedly); page.goto()-based e2e specs (tests/e2e/guest-intake.spec.ts, slice-11 scope) cannot run here.",
         "impact": "slice-08 verified on typecheck+lint+test:unit+the in-scope mark-sent.spec.ts (request-only, no browser, 2/2 passing)+verify:no-auto-send; the 3 failing tests belong to slice-11 scope and are an environment limitation, not a code defect.",
         "resolution": "Re-run pnpm test:e2e:smoke on a machine/CI with working Playwright browsers before final phase-exit sign-off.",
-        "status": "open",
+        "status": "resolved_workaround",
         "attempts": 6,
-        "latest_note": "6th attempt (chromium-headless-shell specific, smaller 79.8MiB download) got further than the bundled chromium installs - download completed and extraction began (libEGL.dylib written) - but still stalled with zero CPU progress afterward. Consistent across both the bundled chromium target and the headless-shell-only target: download always completes, post-download step (extraction/finalization) never does. Likely a sandbox-specific filesystem/subprocess restriction, not a network issue. Needs to be resolved outside this sandbox."
+        "latest_note": "6th attempt (chromium-headless-shell specific, smaller 79.8MiB download) got further than the bundled chromium installs - download completed and extraction began (libEGL.dylib written) - but still stalled with zero CPU progress afterward. Consistent across both the bundled chromium target and the headless-shell-only target: download always completes, post-download step (extraction/finalization) never does. Likely a sandbox-specific filesystem/subprocess restriction, not a network issue. Needs to be resolved outside this sandbox.",
+        "resolved_at": "2026-06-21",
+        "resolution_note": "Playwright bundled chromium/chromium-headless-shell binaries never finish extracting in this sandbox after 7 total attempts (confirmed via DEBUG=pw:install logging: download always completes, then hangs forever at the extracting archive step). Workaround: playwright.config.ts now supports an opt-in PLAYWRIGHT_CHROME_CHANNEL env var that sets use.channel, letting Playwright drive an already-installed system browser (Google Chrome 149, found at /Applications/Google Chrome.app) instead of downloading its own binary. Running PLAYWRIGHT_CHROME_CHANNEL=chrome pnpm test:e2e:smoke passes all 6 tests cleanly. Default behavior (no env var set) is unchanged for CI/other machines with working Playwright installs."
       },
       {
         "id": "ENV-002",
