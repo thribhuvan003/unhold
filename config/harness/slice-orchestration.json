@@ -1,0 +1,492 @@
+{
+  "$schema": "./slice-orchestration.schema.json",
+  "version": "1.0.0",
+  "project": "lienliberator",
+  "phase": 1,
+  "description": "Multi-agent harness orchestration for BUILD_SPEC Phase 1 slices 1-11. Each slice runs the same agent pipeline in order; agents may be skipped only when MANIFEST.harness_state resumes mid-loop.",
+  "global_agent_pipeline": [
+    {
+      "order": 1,
+      "role": "ROUTER",
+      "prompt": "prompts/agents/ROUTER.md",
+      "may_edit_code": false,
+      "outputs": [".claude/session/{slice_id}/route.json"],
+      "exit_when": "route.json written with next_agent and slice_id"
+    },
+    {
+      "order": 2,
+      "role": "PLANNER",
+      "prompt": "prompts/agents/PLANNER.md",
+      "may_edit_code": false,
+      "outputs": [".claude/session/{slice_id}/plan.md"],
+      "exit_when": "plan.md has Scope, Files, Tests, Risks sections"
+    },
+    {
+      "order": 3,
+      "role": "IMPLEMENTER",
+      "prompt": "prompts/agents/IMPLEMENTER.md",
+      "may_edit_code": true,
+      "outputs": ["git diff vs base branch"],
+      "exit_when": "all plan.md tasks checked; no out-of-scope files"
+    },
+    {
+      "order": 4,
+      "role": "REVIEWER",
+      "prompt": "prompts/agents/REVIEWER.md",
+      "may_edit_code": false,
+      "outputs": [".claude/session/{slice_id}/review-round-{n}.json"],
+      "exit_when": "review JSON emitted",
+      "loop": {
+        "condition": "issues.length > 0",
+        "next_agent": "IMPLEMENTER",
+        "max_rounds": 5,
+        "then": "VERIFIER"
+      }
+    },
+    {
+      "order": 5,
+      "role": "VERIFIER",
+      "prompt": "prompts/agents/VERIFIER.md",
+      "may_edit_code": false,
+      "outputs": [".claude/session/{slice_id}/verification.json"],
+      "exit_when": "all gates pass OR blocked status set",
+      "loop": {
+        "condition": "verification.failed_gates.length > 0",
+        "next_agent": "IMPLEMENTER",
+        "max_rounds": 3,
+        "abbreviated_reviewer": true,
+        "then": "slice_complete"
+      }
+    }
+  ],
+  "slices": [
+    {
+      "id": "slice-01",
+      "number": 1,
+      "title": "Migrations + RLS + SBI seed",
+      "week": 1,
+      "depends_on": [],
+      "spec_refs": ["BUILD_SPEC.md §5", "BUILD_SPEC.md §4.1", "BUILD_SPEC.md §16"],
+      "scope_files": [
+        "supabase/migrations/001_extensions_enums.sql",
+        "supabase/migrations/002_reference_tables.sql",
+        "supabase/migrations/003_identity_tables.sql",
+        "supabase/migrations/004_cases.sql",
+        "supabase/migrations/005_evidence_action_logs.sql",
+        "supabase/migrations/006_escalations_swarm.sql",
+        "supabase/migrations/007_jobs_consent_fees.sql",
+        "supabase/migrations/008_rankings_audit.sql",
+        "supabase/migrations/009_functions_triggers.sql",
+        "supabase/migrations/010_rls_views_seed.sql",
+        "supabase/database.types.ts"
+      ],
+      "forbidden_in_slice": ["app/**", "components/**", "lib/agents/**"],
+      "acceptance_criteria": [
+        "All 10 migrations apply cleanly on fresh Supabase local",
+        "case_status enum matches BUILD_SPEC §4.1 exactly (13 values)",
+        "18 tables exist per BUILD_SPEC §5.1",
+        "SBI seed: bank slug state-bank-of-india, nodal customer.care@sbi.co.in",
+        "Playbooks seeded: innocent_receiver_upi_chain_sbi, victim_upi_chain_sbi, innocent_receiver_upi_chain_generic",
+        "RLS enabled on all user-owned tables; service role bypass documented",
+        "action_logs, consent_records, swarm_events have append-only triggers",
+        "Money columns are BIGINT *_paise only"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm verify:no-auto-send"
+        ],
+        "optional": [
+          "supabase db reset && supabase migration list"
+        ],
+        "grep_gates": [
+          "case_status enum includes human_escalation",
+          "no FLOAT amount columns in migrations"
+        ]
+      },
+      "agent_notes": {
+        "PLANNER": "Map each migration file to tables; do not create API routes.",
+        "IMPLEMENTER": "Copy from workspace supabase/ if present; normalize to lienliberator/supabase/.",
+        "REVIEWER": "Cross-check enum values against §16 trap list."
+      }
+    },
+    {
+      "id": "slice-02",
+      "number": 2,
+      "title": "Guest session + case CRUD",
+      "week": 1,
+      "depends_on": ["slice-01"],
+      "spec_refs": ["BUILD_SPEC.md §7", "BUILD_SPEC.md §6.2", "BUILD_SPEC.md §9.1"],
+      "scope_files": [
+        "lib/supabase/client.ts",
+        "lib/supabase/server.ts",
+        "lib/supabase/admin.ts",
+        "lib/auth/guest.ts",
+        "lib/validation/api-schemas.ts",
+        "lib/ratelimit.ts",
+        "middleware.ts",
+        "app/api/v1/guest/sessions/route.ts",
+        "app/api/v1/cases/route.ts",
+        "app/api/v1/cases/[id]/route.ts",
+        "app/api/v1/cases/[id]/claim/route.ts",
+        "app/api/v1/cases/[id]/intake/route.ts",
+        "app/guest/report/page.tsx",
+        "app/cases/page.tsx",
+        "app/cases/new/page.tsx",
+        "app/cases/[id]/page.tsx",
+        "tests/contract/guest-sessions.test.ts",
+        "tests/contract/cases-crud.test.ts"
+      ],
+      "forbidden_in_slice": ["lib/agents/**", "lib/state-machine/transitions.ts"],
+      "acceptance_criteria": [
+        "POST /api/v1/guest/sessions returns device_token JWT + guest_session_id",
+        "Cookie ll_guest httpOnly SameSite=Lax",
+        "POST /api/v1/cases works with JWT or X-Guest-Token",
+        "cases.public_id format LL-XXXXXX",
+        "Idempotency-Key header on POST /cases",
+        "Guest rate limit 5/day per BUILD_SPEC §6.4",
+        "No localStorage for case persistence",
+        "Error envelope on all routes"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:contract",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-03",
+      "number": 3,
+      "title": "Evidence upload + SHA-256",
+      "week": 2,
+      "depends_on": ["slice-02"],
+      "spec_refs": ["BUILD_SPEC.md §5.4", "BUILD_SPEC.md §6.2"],
+      "scope_files": [
+        "app/api/v1/cases/[id]/evidence/upload-url/route.ts",
+        "app/api/v1/cases/[id]/evidence/[eid]/confirm/route.ts",
+        "lib/evidence/sha256.ts",
+        "lib/evidence/storage-path.ts",
+        "components/evidence/EvidenceUploader.tsx",
+        "tests/unit/evidence/sha256.test.ts",
+        "tests/contract/evidence-upload.test.ts"
+      ],
+      "forbidden_in_slice": ["lib/agents/verifier.ts", "run_vision_ocr"],
+      "acceptance_criteria": [
+        "Upload path: {case_id}/{evidence_id}/{filename}",
+        "SHA-256 computed client-side or server-side on confirm; stored on evidence row",
+        "Bucket evidence private 25MB jpeg/png/pdf",
+        "confirm route sets evidence status; triggers transition new→intake_scoping when has_min_evidence",
+        "No OCR auto-advance (Phase 2)"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm test:contract",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-04",
+      "number": 4,
+      "title": "State machine API + action_logs",
+      "week": 2,
+      "depends_on": ["slice-03"],
+      "spec_refs": ["BUILD_SPEC.md §4", "BUILD_SPEC.md §6.2", "BUILD_SPEC.md §6.3"],
+      "scope_files": [
+        "lib/state-machine/types.ts",
+        "lib/state-machine/guards.ts",
+        "lib/state-machine/transitions.ts",
+        "app/api/v1/cases/[id]/transitions/route.ts",
+        "lib/action-logs/append.ts",
+        "tests/unit/state-machine/guards.test.ts",
+        "tests/contract/transitions.test.ts"
+      ],
+      "forbidden_in_slice": ["lib/agents/**"],
+      "acceptance_criteria": [
+        "POST /transitions is ONLY way to change case.status",
+        "Invalid transition returns 422 guard_failed with guard name",
+        "Every successful transition appends action_logs",
+        "50+ guard unit tests per BUILD_SPEC §14",
+        "No ESCALATION_L1 or legacy status strings"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm test:contract",
+          "pnpm verify:no-auto-send"
+        ],
+        "min_guard_tests": 50
+      }
+    },
+    {
+      "id": "slice-05",
+      "number": 5,
+      "title": "Intake classifier (rules + LLM)",
+      "week": 3,
+      "depends_on": ["slice-04"],
+      "spec_refs": ["BUILD_SPEC_AGENTS.md §1.2", "BUILD_SPEC_AGENTS.md §2", "BUILD_SPEC_AGENTS.md §3.2", "BUILD_SPEC.md §8"],
+      "scope_files": [
+        "lib/agents/schemas.ts",
+        "lib/agents/validators.ts",
+        "lib/agents/prompts/global.ts",
+        "lib/agents/prompts/intake.ts",
+        "lib/agents/intake/runner.ts",
+        "lib/agents/intake/rules.ts",
+        "lib/agents/tools/registry.ts",
+        "lib/jobs/enqueue.ts",
+        "lib/jobs/process.ts",
+        "lib/jobs/idempotency.ts",
+        "app/api/v1/internal/jobs/enqueue/route.ts",
+        "app/api/v1/internal/jobs/process/route.ts",
+        "tests/unit/agents/intake.test.ts",
+        "tests/golden/agent_eval.json"
+      ],
+      "forbidden_in_slice": ["send_email", "file_rbi", "components/NextStepsCard.tsx"],
+      "acceptance_criteria": [
+        "IntakeClassificationOutput passes Zod",
+        "Rule engine path when evidence_count=0",
+        "human_gate for court_order, tax_attachment, mule_suspected",
+        "Citations validated against input manifest",
+        "enqueue intake job on intake_scoping status",
+        "FORBIDDEN_TOOL_NAMES not referenced"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm test:agents:golden",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-06",
+      "number": 6,
+      "title": "NextStepsCard + user_actions",
+      "week": 3,
+      "depends_on": ["slice-05"],
+      "spec_refs": ["BUILD_SPEC.md §9.2", "BUILD_SPEC.md §9.3"],
+      "scope_files": [
+        "components/case/NextStepsCard.tsx",
+        "components/case/ActionInbox.tsx",
+        "components/case/SwarmLogPanel.tsx",
+        "lib/user-actions/create.ts",
+        "app/api/v1/cases/[id]/user-actions/route.ts",
+        "app/cases/[id]/page.tsx",
+        "tests/unit/components/NextStepsCard.test.tsx"
+      ],
+      "forbidden_in_slice": ["lib/agents/drafter/**"],
+      "acceptance_criteria": [
+        "NextStepsCard is primary widget on case detail",
+        "Swarm log behind Details tab",
+        "user_actions created from intake checklist + monitor suggestions",
+        "Realtime subscription on user_actions with 30s poll fallback",
+        "Mobile 44px touch targets"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-07",
+      "number": 7,
+      "title": "Drafter L1–L3 copy-only",
+      "week": 4,
+      "depends_on": ["slice-06"],
+      "spec_refs": ["BUILD_SPEC_AGENTS.md §1.3", "BUILD_SPEC_AGENTS.md §3.3", "BUILD_SPEC_AGENTS.md §9"],
+      "scope_files": [
+        "lib/agents/prompts/drafter.ts",
+        "lib/agents/drafter/runner.ts",
+        "lib/agents/fallback/sbi_l1.ts",
+        "lib/agents/fallback/sbi_l2.ts",
+        "lib/agents/fallback/sbi_l3.ts",
+        "app/api/v1/cases/[id]/escalations/route.ts",
+        "app/cases/[id]/letters/[level]/page.tsx",
+        "components/letters/LetterPreview.tsx",
+        "lib/constants/disclaimers.ts",
+        "tests/unit/agents/drafter.test.ts"
+      ],
+      "forbidden_in_slice": ["send_email", "mark_escalation_sent in agent tools"],
+      "acceptance_criteria": [
+        "LetterDraftOutput with exact disclaimer_block",
+        "Template fallback when LLM fails",
+        "L1/L2/L3 SBI templates per BUILD_SPEC_AGENTS §9",
+        "refuse_to_draft without proof gates for L2/L3",
+        "Copy-only UI; user must approve before export"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm test:agents:golden",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-08",
+      "number": 8,
+      "title": "Escalation proof gates",
+      "week": 4,
+      "depends_on": ["slice-07"],
+      "spec_refs": ["BUILD_SPEC.md §4.3", "BUILD_SPEC.md §6.2"],
+      "scope_files": [
+        "lib/escalations/proof-gates.ts",
+        "lib/escalations/ladder.ts",
+        "app/api/v1/cases/[id]/escalations/[eid]/approve/route.ts",
+        "app/api/v1/cases/[id]/escalations/[eid]/mark-sent/route.ts",
+        "components/escalations/MarkSentForm.tsx",
+        "tests/unit/escalations/proof-gates.test.ts",
+        "tests/e2e/mark-sent.spec.ts"
+      ],
+      "forbidden_in_slice": ["skip_escalation_level", "auto send"],
+      "acceptance_criteria": [
+        "L2 requires L1 send_proof evidence",
+        "L3 requires L2 send_proof + user consent",
+        "mark-sent requires proof_evidence_id",
+        "Idempotency-Key on mark-sent",
+        "Server 422 if UI bypass attempted"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm test:e2e:smoke",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-09",
+      "number": 9,
+      "title": "Cron tick + reminders",
+      "week": 5,
+      "depends_on": ["slice-08"],
+      "spec_refs": ["BUILD_SPEC_AGENTS.md §1.4", "BUILD_SPEC_AGENTS.md §3.4", "BUILD_SPEC.md §12", "BUILD_SPEC.md §15"],
+      "scope_files": [
+        "lib/agents/prompts/monitor.ts",
+        "lib/agents/monitor/runner.ts",
+        "lib/agents/router.ts",
+        "app/api/v1/internal/cron/tick/route.ts",
+        "app/api/v1/internal/cron/reminders/route.ts",
+        "vercel.json",
+        "tests/unit/agents/monitor.test.ts"
+      ],
+      "forbidden_in_slice": ["send_email", "send_sms", "draft_letter in monitor tools"],
+      "acceptance_criteria": [
+        "Cron auth: Bearer CRON_SECRET + Redis lock",
+        "Monitor never auto-sends; reminders create user_actions only",
+        "Quiet hours 22:00-08:00 IST respected",
+        "Schedule rules per BUILD_SPEC_AGENTS §3.4",
+        "vercel.json crons: tick */15, reminders 09:00 IST"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-10",
+      "number": 10,
+      "title": "Disclaimers + consent",
+      "week": 5,
+      "depends_on": ["slice-09"],
+      "spec_refs": ["BUILD_SPEC.md §10", "BUILD_SPEC.md §9.1"],
+      "scope_files": [
+        "lib/constants/disclaimers.ts",
+        "lib/consent/record.ts",
+        "components/legal/DisclaimerModal.tsx",
+        "components/legal/ConsentCheckbox.tsx",
+        "app/legal/disclaimer/page.tsx",
+        "app/legal/privacy/page.tsx",
+        "app/layout.tsx",
+        "tests/unit/consent/record.test.ts"
+      ],
+      "forbidden_in_slice": ["mutate consent_records (UPDATE/DELETE)"],
+      "acceptance_criteria": [
+        "Blocks A–H verbatim in disclaimers.ts",
+        "Intake modal requires checkbox (Block B)",
+        "consent_records append-only for all consent types",
+        "cross_border_ai consent before LLM processing",
+        "public_stats default OFF"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:unit",
+          "pnpm verify:no-auto-send"
+        ]
+      }
+    },
+    {
+      "id": "slice-11",
+      "number": 11,
+      "title": "Human ops queue",
+      "week": 6,
+      "depends_on": ["slice-10"],
+      "spec_refs": ["BUILD_SPEC_AGENTS.md §1.9", "BUILD_SPEC.md §6.2", "BUILD_SPEC.md §13 Phase 1 exit"],
+      "scope_files": [
+        "app/api/v1/ops/queue/route.ts",
+        "app/ops/queue/page.tsx",
+        "lib/ops/human-gate.ts",
+        "lib/ops/operator-auth.ts",
+        "components/ops/QueueTable.tsx",
+        "tests/contract/ops-queue.test.ts",
+        "tests/e2e/guest-intake.spec.ts"
+      ],
+      "forbidden_in_slice": ["autonomous HUMAN_OPS LLM loop"],
+      "acceptance_criteria": [
+        "GET /ops/queue requires operator JWT",
+        "human_gate_queue populated from intake/verifier low confidence",
+        "HUMAN_OPS never auto-resolves cases",
+        "Phase 1 E2E smoke: guest intake → auth merge → L1 letter → mark-sent → audit log",
+        "Full harness slice-01..11 verified in MANIFEST"
+      ],
+      "verification": {
+        "commands": [
+          "pnpm typecheck",
+          "pnpm lint",
+          "pnpm test:contract",
+          "pnpm test:e2e:smoke",
+          "pnpm verify:no-auto-send",
+          "bash scripts/harness/run-slice.sh --verify-phase-exit"
+        ]
+      }
+    }
+  ],
+  "resume_rules": {
+    "on_session_start": "Read MANIFEST.active_slice and harness_state; jump to agent matching state",
+    "harness_state_to_agent": {
+      "idle": "ROUTER",
+      "routing": "ROUTER",
+      "planning": "PLANNER",
+      "implementing": "IMPLEMENTER",
+      "reviewing": "REVIEWER",
+      "fixing": "IMPLEMENTER",
+      "verifying": "VERIFIER",
+      "blocked": "PLANNER",
+      "slice_complete": "ROUTER"
+    }
+  }
+}

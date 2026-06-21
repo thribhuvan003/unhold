@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+:root {
+  --color-navy: #0b1f33;
+  --color-primary: #1f6b8a;
+  --color-accent: #e67e00;
+}
+
+body {
+  margin: 0;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  color: var(--color-navy);
+  background: #f8fafc;
+}
+
+a {
+  color: var(--color-primary);
+}

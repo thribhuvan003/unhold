@@ -1,0 +1,132 @@
+{
+  "$schema": "./team-roster.schema.json",
+  "version": "1.0.0",
+  "project": "lienliberator",
+  "team_lead": {
+    "prompt": "prompts/team/TEAM_LEAD.md",
+    "start_doc": "docs/START_HERE.md",
+    "orchestration_doc": "docs/TEAM_ORCHESTRATION.md"
+  },
+  "specialists": [
+    {
+      "id": "RESEARCHER",
+      "prompt": "prompts/team/RESEARCHER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "output_template": "prompts/templates/research-brief-template.md"
+    },
+    {
+      "id": "ARCHITECT",
+      "prompt": "prompts/team/ARCHITECT.md",
+      "may_edit_code": false,
+      "parallel_safe": true
+    },
+    {
+      "id": "DB_ENGINEER",
+      "prompt": "prompts/team/DB_ENGINEER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "primary_slices": ["slice-01"]
+    },
+    {
+      "id": "BACKEND_ENGINEER",
+      "prompt": "prompts/team/BACKEND_ENGINEER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "primary_slices": ["slice-02", "slice-03", "slice-04", "slice-05", "slice-08", "slice-09", "slice-11"]
+    },
+    {
+      "id": "FRONTEND_ENGINEER",
+      "prompt": "prompts/team/FRONTEND_ENGINEER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "primary_slices": ["slice-02", "slice-03", "slice-06", "slice-07", "slice-08", "slice-10", "slice-11"]
+    },
+    {
+      "id": "AGENTS_ENGINEER",
+      "prompt": "prompts/team/AGENTS_ENGINEER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "primary_slices": ["slice-05", "slice-07", "slice-09"]
+    },
+    {
+      "id": "SECURITY_AUDITOR",
+      "prompt": "prompts/team/SECURITY_AUDITOR.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "mandatory_review_slices": "all"
+    },
+    {
+      "id": "QA_ENGINEER",
+      "prompt": "prompts/team/QA_ENGINEER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "primary_slices": ["slice-02", "slice-04", "slice-05", "slice-06", "slice-07", "slice-08", "slice-09", "slice-11"]
+    },
+    {
+      "id": "DEVOPS_ENGINEER",
+      "prompt": "prompts/team/DEVOPS_ENGINEER.md",
+      "may_edit_code": false,
+      "parallel_safe": true,
+      "primary_slices": ["slice-01", "slice-09", "slice-11"]
+    }
+  ],
+  "harness_agents": [
+    { "id": "ROUTER", "prompt": "prompts/agents/ROUTER.md", "sequential_order": 1 },
+    { "id": "PLANNER", "prompt": "prompts/agents/PLANNER.md", "sequential_order": 2 },
+    { "id": "IMPLEMENTER", "prompt": "prompts/agents/IMPLEMENTER.md", "sequential_order": 3 },
+    { "id": "REVIEWER", "prompt": "prompts/agents/REVIEWER.md", "sequential_order": 4 },
+    { "id": "VERIFIER", "prompt": "prompts/agents/VERIFIER.md", "sequential_order": 5 }
+  ],
+  "slice_dispatch": {
+    "slice-01": {
+      "plan_phase": ["RESEARCHER", "DB_ENGINEER", "ARCHITECT", "SECURITY_AUDITOR"],
+      "review_phase": ["DB_ENGINEER", "SECURITY_AUDITOR", "QA_ENGINEER"]
+    },
+    "slice-02": {
+      "plan_phase": ["RESEARCHER", "BACKEND_ENGINEER", "FRONTEND_ENGINEER", "SECURITY_AUDITOR"],
+      "review_phase": ["BACKEND_ENGINEER", "SECURITY_AUDITOR", "QA_ENGINEER"]
+    },
+    "slice-03": {
+      "plan_phase": ["RESEARCHER", "BACKEND_ENGINEER", "SECURITY_AUDITOR"],
+      "review_phase": ["BACKEND_ENGINEER", "SECURITY_AUDITOR", "QA_ENGINEER"]
+    },
+    "slice-04": {
+      "plan_phase": ["RESEARCHER", "BACKEND_ENGINEER", "ARCHITECT", "QA_ENGINEER"],
+      "review_phase": ["BACKEND_ENGINEER", "QA_ENGINEER", "SECURITY_AUDITOR"]
+    },
+    "slice-05": {
+      "plan_phase": ["RESEARCHER", "AGENTS_ENGINEER", "SECURITY_AUDITOR"],
+      "review_phase": ["AGENTS_ENGINEER", "SECURITY_AUDITOR", "QA_ENGINEER"]
+    },
+    "slice-06": {
+      "plan_phase": ["FRONTEND_ENGINEER", "BACKEND_ENGINEER", "QA_ENGINEER"],
+      "review_phase": ["FRONTEND_ENGINEER", "QA_ENGINEER", "SECURITY_AUDITOR"]
+    },
+    "slice-07": {
+      "plan_phase": ["AGENTS_ENGINEER", "SECURITY_AUDITOR", "QA_ENGINEER"],
+      "review_phase": ["AGENTS_ENGINEER", "SECURITY_AUDITOR", "FRONTEND_ENGINEER"]
+    },
+    "slice-08": {
+      "plan_phase": ["BACKEND_ENGINEER", "FRONTEND_ENGINEER", "SECURITY_AUDITOR"],
+      "review_phase": ["BACKEND_ENGINEER", "SECURITY_AUDITOR", "QA_ENGINEER"]
+    },
+    "slice-09": {
+      "plan_phase": ["AGENTS_ENGINEER", "DEVOPS_ENGINEER", "ARCHITECT"],
+      "review_phase": ["DEVOPS_ENGINEER", "AGENTS_ENGINEER", "QA_ENGINEER", "SECURITY_AUDITOR"]
+    },
+    "slice-10": {
+      "plan_phase": ["FRONTEND_ENGINEER", "SECURITY_AUDITOR"],
+      "review_phase": ["SECURITY_AUDITOR", "FRONTEND_ENGINEER"]
+    },
+    "slice-11": {
+      "plan_phase": ["BACKEND_ENGINEER", "FRONTEND_ENGINEER", "QA_ENGINEER", "SECURITY_AUDITOR"],
+      "review_phase": ["QA_ENGINEER", "SECURITY_AUDITOR", "BACKEND_ENGINEER"]
+    }
+  },
+  "anti_hallucination": {
+    "doc": "docs/ANTI_HALLUCINATION.md",
+    "research_protocol": "docs/RESEARCH_PROTOCOL.md",
+    "verify_script": "pnpm verify:no-auto-send"
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "version": "1.0.0",
+  "project": "lienliberator",
+  "phase": 1,
+  "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
+  "active_slice": "slice-06",
+  "harness_state": "routing",
+  "last_agent": "VERIFIER",
+  "fix_round": 0,
+  "max_fix_rounds": 5,
+  "orchestration_config": "config/harness/slice-orchestration.json",
+  "started_at": "2026-06-20T00:00:00.000Z",
+  "updated_at": "2026-06-21T03:55:24Z",
+  "slices": [
+    {
+      "id": "slice-01",
+      "number": 1,
+      "title": "Migrations + RLS + SBI seed",
+      "status": "verified",
+      "depends_on": [],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-20T17:10:42Z",
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-01"
+    },
+    {
+      "id": "slice-02",
+      "number": 2,
+      "title": "Guest session + case CRUD",
+      "status": "verified",
+      "depends_on": [
+        "slice-01"
+      ],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-20T17:55:03Z",
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-02"
+    },
+    {
+      "id": "slice-03",
+      "number": 3,
+      "title": "Evidence upload + SHA-256",
+      "status": "verified",
+      "depends_on": [
+        "slice-02"
+      ],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-20T17:56:19Z",
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-03"
+    },
+    {
+      "id": "slice-04",
+      "number": 4,
+      "title": "State machine API + action_logs",
+      "status": "verified",
+      "depends_on": [
+        "slice-03"
+      ],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-21T03:50:45Z",
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-04"
+    },
+    {
+      "id": "slice-05",
+      "number": 5,
+      "title": "Intake classifier (rules + LLM)",
+      "status": "verified",
+      "depends_on": [
+        "slice-04"
+      ],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-21T03:54:52Z",
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-05"
+    },
+    {
+      "id": "slice-06",
+      "number": 6,
+      "title": "NextStepsCard + user_actions",
+      "status": "in_progress",
+      "depends_on": [
+        "slice-05"
+      ],
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-06"
+    },
+    {
+      "id": "slice-07",
+      "number": 7,
+      "title": "Drafter L1–L3 copy-only",
+      "status": "pending",
+      "depends_on": [
+        "slice-06"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-07"
+    },
+    {
+      "id": "slice-08",
+      "number": 8,
+      "title": "Escalation proof gates",
+      "status": "pending",
+      "depends_on": [
+        "slice-07"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-08"
+    },
+    {
+      "id": "slice-09",
+      "number": 9,
+      "title": "Cron tick + reminders",
+      "status": "pending",
+      "depends_on": [
+        "slice-08"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-09"
+    },
+    {
+      "id": "slice-10",
+      "number": 10,
+      "title": "Disclaimers + consent",
+      "status": "pending",
+      "depends_on": [
+        "slice-09"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-10"
+    },
+    {
+      "id": "slice-11",
+      "number": 11,
+      "title": "Human ops queue",
+      "status": "pending",
+      "depends_on": [
+        "slice-10"
+      ],
+      "started_at": null,
+      "verified_at": null,
+      "pr_branch": null,
+      "session_dir": ".claude/session/slice-11"
+    }
+  ],
+  "verification": {
+    "last_run_at": "2026-06-21T03:54:52Z",
+    "typecheck": 0,
+    "lint": 0,
+    "unit_tests": 0,
+    "verify_no_auto_send": 0,
+    "slice_gates": "slice-05",
+    "passed": true
+  },
+  "review": {
+    "last_round": 0,
+    "open_issues": 0,
+    "last_review_at": null,
+    "review_file": null
+  },
+  "memory": {
+    "decisions": [
+      {
+        "id": "ADR-LOOP-001",
+        "date": "2026-06-20",
+        "decision": "Two loop systems: product (case-tick/router) vs dev (harness agents). prompts/README.md documents name collisions.",
+        "spec_ref": "docs/LOOP_ENGINEERING.md"
+      },
+      {
+        "id": "ADR-LOOP-002",
+        "date": "2026-06-20",
+        "decision": "TickTrigger in lib/loops/tick-types.ts to break router↔case-tick circular import",
+        "spec_ref": "docs/BUILD_SPEC_LOOPS.md §11"
+      },
+      {
+        "id": "ADR-003",
+        "date": "2026-06-20",
+        "decision": "Migrations 001-010 copied from workspace supabase/; agent_role UPPERCASE per SQL canonical",
+        "spec_ref": "slice-01 plan.md"
+      }
+    ],
+    "blockers": [],
+    "spec_gaps": []
+  },
+  "loop_infrastructure": {
+    "product_loop": {
+      "inner_loop": "lib/loops/case-tick.ts",
+      "scheduling": "lib/loops/scheduling.ts",
+      "locks": "lib/loops/locks.ts",
+      "termination": "lib/loops/termination.ts",
+      "lead_router": "lib/agents/router.ts",
+      "job_queue": "lib/jobs/enqueue.ts",
+      "job_processor": "lib/jobs/process.ts",
+      "status": "stub_runner_until_slice_05"
+    },
+    "dev_loop": {
+      "types": "lib/loops/agent-harness.ts",
+      "runner": "lib/loops/dev-loop.ts",
+      "orchestration": "config/harness/slice-orchestration.json",
+      "shell_runner": "scripts/harness/run-slice.sh",
+      "status": "ready"
+    },
+    "file_manifest": "docs/FILE_MANIFEST.md"
+  },
+  "team": {
+    "lead_prompt": "prompts/team/TEAM_LEAD.md",
+    "start_here": "docs/START_HERE.md",
+    "roster": "config/harness/team-roster.json",
+    "pre_flight_complete": true,
+    "specialist_count": 9
+  }
+}

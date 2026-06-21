@@ -1,0 +1,19 @@
+{
+  "codename": "lienliberator",
+  "public_name": "Unhold",
+  "tagline": "Unfreeze your bank account — step by step",
+  "github_owner": "thribhuvan003",
+  "github_repo": "unhold",
+  "github_full": "thribhuvan003/unhold",
+  "supabase_project_slug": "unhold",
+  "vercel_project": "unhold",
+  "owner": {
+    "name": "thribhuvan003",
+    "email": "thribhuvan003@gmail.com"
+  },
+  "llm": {
+    "provider": "nvidia",
+    "model": "minimaxai/minimax-m3",
+    "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "./settings.schema.json",
+  "project": "lienliberator",
+  "harness": {
+    "manifest": "MANIFEST.json",
+    "orchestration": "config/harness/slice-orchestration.json",
+    "session_dir": ".claude/session",
+    "max_review_rounds": 5,
+    "max_verify_rounds": 3,
+    "max_fix_rounds": 5,
+    "agent_pipeline": ["ROUTER", "PLANNER", "IMPLEMENTER", "REVIEWER", "VERIFIER"],
+    "source_of_truth": [
+      "docs/BUILD_SPEC.md",
+      "docs/BUILD_SPEC_AGENTS.md",
+      "docs/BUILD_SPEC_LOOPS.md",
+      "supabase/migrations/*",
+      "MANIFEST.json"
+    ]
+  },
+  "loops": {
+    "product_inner_loop": "lib/loops/case-tick.ts",
+    "product_lead_router": "lib/agents/router.ts",
+    "dev_harness_types": "lib/loops/agent-harness.ts",
+    "dev_loop_runner": "lib/loops/dev-loop.ts"
+  },
+  "forbidden_patterns": [
+    "send_email",
+    "send_sms",
+    "file_rbi",
+    "file_ncrp",
+    "auto_send",
+    "resend.emails.send",
+    "ESCALATION_L1",
+    "DRAFT",
+    "CLASSIFIED",
+    "INTAKE_COMPLETE"
+  ],
+  "team": {
+    "lead_prompt": "prompts/team/TEAM_LEAD.md",
+    "start_here": "docs/START_HERE.md",
+    "roster": "config/harness/team-roster.json",
+    "orchestration_doc": "docs/TEAM_ORCHESTRATION.md",
+    "research_protocol": "docs/RESEARCH_PROTOCOL.md",
+    "anti_hallucination": "docs/ANTI_HALLUCINATION.md",
+    "pre_flight": "docs/PRE_FLIGHT_CHECKLIST.md",
+    "specialists": [
+      "RESEARCHER",
+      "ARCHITECT",
+      "DB_ENGINEER",
+      "BACKEND_ENGINEER",
+      "FRONTEND_ENGINEER",
+      "AGENTS_ENGINEER",
+      "SECURITY_AUDITOR",
+      "QA_ENGINEER",
+      "DEVOPS_ENGINEER"
+    ],
+    "parallel_safe_phases": ["plan_phase", "review_phase"]
+  },
+  "session_startup": [
+    "Read docs/START_HERE.md — adopt TEAM_LEAD",
+    "Read MANIFEST.json",
+    "Read config/harness/slice-orchestration.json active slice",
+    "Read config/harness/team-roster.json slice_dispatch",
+    "Read .claude/session/{active_slice}/handoff.md if exists",
+    "Dispatch plan-phase specialists OR adopt exactly one harness agent prompt"
+  ],
+  "session_shutdown": [
+    "Write .claude/session/{slice}/handoff.md",
+    "Update MANIFEST.json harness_state and verification block"
+  ]
+}
