@@ -3,14 +3,14 @@
   "project": "lienliberator",
   "phase": 1,
   "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
-  "active_slice": "slice-07",
+  "active_slice": "slice-08",
   "harness_state": "idle",
   "last_agent": "VERIFIER",
   "fix_round": 0,
   "max_fix_rounds": 5,
   "orchestration_config": "config/harness/slice-orchestration.json",
   "started_at": "2026-06-20T00:00:00.000Z",
-  "updated_at": "2026-06-21T04:07:51Z",
+  "updated_at": "2026-06-21T04:11:52Z",
   "slices": [
     {
       "id": "slice-01",
@@ -92,12 +92,12 @@
       "id": "slice-07",
       "number": 7,
       "title": "Drafter L1–L3 copy-only",
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "slice-06"
       ],
-      "started_at": null,
-      "verified_at": null,
+      "started_at": "2026-06-20T00:00:00.000Z",
+      "verified_at": "2026-06-21T04:11:52Z",
       "pr_branch": null,
       "session_dir": ".claude/session/slice-07"
     },
@@ -155,12 +155,12 @@
     }
   ],
   "verification": {
-    "last_run_at": "2026-06-21T04:07:51Z",
+    "last_run_at": "2026-06-21T04:11:52Z",
     "typecheck": 0,
     "lint": 0,
     "unit_tests": 0,
     "verify_no_auto_send": 0,
-    "slice_gates": "slice-06",
+    "slice_gates": "slice-07",
     "passed": true
   },
   "review": {
