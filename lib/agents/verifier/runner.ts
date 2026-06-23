@@ -5,7 +5,7 @@ import { extractJsonText, isNvidiaLlmConfigured, nvidiaChatCompletion } from '@/
 import { VerifierResultOutputSchema, type VerifierResultOutput } from '@/lib/agents/schemas';
 import { validateVerifierOutput } from '@/lib/agents/validators';
 import { hasGrantedConsent } from '@/lib/consent/record';
-import { redactExtractedFields } from '@/lib/redaction/pii';
+import { redactExtractedFields, redactForgeryFlags, redactMismatches } from '@/lib/redaction/pii';
 import { enqueueHumanGate } from '@/lib/ops/human-gate';
 import { appendSwarmEvent } from '@/lib/swarm/append-event';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -123,6 +123,8 @@ export async function runVerifier(input: VerifierInput): Promise<VerifierResultO
   return {
     ...llmResult,
     extracted: redactExtractedFields(llmResult.extracted),
+    forgery_flags: redactForgeryFlags(llmResult.forgery_flags),
+    mismatches: redactMismatches(llmResult.mismatches),
   };
 }
 

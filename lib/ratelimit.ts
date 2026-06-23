@@ -41,6 +41,16 @@ function getTransitionLimiter(): Ratelimit | null {
   });
 }
 
+function getSwarmEventsReadLimiter(): Ratelimit | null {
+  const redis = getRedis();
+  if (!redis) return null;
+  return new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(60, '5 m'),
+    prefix: 'rl:swarm_events_read',
+  });
+}
+
 async function memoryRateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
   const now = Date.now();
   const entry = memoryRateCounts.get(key);
@@ -82,6 +92,22 @@ export async function enforceTransitionRateLimit(caseId: string): Promise<void> 
   const allowed = await memoryRateLimit(`transition:${caseId}`, 20, 60 * 60 * 1000);
   if (!allowed) {
     throw new ApiError(429, 'rate_limited', 'Transition rate limit exceeded (20/hour/case)');
+  }
+}
+
+export async function enforceSwarmEventsReadLimit(caseId: string): Promise<void> {
+  const limiter = getSwarmEventsReadLimiter();
+  if (limiter) {
+    const { success } = await limiter.limit(caseId);
+    if (!success) {
+      throw new ApiError(429, 'rate_limited', 'Swarm events read limit exceeded (60/5min/case)');
+    }
+    return;
+  }
+
+  const allowed = await memoryRateLimit(`swarm_events_read:${caseId}`, 60, 5 * 60 * 1000);
+  if (!allowed) {
+    throw new ApiError(429, 'rate_limited', 'Swarm events read limit exceeded (60/5min/case)');
   }
 }
 

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { VerifierResultOutputSchema, type VerifierResultOutput } from '@/lib/agents/schemas';
 import { validateVerifierOutput } from '@/lib/agents/validators';
-import { redactExtractedFields, redactPiiText } from '@/lib/redaction/pii';
+import { redactExtractedFields, redactForgeryFlags, redactMismatches, redactPiiText } from '@/lib/redaction/pii';
 
 const nvidiaChatCompletionMock = vi.fn();
 const isNvidiaLlmConfiguredMock = vi.fn();
@@ -140,6 +140,25 @@ describe('redactExtractedFields', () => {
   });
 });
 
+describe('redactForgeryFlags', () => {
+  it('redacts PII-shaped text echoed in a forgery flag', () => {
+    const redacted = redactForgeryFlags(['Account 123456789012 appears edited']);
+    expect(redacted[0]).toContain('XXXXXXXX9012');
+    expect(redacted[0]).not.toMatch(/123456789012/);
+  });
+});
+
+describe('redactMismatches', () => {
+  it('redacts expected/found free text but leaves the field name untouched', () => {
+    const redacted = redactMismatches([
+      { field: 'amount_paise', expected: '2500000', found: 'Acc123456789012' },
+    ]);
+    expect(redacted[0].field).toBe('amount_paise');
+    expect(redacted[0].found).toContain('XXXXXXXX9012');
+    expect(redacted[0].found).not.toMatch(/123456789012/);
+  });
+});
+
 describe('runVerifier', () => {
   beforeEach(() => {
     nvidiaChatCompletionMock.mockReset();
@@ -217,7 +236,7 @@ describe('runVerifier', () => {
         extracted: { bank_name: 'Acct 123456789012 SBI', amount_paise: 2500000 },
         forgery_risk: false,
         forgery_flags: [],
-        mismatches: [],
+        mismatches: [{ field: 'amount_paise', expected: '2500000', found: 'Acc123456789012' }],
         human_review_required: false,
       }),
     );
@@ -234,6 +253,11 @@ describe('runVerifier', () => {
     expect(output.confidence).toBe(0.9);
     expect(output.extracted.bank_name).toContain('XXXXXXXX9012');
     expect(output.human_review_required).toBe(false);
+    // SEC-2: mismatches echo model free-text read off the document image —
+    // same PII-echo risk as `extracted`, redacted the same way (forgery_flags
+    // redaction is covered independently in the `redactForgeryFlags` suite above).
+    expect(output.mismatches[0].found).toContain('XXXXXXXX9012');
+    expect(output.mismatches[0].found).not.toMatch(/123456789012/);
   });
 
   it('falls back to no-OCR when the model response is not parsable JSON', async () => {

@@ -26,13 +26,25 @@ interface EvidenceUploaderProps {
   defaultEvidenceType?: EvidenceType;
 }
 
+type VerificationMismatch = { field: string; expected: string; found: string };
+
 type VerificationFeedback = {
   confidence: number;
   forgery_risk: boolean;
   forgery_flags: string[];
-  mismatches: string[];
+  mismatches: VerificationMismatch[];
   human_review_required: boolean;
 };
+
+function isVerificationMismatch(value: unknown): value is VerificationMismatch {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Record<string, unknown>).field === 'string' &&
+    typeof (value as Record<string, unknown>).expected === 'string' &&
+    typeof (value as Record<string, unknown>).found === 'string'
+  );
+}
 
 type UploadPhase = 'idle' | 'uploading' | 'verifying' | 'complete' | 'error';
 
@@ -98,7 +110,9 @@ export function EvidenceUploader({
             confidence: typeof metadata.confidence === 'number' ? metadata.confidence : 0,
             forgery_risk: Boolean(metadata.forgery_risk),
             forgery_flags: Array.isArray(metadata.forgery_flags) ? (metadata.forgery_flags as string[]) : [],
-            mismatches: Array.isArray(metadata.mismatches) ? (metadata.mismatches as string[]) : [],
+            mismatches: Array.isArray(metadata.mismatches)
+              ? metadata.mismatches.filter(isVerificationMismatch)
+              : [],
             human_review_required: Boolean(metadata.human_review_required),
           });
           setPendingEvidenceId(null);
@@ -355,7 +369,10 @@ function VerificationFeedbackPanel({ feedback }: { feedback: VerificationFeedbac
     });
   }
   for (const mismatch of feedback.mismatches) {
-    flags.push({ type: 'warning', text: `Mismatch: ${mismatch}` });
+    flags.push({
+      type: 'warning',
+      text: `Mismatch on ${mismatch.field}: expected ${mismatch.expected}, found ${mismatch.found}`,
+    });
   }
 
   const hasAutomatedReadOut = feedback.confidence > 0;

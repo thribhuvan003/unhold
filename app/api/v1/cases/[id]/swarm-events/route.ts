@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { assertCaseAccess, requireRequestAuth } from '@/lib/api/case-access';
+import { enforceSwarmEventsReadLimit } from '@/lib/ratelimit';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getRequestId, handleRouteError, jsonSuccess } from '@/lib/api/response';
 
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const { id: caseId } = await context.params;
     const auth = await requireRequestAuth(request);
     await assertCaseAccess(caseId, auth, 'viewer');
+    await enforceSwarmEventsReadLimit(caseId);
 
     const requestedLimit = Number(request.nextUrl.searchParams.get('limit'));
     const limit = Number.isInteger(requestedLimit) && requestedLimit > 0

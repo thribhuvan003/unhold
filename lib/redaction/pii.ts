@@ -41,3 +41,23 @@ export function redactExtractedFields(
     date_detected: extracted.date_detected ? redactPiiText(extracted.date_detected) : extracted.date_detected,
   };
 }
+
+/**
+ * forgery_flags/mismatches are free-text the model writes about what it saw
+ * on the document (e.g. "found account ending differs from on file") — same
+ * echo risk as `extracted`, and this metadata is stored in swarm_events and
+ * rendered straight to the case UI, so it needs the same defense-in-depth.
+ */
+export function redactForgeryFlags(flags: VerifierResultOutput['forgery_flags']): VerifierResultOutput['forgery_flags'] {
+  return flags.map(redactPiiText);
+}
+
+export function redactMismatches(
+  mismatches: VerifierResultOutput['mismatches'],
+): VerifierResultOutput['mismatches'] {
+  return mismatches.map((m) => ({
+    field: m.field,
+    expected: redactPiiText(m.expected),
+    found: redactPiiText(m.found),
+  }));
+}

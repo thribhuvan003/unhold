@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/cases/[id]/swarm-events/route';
 import { signGuestToken } from '@/lib/auth/guest';
+import { resetRateLimitMemory } from '@/lib/ratelimit';
 import { errorEnvelopeSchema } from '@/lib/validation/api-schemas';
 
 const caseId = '22222222-2222-4222-8222-222222222222';
@@ -81,6 +82,7 @@ describe('GET /cases/:id/swarm-events', () => {
     caseRowRef.current = null;
     eventsSelectMock.mockReset().mockReturnValue({ data: [], error: null });
     limitArgMock.mockReset();
+    resetRateLimitMemory();
   });
 
   it('returns 401 with no auth at all', async () => {
@@ -113,6 +115,20 @@ describe('GET /cases/:id/swarm-events', () => {
     const response = await GET(request, { params: Promise.resolve({ id: caseId }) });
     expect(response.status).toBe(200);
     expect(limitArgMock).toHaveBeenCalledWith(20);
+  });
+
+  it('returns 429 once a case is polled past the read rate limit (SEC-1)', async () => {
+    caseRowRef.current = { id: caseId, user_id: null, guest_session_id: guestSessionId };
+    const headers = guestHeaders();
+
+    let lastResponse: Response | null = null;
+    for (let i = 0; i < 61; i += 1) {
+      lastResponse = await GET(getRequest(undefined, headers), { params: Promise.resolve({ id: caseId }) });
+    }
+
+    expect(lastResponse?.status).toBe(429);
+    const json = await lastResponse?.json();
+    expect(errorEnvelopeSchema.safeParse(json).success).toBe(true);
   });
 
   it('allows a guest viewer of their own case (viewer level, not owner-only)', async () => {
