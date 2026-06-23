@@ -2,15 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { DisclaimerModal } from '@/components/legal/DisclaimerModal';
+import { GuidedIntakeForm, type GuidedIntakeResult } from '@/components/intake/GuidedIntakeForm';
 
 export default function GuestReportPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
-  async function startGuestIntake(aiConsentAccepted: boolean) {
+  async function startGuestIntake(result: GuidedIntakeResult) {
     setLoading(true);
     setError(null);
     try {
@@ -30,10 +29,11 @@ export default function GuestReportPage() {
         body: JSON.stringify({
           bank_slug: 'state-bank-of-india',
           freeze_reason: 'cyber_upi_chain',
-          victim_role: 'innocent_receiver',
-          intake_json: { source: 'guest_report' },
+          victim_role: result.victimRole,
+          frozen_amount_paise: result.frozenAmountPaise,
+          intake_json: result.intakeJson,
           consent_accepted: true,
-          ai_consent_accepted: aiConsentAccepted,
+          ai_consent_accepted: result.aiConsentAccepted,
         }),
       });
       const caseJson = await caseRes.json();
@@ -52,24 +52,11 @@ export default function GuestReportPage() {
   return (
     <section className="max-w-xl space-y-4">
       <h1 className="text-2xl font-bold text-[#0B1F33]">Quick freeze report</h1>
-      <p className="text-slate-700">Under 30 seconds. No account required. Data stored in Supabase — not localStorage.</p>
-      <button
-        type="button"
-        onClick={() => setShowDisclaimer(true)}
-        disabled={loading}
-        className="min-h-[44px] rounded bg-[#1F6B8A] px-5 font-medium text-white disabled:opacity-60"
-      >
-        {loading ? 'Starting…' : 'Start my case'}
-      </button>
+      <p className="text-slate-700">
+        A few guided questions, under 2 minutes. No account required. Data stored in Supabase — not localStorage.
+      </p>
+      <GuidedIntakeForm onComplete={startGuestIntake} submitting={loading} />
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      <DisclaimerModal
-        open={showDisclaimer}
-        onDecline={() => setShowDisclaimer(false)}
-        onAccept={async (aiConsentAccepted) => {
-          setShowDisclaimer(false);
-          await startGuestIntake(aiConsentAccepted);
-        }}
-      />
     </section>
   );
 }

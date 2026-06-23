@@ -60,6 +60,15 @@ vi.mock('@/lib/supabase/admin', () => ({
           },
         };
       }
+      if (table === 'evidence') {
+        return {
+          select: () => ({
+            in: () => ({
+              is: () => thenable({ data: [], error: null }),
+            }),
+          }),
+        };
+      }
       return {};
     },
   }),

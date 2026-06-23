@@ -156,7 +156,15 @@ async function applyVerifierSideEffects(
     severity: human_gate_required ? 'human_required' : 'info',
     message: `Evidence ${input.evidence_id.slice(0, 8)} verified (confidence ${output.confidence.toFixed(2)})`,
     job_id: jobId,
-    metadata: { field_confidence: output.field_confidence },
+    metadata: {
+      evidence_id: input.evidence_id,
+      confidence: output.confidence,
+      field_confidence: output.field_confidence,
+      forgery_risk: output.forgery_risk,
+      forgery_flags: output.forgery_flags,
+      mismatches: output.mismatches,
+      human_review_required: output.human_review_required,
+    },
   });
 }
 

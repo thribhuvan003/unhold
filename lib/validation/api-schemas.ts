@@ -154,6 +154,8 @@ export const caseResponseSchema = z.object({
   victim_role: victimRoleSchema.nullable(),
   frozen_amount_paise: z.number().int().nullable(),
   intake_json: z.record(z.unknown()),
+  user_action_required: z.boolean(),
+  classification_confidence: z.number().min(0).max(1).nullable(),
   created_at: z.string(),
   updated_at: z.string(),
 });

@@ -124,6 +124,8 @@ export function serializeCase(row: Record<string, unknown>) {
     victim_role: row.victim_role,
     frozen_amount_paise: row.frozen_amount_paise,
     intake_json: row.intake_json ?? {},
+    user_action_required: row.user_action_required ?? false,
+    classification_confidence: row.classification_confidence ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };

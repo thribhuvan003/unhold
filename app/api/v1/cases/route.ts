@@ -141,12 +141,43 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
     if (error) throw error;
 
-    const response = jsonSuccess({ cases: (data ?? []).map(serializeCase) });
+    const caseRows = data ?? [];
+    const evidenceCounts = await loadEvidenceCounts(
+      admin,
+      caseRows.map((row) => row.id),
+    );
+
+    const response = jsonSuccess({
+      cases: caseRows.map((row) => ({
+        ...serializeCase(row),
+        evidence_count: evidenceCounts.get(row.id) ?? 0,
+      })),
+    });
     response.headers.set('x-request-id', requestId);
     return response;
   } catch (error) {
     return handleRouteError(error, requestId);
   }
+}
+
+async function loadEvidenceCounts(
+  admin: ReturnType<typeof createAdminClient>,
+  caseIds: string[],
+): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  if (caseIds.length === 0) return counts;
+
+  const { data, error } = await admin
+    .from('evidence')
+    .select('case_id')
+    .in('case_id', caseIds)
+    .is('deleted_at', null);
+  if (error) throw error;
+
+  for (const row of data ?? []) {
+    counts.set(row.case_id, (counts.get(row.case_id) ?? 0) + 1);
+  }
+  return counts;
 }
 
 function NextResponseFromIdempotent(status: number, body: unknown, requestId: string) {
