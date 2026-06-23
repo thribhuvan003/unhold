@@ -1,3 +1,5 @@
+import { cn } from '@/lib/ui/cn';
+
 type MoneyDisplayProps = {
   amountPaise: number;
   className?: string;
@@ -12,7 +14,7 @@ export function MoneyDisplay({ amountPaise, className }: MoneyDisplayProps) {
   }).format(inr);
 
   return (
-    <span className={className} data-testid="money-display">
+    <span className={cn('tabular-nums', className)} data-testid="money-display">
       {formatted}
     </span>
   );

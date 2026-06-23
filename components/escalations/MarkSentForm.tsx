@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { CheckCircle2, Send } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/ui/cn';
 
 type MarkSentFormProps = {
   caseId: string;
@@ -70,25 +73,27 @@ export function MarkSentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 p-4">
-      <div>
-        <h3 className="text-lg font-semibold text-[#0B1F33]">Mark {level} letter as sent</h3>
-        <p className="mt-1 text-sm text-slate-600">
-          Copy-only draft — you send the letter yourself. Upload proof (screenshot or sent-email
-          confirmation) to unlock the next escalation level.
-        </p>
+    <form onSubmit={handleSubmit} className="u-card animate-fade-up space-y-5 p-5 sm:p-6">
+      <div className="flex items-start gap-3">
+        <span className="u-icon-box u-icon-box-forest h-10 w-10 shrink-0">
+          <Send className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+        </span>
+        <div>
+          <h3 className="type-display text-lg">Mark {level} letter as sent</h3>
+          <p className="type-caption mt-1 text-[0.875rem] text-ink-muted">
+            Copy-only draft — you send the letter yourself. Upload proof (screenshot or sent-email
+            confirmation) to unlock the next escalation level.
+          </p>
+        </div>
       </div>
 
-      {proofGateBlocked && (
-        <div
-          role="alert"
-          className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900"
-        >
+      {proofGateBlocked ? (
+        <div role="alert" className="u-alert u-alert-warn">
           {blockedReason ?? 'Prior level send proof is required before marking this letter sent.'}
         </div>
-      )}
+      ) : null}
 
-      <label className="block text-sm font-medium text-[#0B1F33]">
+      <label className="block text-sm font-medium text-ink">
         Send proof evidence ID
         <input
           type="text"
@@ -96,33 +101,34 @@ export function MarkSentForm({
           value={proofEvidenceId}
           onChange={(e) => setProofEvidenceId(e.target.value)}
           placeholder="UUID from uploaded letter_sent_proof"
-          className="mt-1 min-h-[44px] w-full rounded-md border border-slate-300 px-3 py-2 text-base"
+          className="u-input type-mono-data mt-1.5"
           required
           disabled={proofGateBlocked || submitting || success}
           aria-label="Proof evidence ID"
         />
       </label>
 
-      {error && (
-        <p role="alert" className="text-sm text-red-700">
+      {error ? (
+        <p role="alert" className="u-alert u-alert-error">
           {error}
         </p>
-      )}
+      ) : null}
 
-      {success && (
-        <p className="text-sm text-green-700">
-          Letter marked sent. Response deadline tracked — we will remind you before the statutory
-          wait ends.
+      {success ? (
+        <p className="u-alert u-alert-success flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+          Letter marked sent. Response deadline tracked — we will remind you before the statutory wait ends.
         </p>
-      )}
+      ) : null}
 
-      <button
+      <Button
         type="submit"
+        variant="secondary"
         disabled={proofGateBlocked || submitting || success}
-        className="min-h-[44px] w-full rounded-md bg-[#1F6B8A] px-4 py-2 text-base font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn('w-full')}
       >
         {submitting ? 'Saving…' : 'I sent this letter — save proof'}
-      </button>
+      </Button>
     </form>
   );
 }

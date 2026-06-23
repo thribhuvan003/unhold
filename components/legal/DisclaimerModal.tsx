@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { Shield } from 'lucide-react';
 import { AI_PROCESSING_DISCLAIMER, INTAKE_DISCLAIMER } from '@/lib/constants/disclaimers';
 import { ConsentCheckbox } from '@/components/legal/ConsentCheckbox';
+import { Button } from '@/components/ui/Button';
 
 type DisclaimerModalProps = {
   open: boolean;
@@ -32,53 +34,54 @@ export function DisclaimerModal({ open, onAccept, onDecline }: DisclaimerModalPr
       role="dialog"
       aria-modal="true"
       aria-labelledby="disclaimer-modal-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--ink)]/40 p-4 backdrop-blur-sm sm:items-center"
     >
-      <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
-        <h2 id="disclaimer-modal-title" className="text-xl font-semibold text-[#0B1F33]">
-          Before you continue
-        </h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-700">{INTAKE_DISCLAIMER}</p>
-
-        <div className="mt-4">
-          <ConsentCheckbox
-            id="intake-disclaimer-accept"
-            label="I have read and agree to the above. I understand LienLiberator is not a law firm and does not guarantee outcomes."
-            checked={accepted}
-            onChange={setAccepted}
-          />
+      <div className="animate-scale-in u-card w-full max-w-lg overflow-hidden shadow-xl">
+        <div className="border-b border-[var(--border)] bg-[var(--paper)] px-6 py-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--forest-muted)] text-[var(--forest)]">
+              <Shield className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <h2 id="disclaimer-modal-title" className="font-display text-xl font-semibold text-[var(--ink)]">
+              Before you continue
+            </h2>
+          </div>
         </div>
 
-        <p className="mt-4 text-sm leading-relaxed text-slate-700">{AI_PROCESSING_DISCLAIMER}</p>
+        <div className="max-h-[60vh] overflow-y-auto px-6 py-5">
+          <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{INTAKE_DISCLAIMER}</p>
 
-        <div className="mt-4">
-          <ConsentCheckbox
-            id="ai-processing-consent"
-            label="I consent to AI processing of my case data and documents, including by providers outside India (optional)."
-            checked={aiConsent}
-            onChange={setAiConsent}
-            required={false}
-          />
+          <div className="mt-4">
+            <ConsentCheckbox
+              id="intake-disclaimer-accept"
+              label="I have read and agree to the above. I understand LienLiberator is not a law firm and does not guarantee outcomes."
+              checked={accepted}
+              onChange={setAccepted}
+            />
+          </div>
+
+          <p className="mt-5 text-sm leading-relaxed text-[var(--ink-muted)]">{AI_PROCESSING_DISCLAIMER}</p>
+
+          <div className="mt-4">
+            <ConsentCheckbox
+              id="ai-processing-consent"
+              label="I consent to AI processing of my case data and documents, including by providers outside India (optional)."
+              checked={aiConsent}
+              onChange={setAiConsent}
+              required={false}
+            />
+          </div>
         </div>
 
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
-          {onDecline && (
-            <button
-              type="button"
-              onClick={onDecline}
-              className="min-h-[44px] rounded-md border border-slate-300 px-4 py-2 text-sm font-medium"
-            >
+        <div className="flex flex-col gap-2 border-t border-[var(--border)] bg-[var(--paper)] px-6 py-4 sm:flex-row sm:justify-end">
+          {onDecline ? (
+            <Button variant="ghost" onClick={onDecline} className="text-[var(--ink)]">
               Cancel
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={handleContinue}
-            disabled={!accepted || submitting}
-            className="min-h-[44px] rounded-md bg-[#1F6B8A] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-          >
+            </Button>
+          ) : null}
+          <Button variant="secondary" onClick={handleContinue} disabled={!accepted || submitting}>
             {submitting ? 'Saving…' : 'Continue'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

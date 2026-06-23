@@ -1,34 +1,62 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Bricolage_Grotesque, Red_Hat_Mono, Schibsted_Grotesk } from 'next/font/google';
 import './globals.css';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { brand } from '@/lib/ui/tokens';
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['500', '600', '700', '800'],
+  display: 'swap',
+});
+
+const schibsted = Schibsted_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-body',
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const redHatMono = Red_Hat_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'Unhold',
-  description: 'Unfreeze your bank account — step by step',
+  title: brand.publicName,
+  description: brand.tagline,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN">
-      <body>
-        <header className="border-b border-slate-200 bg-[#0B1F33] text-white">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <Link href="/" className="text-lg font-semibold text-white no-underline">
-              Unhold
-            </Link>
-            <nav className="flex gap-4 text-sm">
-              <Link href="/guest/report" className="text-white/90 hover:text-white">
-                Report freeze
-              </Link>
-              <Link href="/cases" className="text-white/90 hover:text-white">
-                My cases
-              </Link>
-            </nav>
+    <html
+      lang="en-IN"
+      className={`${bricolage.variable} ${schibsted.variable} ${redHatMono.variable}`}
+    >
+      <body className="u-paper-grain flex min-h-screen flex-col antialiased">
+        <SiteHeader />
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="u-main-skip-target mx-auto w-full max-w-5xl flex-1 px-4 py-9 sm:px-5 sm:py-11"
+        >
+          {children}
+        </main>
+        <footer className="border-t border-border bg-surface py-9">
+          <div className="mx-auto max-w-5xl px-4 text-center sm:px-5">
+            <p className="type-caption">
+              Not a law firm. Not RBI. Cyber helpline{' '}
+              <a href="tel:1930" className="type-mono-data font-medium text-sky-deep no-underline hover:underline">
+                1930
+              </a>
+            </p>
+            <p className="mt-1.5 text-[0.6875rem] leading-relaxed text-ink-faint">
+              Built for people navigating bank freezes — you stay in control.
+            </p>
           </div>
-        </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
-        <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-500">
-          Not a law firm. Not RBI. Cyber helpline 1930.
         </footer>
       </body>
     </html>

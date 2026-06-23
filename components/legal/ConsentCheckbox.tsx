@@ -1,5 +1,7 @@
 'use client';
 
+import { cn } from '@/lib/ui/cn';
+
 type ConsentCheckboxProps = {
   id: string;
   label: string;
@@ -20,7 +22,13 @@ export function ConsentCheckbox({
   return (
     <label
       htmlFor={id}
-      className="flex min-h-[44px] cursor-pointer items-start gap-3 rounded-md border border-slate-200 p-3"
+      className={cn(
+        'flex min-h-[44px] cursor-pointer items-start gap-3 rounded-[var(--radius-md)] border p-3.5 transition-all duration-200',
+        checked
+          ? 'border-[var(--forest)]/40 bg-[var(--forest-muted)]'
+          : 'border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--border-strong)]',
+        disabled && 'cursor-not-allowed opacity-60',
+      )}
     >
       <input
         id={id}
@@ -29,10 +37,10 @@ export function ConsentCheckbox({
         onChange={(e) => onChange(e.target.checked)}
         required={required}
         disabled={disabled}
-        className="mt-1 h-5 w-5 shrink-0 accent-[#1F6B8A]"
+        className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--forest)]"
         aria-required={required}
       />
-      <span className="text-sm leading-relaxed text-[#0B1F33]">{label}</span>
+      <span className="text-sm leading-relaxed text-[var(--ink)]">{label}</span>
     </label>
   );
 }

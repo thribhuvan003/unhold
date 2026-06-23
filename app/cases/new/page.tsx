@@ -48,14 +48,30 @@ export default function NewCasePage() {
   }
 
   return (
-    <section className="max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">New case</h1>
-      <p className="text-slate-600">
-        SBI cyber UPI chain playbook (guest or signed-in). A few guided questions help our AI route your case
-        correctly.
-      </p>
-      <GuidedIntakeForm onComplete={createCase} submitting={loading} />
-      {error ? <p className="text-red-700">{error}</p> : null}
+    <section className="mx-auto max-w-xl space-y-8">
+      <header className="animate-fade-up space-y-2">
+        <p className="font-mono text-[10px] font-medium uppercase tracking-widest text-[var(--forest)]">
+          SBI · cyber UPI chain
+        </p>
+        <h1 className="font-display text-3xl font-semibold text-[var(--ink)]">New case</h1>
+        <p className="text-sm leading-relaxed text-[var(--ink-muted)]">
+          A few guided questions help our AI route your case correctly — you review everything before it goes
+          anywhere.
+        </p>
+      </header>
+
+      <div className="animate-fade-up stagger-1">
+        <GuidedIntakeForm onComplete={createCase} submitting={loading} />
+      </div>
+
+      {error ? (
+        <p
+          role="alert"
+          className="animate-scale-in rounded-[var(--radius-md)] border border-[var(--error)]/20 bg-[var(--error-muted)] px-4 py-3 text-sm text-[var(--error)]"
+        >
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }

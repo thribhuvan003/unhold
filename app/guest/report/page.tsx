@@ -50,13 +50,25 @@ export default function GuestReportPage() {
   }
 
   return (
-    <section className="max-w-xl space-y-4">
-      <h1 className="text-2xl font-bold text-[#0B1F33]">Quick freeze report</h1>
-      <p className="text-slate-700">
-        A few guided questions, under 2 minutes. No account required. Data stored in Supabase — not localStorage.
-      </p>
-      <GuidedIntakeForm onComplete={startGuestIntake} submitting={loading} />
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+    <section className="mx-auto max-w-xl space-y-8">
+      <header className="animate-fade-up space-y-2">
+        <p className="type-eyebrow">~2 minutes · no account</p>
+        <h1 className="type-display mt-1 text-3xl">Quick freeze report</h1>
+        <p className="type-lead text-[0.9375rem]">
+          A few guided questions to help us understand your situation. Data stored securely in Supabase — not
+          localStorage.
+        </p>
+      </header>
+
+      <div className="animate-fade-up stagger-1">
+        <GuidedIntakeForm onComplete={startGuestIntake} submitting={loading} />
+      </div>
+
+      {error ? (
+        <p role="alert" className="u-alert u-alert-error">
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }
