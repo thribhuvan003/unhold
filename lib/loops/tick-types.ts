@@ -6,6 +6,7 @@ export type TickTrigger =
   | { type: 'transition'; event: string }
   | { type: 'mark_sent'; escalation_id: string }
   | { type: 'human_gate_cleared'; gate_id: string }
+  | { type: 'intake_submitted' }
   | { type: 'user_resume' };
 
 export type CaseTickResult =

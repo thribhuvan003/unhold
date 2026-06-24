@@ -5,6 +5,7 @@ import {
   serializeCase,
 } from '@/lib/api/case-access';
 import { patchIntakeSchema } from '@/lib/validation/api-schemas';
+import { runCaseTick } from '@/lib/loops/case-tick';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { Json } from '@/supabase/database.types';
 import { appendActionLog } from '@/lib/action-logs/append';
@@ -86,6 +87,15 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       payload: { fields: Object.keys(parsed.data) },
       requestId,
     });
+
+    // Wizard chain: once intake details are in (incl. notice freeze_reason_hint),
+    // trigger a tick so the router enqueues the INTAKE classifier. Best-effort —
+    // a tick failure must not fail the user's intake submission.
+    try {
+      await runCaseTick(caseId, { type: 'intake_submitted' });
+    } catch {
+      // swallow — classification will still run on the next cron tick
+    }
 
     const response = jsonSuccess(serializeCase(updated));
     response.headers.set('x-request-id', requestId);

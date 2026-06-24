@@ -1,0 +1,109 @@
+import Link from 'next/link';
+import { FileText, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
+import { DraftLetterButton } from '@/components/case/DraftLetterButton';
+
+type EscalationStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'sent'
+  | 'response_received'
+  | 'timeout'
+  | 'skipped';
+
+export type LetterSummary = {
+  level: 'L1' | 'L2' | 'L3';
+  status: EscalationStatus;
+  hasDraft: boolean;
+};
+
+const STATUS_LABEL: Record<EscalationStatus, string> = {
+  draft: 'Draft ready',
+  pending_approval: 'Ready to review',
+  approved: 'Approved — ready to send',
+  sent: 'Sent',
+  response_received: 'Response received',
+  timeout: 'Awaiting response',
+  skipped: 'Skipped',
+};
+
+const STATUS_TONE: Record<EscalationStatus, 'neutral' | 'forest' | 'success' | 'warn'> = {
+  draft: 'forest',
+  pending_approval: 'forest',
+  approved: 'forest',
+  sent: 'success',
+  response_received: 'success',
+  timeout: 'warn',
+  skipped: 'neutral',
+};
+
+const LEVEL_DESC: Record<'L1' | 'L2' | 'L3', string> = {
+  L1: 'Branch manager — your first formal letter.',
+  L2: 'Nodal officer — escalate after L1, with proof you sent it.',
+  L3: 'RBI / Ombudsman — final escalation after L2.',
+};
+
+interface LettersPanelProps {
+  caseId: string;
+  letters: LetterSummary[];
+  guestToken?: string;
+}
+
+export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps) {
+  const byLevel = new Map(letters.map((l) => [l.level, l]));
+  const levels: Array<'L1' | 'L2' | 'L3'> = ['L1', 'L2', 'L3'];
+  const anyDraft = letters.some((l) => l.hasDraft);
+
+  return (
+    <div className="space-y-3">
+      {!anyDraft ? (
+        <p className="type-caption text-ink-faint">
+          Your escalation letters appear here as your case progresses. You always review and send them
+          yourself — nothing is sent automatically.
+        </p>
+      ) : null}
+
+      <ul className="space-y-2">
+        {levels.map((level) => {
+          const letter = byLevel.get(level);
+          const hasDraft = letter?.hasDraft ?? false;
+          return (
+            <li key={level} className="u-card flex flex-wrap items-start justify-between gap-3 p-4">
+              <div className="flex items-start gap-3">
+                <FileText className="mt-0.5 h-5 w-5 shrink-0 text-[var(--ink-faint)]" aria-hidden />
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-[var(--ink)]">{level} letter</span>
+                    {letter ? (
+                      <Badge tone={STATUS_TONE[letter.status]}>{STATUS_LABEL[letter.status]}</Badge>
+                    ) : (
+                      <Badge tone="neutral">Not drafted yet</Badge>
+                    )}
+                  </div>
+                  <p className="type-caption text-ink-faint">{LEVEL_DESC[level]}</p>
+                </div>
+              </div>
+              {hasDraft ? (
+                <Link
+                  href={`/cases/${caseId}/letters/${level}`}
+                  className="u-btn u-btn-secondary inline-flex min-h-[44px] shrink-0 items-center gap-1.5 px-3 text-sm"
+                >
+                  View &amp; copy
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              ) : level === 'L1' ? (
+                <DraftLetterButton caseId={caseId} level="L1" guestToken={guestToken} />
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
+
+      <p className="type-caption text-ink-faint">
+        Letters are copy-only. You send them by email or post — and you must upload proof you sent each one
+        before the next level unlocks.
+      </p>
+    </div>
+  );
+}

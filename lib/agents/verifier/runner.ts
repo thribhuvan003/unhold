@@ -57,12 +57,26 @@ export async function loadVerifierInput(evidenceId: string): Promise<VerifierInp
     .eq('id', evidence.case_id)
     .maybeSingle();
 
+  // Cross-check uploads against the notice amount when the case has no frozen
+  // amount yet (pre-intake hero path) — reuses the existing amount-mismatch rule.
+  let expectedAmountPaise = caseRow?.frozen_amount_paise ?? null;
+  if (expectedAmountPaise === null) {
+    const { data: notice } = await supabase
+      .from('notice_analysis')
+      .select('extracted_amount_paise')
+      .eq('case_id', evidence.case_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    expectedAmountPaise = notice?.extracted_amount_paise ?? null;
+  }
+
   return {
     evidence_id: evidence.id,
     case_id: evidence.case_id,
     storage_path: evidence.storage_path,
     mime_type: evidence.mime_type,
-    frozen_amount_paise: caseRow?.frozen_amount_paise ?? null,
+    frozen_amount_paise: expectedAmountPaise,
   };
 }
 

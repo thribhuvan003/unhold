@@ -51,6 +51,16 @@ function getSwarmEventsReadLimiter(): Ratelimit | null {
   });
 }
 
+function getNoticeAnalysisLimiter(): Ratelimit | null {
+  const redis = getRedis();
+  if (!redis) return null;
+  return new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, '1 h'),
+    prefix: 'rl:notice_analysis',
+  });
+}
+
 async function memoryRateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
   const now = Date.now();
   const entry = memoryRateCounts.get(key);
@@ -76,6 +86,27 @@ export async function enforceGuestCaseCreateLimit(identifier: string): Promise<v
   const allowed = await memoryRateLimit(`guest_case:${identifier}`, 5, 24 * 60 * 60 * 1000);
   if (!allowed) {
     throw new ApiError(429, 'rate_limited', 'Guest case creation limit exceeded (5/day)');
+  }
+}
+
+/**
+ * Per-case cap on Freeze Notice Analyzer runs. The analyzer makes a synchronous
+ * NVIDIA call (not a queued agent_job), so it isn't covered by agent_cost_cap_usd;
+ * this limiter is the cost/abuse control for that path.
+ */
+export async function enforceNoticeAnalysisLimit(caseId: string): Promise<void> {
+  const limiter = getNoticeAnalysisLimiter();
+  if (limiter) {
+    const { success } = await limiter.limit(caseId);
+    if (!success) {
+      throw new ApiError(429, 'rate_limited', 'Notice analysis limit exceeded (10/hour/case)');
+    }
+    return;
+  }
+
+  const allowed = await memoryRateLimit(`notice_analysis:${caseId}`, 10, 60 * 60 * 1000);
+  if (!allowed) {
+    throw new ApiError(429, 'rate_limited', 'Notice analysis limit exceeded (10/hour/case)');
   }
 }
 

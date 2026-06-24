@@ -98,8 +98,11 @@ describe('EvidenceUploader', () => {
     expect(container.textContent).toContain('Possible authenticity issue');
     expect(container.textContent).toContain('edited_amount_field');
     // SEC-3: mismatches are {field, expected, found} objects, not strings —
-    // renders the structured fields instead of "[object Object]".
-    expect(container.textContent).toContain('Mismatch on amount_paise: expected 25000, found 250000');
+    // renders the structured fields (humane guidance copy) instead of "[object Object]".
+    expect(container.textContent).toContain('amount_paise');
+    expect(container.textContent).toContain('250000');
+    expect(container.textContent).toContain('25000');
+    expect(container.textContent).not.toContain('[object Object]');
   });
 
   it('shows a calm fallback message instead of going silent when polling exhausts with no match', async () => {

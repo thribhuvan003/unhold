@@ -456,6 +456,52 @@ export type Database = {
         };
         Relationships: [];
       };
+      notice_analysis: {
+        Row: {
+          id: string;
+          case_id: string;
+          input_kind: string;
+          evidence_id: string | null;
+          freeze_reason: Database['public']['Enums']['freeze_reason'];
+          severity: Database['public']['Enums']['notice_severity'];
+          confidence: number;
+          plain_english: string;
+          what_this_means: string;
+          suggested_next: string[];
+          extracted_amount_paise: number | null;
+          extracted_date: string | null;
+          extracted_reference: string | null;
+          extracted_bank_id: string | null;
+          raw_output_json: Json;
+          agent_job_id: string | null;
+          human_review_required: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          case_id: string;
+          input_kind: string;
+          evidence_id?: string | null;
+          freeze_reason: Database['public']['Enums']['freeze_reason'];
+          severity: Database['public']['Enums']['notice_severity'];
+          confidence: number;
+          plain_english: string;
+          what_this_means: string;
+          suggested_next?: string[];
+          extracted_amount_paise?: number | null;
+          extracted_date?: string | null;
+          extracted_reference?: string | null;
+          extracted_bank_id?: string | null;
+          raw_output_json?: Json;
+          agent_job_id?: string | null;
+          human_review_required?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          human_review_required?: boolean;
+        };
+        Relationships: [];
+      };
       fee_agreements: {
         Row: {
           id: string;
@@ -852,6 +898,7 @@ export type Database = {
       human_gate_status: 'pending' | 'assigned' | 'resolved' | 'dismissed';
       invoice_status: 'none' | 'issued' | 'paid' | 'waived' | 'disputed';
       job_status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'dead_letter';
+      notice_severity: 'low' | 'medium' | 'high' | 'critical';
       permission_level: 'owner' | 'editor' | 'viewer' | 'parent_readonly';
       resolution_type:
         | 'full_unfreeze'

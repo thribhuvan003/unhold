@@ -371,7 +371,7 @@ function VerificationFeedbackPanel({ feedback }: { feedback: VerificationFeedbac
   for (const mismatch of feedback.mismatches) {
     flags.push({
       type: 'warning',
-      text: `Mismatch on ${mismatch.field}: expected ${mismatch.expected}, found ${mismatch.found}`,
+      text: `Worth a quick check — the ${mismatch.field} here (${mismatch.found}) looks different from your notice (${mismatch.expected}). It may be fine; just make sure you uploaded the right document.`,
     });
   }
 

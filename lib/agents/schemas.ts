@@ -79,6 +79,28 @@ export const VerifierResultOutputSchema = z.object({
   human_review_required: z.boolean(),
 });
 
+/**
+ * Freeze Notice Analyzer (P0). Advisory only — never triggers a state transition.
+ * @see .claude/session/notice-analyzer/plan.md
+ */
+export const NoticeSeveritySchema = z.enum(['low', 'medium', 'high', 'critical']);
+
+export const NoticeAnalysisOutputSchema = z.object({
+  freeze_reason: FreezeReasonSchema,
+  severity: NoticeSeveritySchema,
+  confidence: z.number().min(0).max(1),
+  plain_english: z.string().max(2000),
+  what_this_means: z.string().max(2000),
+  suggested_next: z.array(z.string().max(300)).max(6),
+  extracted: z.object({
+    bank_name: z.string().optional(),
+    amount_paise: z.number().int().optional(),
+    reference: z.string().max(120).optional(),
+    date_detected: z.string().optional(),
+  }),
+  human_review_required: z.boolean(),
+});
+
 export const EscalatorSuggestionOutputSchema = z.object({
   can_escalate: z.boolean(),
   target_level: z.enum(['L1', 'L2', 'L3', 'L4']).optional(),
@@ -87,8 +109,27 @@ export const EscalatorSuggestionOutputSchema = z.object({
   suggest_drafter: z.boolean(),
 });
 
+export const EvidenceBundleManifestEntrySchema = z.object({
+  path: z.string(),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  evidence_type: z.string(),
+  uploaded_at: z.string(),
+});
+
+export const EvidenceBundleOutputSchema = z.object({
+  manifest: z.array(EvidenceBundleManifestEntrySchema),
+  manifest_sha256: z.string().regex(/^[a-f0-9]{64}$/).nullable(),
+  sealed_content_path: z.string().nullable(),
+  evidence_count: z.number().int().min(0),
+  human_review_required: z.boolean(),
+});
+
 export type IntakeClassificationOutput = z.infer<typeof IntakeClassificationOutputSchema>;
 export type LetterDraftOutput = z.infer<typeof LetterDraftOutputSchema>;
 export type MonitorTickOutput = z.infer<typeof MonitorTickOutputSchema>;
 export type VerifierResultOutput = z.infer<typeof VerifierResultOutputSchema>;
+export type EvidenceBundleManifestEntry = z.infer<typeof EvidenceBundleManifestEntrySchema>;
+export type EvidenceBundleOutput = z.infer<typeof EvidenceBundleOutputSchema>;
 export type EscalatorSuggestionOutput = z.infer<typeof EscalatorSuggestionOutputSchema>;
+export type NoticeSeverity = z.infer<typeof NoticeSeveritySchema>;
+export type NoticeAnalysisOutput = z.infer<typeof NoticeAnalysisOutputSchema>;

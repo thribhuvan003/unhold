@@ -4,6 +4,7 @@
   "phase": 2,
   "phase_exit_criteria": "guest intake → auth merge → L1 letter → mark-sent → audit log",
   "active_slice": "slice-13",
+  "note": "MVP wizard built across commits 1d3df59..3ef5468 (notice analyzer hero, checklist, amount validation, letters+bundle UI, case header, NOTICE->INTAKE tick chain, slice-14 additive evidence proof gate, L1 letter generate button). AUDIT 2026-06-24 (REMAINING_WORK.md): Notice Analyzer is the only SYNC AI feature; all others run as agent_jobs needing the /internal/jobs/process scheduler. Not run live (no .env.local, migration 011 not applied). slices 15/17/18 + E2E + deploy still pending and need real env.",
   "harness_state": "idle",
   "last_agent": "VERIFIER",
   "fix_round": 0,
@@ -309,6 +310,12 @@
         "date": "2026-06-21",
         "decision": "Primary production deploy: Vercel Hobby (free). vercel.json crons trimmed to daily-only (reminders + rankings) because Hobby rejects */15 and */5 schedules at deploy. functionFailoverRegions removed (Enterprise-only). regions bom1 single region for Hobby. tick and jobs/process via external scheduler (cron-job.org). Netlify unholdd credits exhausted.",
         "spec_ref": "docs/DEPLOY_VERCEL_HOBBY.md"
+      },
+      {
+        "id": "ADR-NOTICE-001",
+        "date": "2026-06-23",
+        "decision": "Freeze Notice Analyzer (P0 research feature) owner decisions locked: (D1) new dedicated agent lib/agents/notice/ copying the Verifier vision pattern, not overloading verifier/runner.ts; (D2) MVP input = image(jpeg/png)+pasted text, PDF deferred (NVIDIA minimax-m3 vision rejects application/pdf); (D3) consent timing = create minimal case + record ai_ocr_processing/cross_border_ai BEFORE OCR (reuse case-scoped append-only consent_records); (D4) result storage decided by DB_ENGINEER in PLANNER phase. Corrected stale facts: vision runner is lib/agents/verifier/runner.ts (not evidence/runner.ts), model is minimaxai/minimax-m3 (not Sonnet), freeze_reason already a 9-value FreezeReasonSchema enum, consent already grantable (commit 473efb0) so SEC-001 'open' flag is stale.",
+        "spec_ref": ".claude/session/notice-analyzer/DECISIONS.md"
       },
       {
         "id": "ADR-CONSENT-001",

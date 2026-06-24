@@ -17,6 +17,8 @@ export type GuidedIntakeResult = {
 interface GuidedIntakeFormProps {
   onComplete: (result: GuidedIntakeResult) => Promise<void> | void;
   submitting: boolean;
+  /** Optional values prefilled from a Freeze Notice Analyzer run (pre-intake hero). */
+  prefill?: { frozenAmountPaise?: number };
 }
 
 const TOTAL_STEPS = 5;
@@ -50,12 +52,14 @@ const STEP_META = [
   },
 ] as const;
 
-export function GuidedIntakeForm({ onComplete, submitting }: GuidedIntakeFormProps) {
+export function GuidedIntakeForm({ onComplete, submitting, prefill }: GuidedIntakeFormProps) {
   const [step, setStep] = useState(0);
   const [narration, setNarration] = useState('');
   const [userRole, setUserRole] = useState<'sender' | 'receiver' | null>(null);
   const [recognizesFunds, setRecognizesFunds] = useState<'yes' | 'no' | null>(null);
-  const [amountInr, setAmountInr] = useState('');
+  const [amountInr, setAmountInr] = useState(
+    prefill?.frozenAmountPaise ? String(Math.round(prefill.frozenAmountPaise / 100)) : '',
+  );
   const [ncrpId, setNcrpId] = useState('');
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [stepError, setStepError] = useState<string | null>(null);

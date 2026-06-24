@@ -1,4 +1,11 @@
 import { EvidenceUploader } from '@/components/evidence/EvidenceUploader';
+import { NoticeAnalyzer } from '@/components/intake/NoticeAnalyzer';
+import type { NoticeAnalysisResult } from '@/components/intake/notice-analysis-types';
+import { DocumentChecklist } from '@/components/case/DocumentChecklist';
+import { getDocumentChecklist, getFreezeReasonLabel } from '@/lib/intake/document-checklist';
+import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
+import { LettersPanel, type LetterSummary } from '@/components/case/LettersPanel';
+import { BundleButton } from '@/components/case/BundleButton';
 import { NextStepsCard } from '@/components/case/NextStepsCard';
 import { ActionInbox } from '@/components/case/ActionInbox';
 import { CaseDetailTabs } from '@/components/case/CaseDetailTabs';
@@ -21,6 +28,10 @@ type CaseDetailData =
       frozenAmountPaise: number | null;
       actions: Database['public']['Tables']['user_actions']['Row'][];
       events: Database['public']['Tables']['swarm_events']['Row'][];
+      noticeAnalysis: NoticeAnalysisResult | null;
+      freezeReason: Database['public']['Enums']['freeze_reason'] | null;
+      gatheredEvidenceTypes: string[];
+      letters: LetterSummary[];
     };
 
 async function loadCaseDetailData(caseId: string, guestToken: string | undefined): Promise<CaseDetailData> {
@@ -48,20 +59,36 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
   }
 
   const admin = createAdminClient();
-  const [{ data: caseRow }, { data: actions }, { data: events }] = await Promise.all([
-    admin.from('cases').select('public_id, frozen_amount_paise').eq('id', caseId).maybeSingle(),
-    admin
-      .from('user_actions')
-      .select('*')
-      .eq('case_id', caseId)
-      .order('priority', { ascending: false }),
-    admin
-      .from('swarm_events')
-      .select('*')
-      .eq('case_id', caseId)
-      .order('created_at', { ascending: false })
-      .limit(50),
-  ]);
+  const [
+    { data: caseRow },
+    { data: actions },
+    { data: events },
+    { data: notice },
+    { data: evidenceRows },
+    { data: escalationRows },
+  ] = await Promise.all([
+      admin.from('cases').select('public_id, frozen_amount_paise, freeze_reason').eq('id', caseId).maybeSingle(),
+      admin
+        .from('user_actions')
+        .select('*')
+        .eq('case_id', caseId)
+        .order('priority', { ascending: false }),
+      admin
+        .from('swarm_events')
+        .select('*')
+        .eq('case_id', caseId)
+        .order('created_at', { ascending: false })
+        .limit(50),
+      admin
+        .from('notice_analysis')
+        .select('freeze_reason, severity, confidence, plain_english, what_this_means, suggested_next, human_review_required')
+        .eq('case_id', caseId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      admin.from('evidence').select('evidence_type').eq('case_id', caseId).is('deleted_at', null),
+      admin.from('escalations').select('level, status, letter_body').eq('case_id', caseId).order('level', { ascending: true }),
+    ]);
 
   return {
     authorized: true,
@@ -69,6 +96,23 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
     frozenAmountPaise: caseRow?.frozen_amount_paise ?? null,
     actions: actions ?? [],
     events: events ?? [],
+    noticeAnalysis: notice
+      ? {
+          freeze_reason: notice.freeze_reason,
+          severity: notice.severity,
+          confidence: notice.confidence,
+          plain_english: notice.plain_english,
+          what_this_means: notice.what_this_means,
+          suggested_next: notice.suggested_next,
+          human_review_required: notice.human_review_required,
+          extracted: {},
+        }
+      : null,
+    freezeReason: caseRow?.freeze_reason ?? notice?.freeze_reason ?? null,
+    gatheredEvidenceTypes: (evidenceRows ?? []).map((e) => e.evidence_type),
+    letters: (escalationRows ?? [])
+      .filter((e): e is typeof e & { level: 'L1' | 'L2' | 'L3' } => ['L1', 'L2', 'L3'].includes(e.level))
+      .map((e) => ({ level: e.level, status: e.status, hasDraft: !!e.letter_body })),
   };
 }
 
@@ -96,6 +140,24 @@ export default async function CaseDetailPage({ params }: PageProps) {
             'Case detail'
           )}
         </h1>
+        {data.authorized &&
+        (data.frozenAmountPaise != null || data.freezeReason || data.noticeAnalysis) ? (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-sm">
+            {data.frozenAmountPaise != null ? (
+              <span className="text-[var(--ink)]">
+                <MoneyDisplay amountPaise={data.frozenAmountPaise} className="font-medium" /> frozen
+              </span>
+            ) : null}
+            {getFreezeReasonLabel(data.freezeReason) ? (
+              <span className="text-[var(--ink-muted)]">{getFreezeReasonLabel(data.freezeReason)}</span>
+            ) : null}
+            {data.noticeAnalysis ? (
+              <Badge tone={data.noticeAnalysis.severity === 'critical' ? 'error' : data.noticeAnalysis.severity === 'low' ? 'neutral' : 'warn'}>
+                {data.noticeAnalysis.severity} severity
+              </Badge>
+            ) : null}
+          </div>
+        ) : null}
         <p className="type-lead max-w-prose text-[0.9375rem]">
           {data.authorized
             ? 'Upload evidence, complete actions, and review AI activity — nothing is sent to your bank automatically.'
@@ -137,19 +199,52 @@ export default async function CaseDetailPage({ params }: PageProps) {
         </CaseSection>
       ) : null}
 
+      {data.authorized ? (
+        <CaseSection
+          label="Understand your freeze notice"
+          description="Paste your bank's freeze notice or SMS and get a plain-English explanation. Guidance only — nothing is sent."
+          stagger={2}
+        >
+          <NoticeAnalyzer caseId={id} guestToken={guestToken} initialAnalysis={data.noticeAnalysis} />
+        </CaseSection>
+      ) : null}
+
+      {data.authorized ? (
+        <CaseSection
+          label="Documents to gather"
+          description="Based on your freeze, here's what helps your case — and why."
+          stagger={3}
+        >
+          <DocumentChecklist
+            items={getDocumentChecklist(data.freezeReason)}
+            gatheredTypes={data.gatheredEvidenceTypes}
+          />
+        </CaseSection>
+      ) : null}
+
+      {data.authorized ? (
+        <CaseSection
+          label="Your letters"
+          description="Review each escalation letter, then send it yourself. Nothing is sent for you."
+          stagger={4}
+        >
+          <LettersPanel caseId={id} letters={data.letters} guestToken={guestToken} />
+        </CaseSection>
+      ) : null}
+
       <CaseSection
         label="Evidence"
         description="Upload documents — each file is SHA-256 verified and checked automatically."
-        stagger={2}
+        stagger={5}
       >
         <EvidenceUploader caseId={id} guestToken={guestToken} />
+        <BundleButton caseId={id} guestToken={guestToken} />
       </CaseSection>
 
       {data.authorized ? (
         <CaseSection
           label="Activity"
           description="Review what our AI agents have done and anything flagged for your attention."
-          stagger={3}
         >
           <CaseDetailTabs events={data.events} />
         </CaseSection>
