@@ -4,6 +4,7 @@ import { buildNoticeAnalyzerSystemPrompt, buildNoticeAnalyzerUserText } from '@/
 import { extractJsonText, isNvidiaLlmConfigured, nvidiaChatCompletion } from '@/lib/llm/nvidia';
 import { NoticeAnalysisOutputSchema, type NoticeAnalysisOutput } from '@/lib/agents/schemas';
 import { hasGrantedConsent } from '@/lib/consent/record';
+import { retrieveRelevantContext } from '@/lib/rag/retrieve';
 import { redactPiiText } from '@/lib/redaction/pii';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { EVIDENCE_BUCKET } from '@/lib/evidence/storage-path';
@@ -79,11 +80,30 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
     content = userText;
   }
 
+  // Ground the analysis in the curated 2026 freeze/unfreeze corpus (RAG). Text
+  // input is used as the retrieval query; failures are non-fatal (ungrounded).
+  let grounding = '';
+  const queryText = (input.pasted_text ?? '').trim();
+  if (queryText) {
+    try {
+      const chunks = await retrieveRelevantContext(queryText, 5);
+      grounding = chunks
+        .map(
+          (c) =>
+            `- [${c.currency ?? '?'}/${c.confidence ?? '?'}] ${c.title}: ${c.content}` +
+            (c.source ? ` (Source: ${c.source})` : ''),
+        )
+        .join('\n');
+    } catch {
+      // grounding is best-effort
+    }
+  }
+
   const raw = await nvidiaChatCompletion({
     max_tokens: 2048,
     temperature: 0.1,
     messages: [
-      { role: 'system', content: buildNoticeAnalyzerSystemPrompt() },
+      { role: 'system', content: buildNoticeAnalyzerSystemPrompt(grounding) },
       { role: 'user', content },
     ],
   });
