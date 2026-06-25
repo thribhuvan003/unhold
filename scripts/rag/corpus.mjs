@@ -318,4 +318,58 @@ export const CORPUS = [
     tags: ['community', 'real-cases', 'expectations'],
     intended_use: ['next_steps_guidance'],
   },
+
+  // ── Group F — official GRM/MRM resolution layer (2026; portals verified live) ─
+  {
+    key: 'grm_portal',
+    title: 'GRM — Grievance Redressal Mechanism (for wrongly-frozen innocent accounts)',
+    content:
+      'The Grievance Redressal Mechanism (GRM) is the official MHA/I4C path for innocent people whose accounts were wrongly frozen or lien-marked during a cyber-fraud investigation. Portal: ncrp-grievanceredressal.mha.gov.in. It is a time-bound process where bank, police and I4C coordinate, and can involve video verification of the account holder. In many cases it is initiated via your bank branch. This is the PRIMARY official route Unhold should point an innocent receiver to — Unhold only helps prepare a stronger submission.',
+    source: 'MHA/I4C GRM portal (verified live 2026-06)',
+    source_url: 'https://ncrp-grievanceredressal.mha.gov.in/',
+    source_type: 'regulator',
+    confidence: 'high',
+    currency: 'current',
+    tags: ['grm', 'unfreeze', 'official', 'innocent-receiver'],
+    intended_use: ['next_steps_guidance', 'intake_classification'],
+  },
+  {
+    key: 'mrm_portal',
+    title: 'MRM — Money Restoration Module (for victims to reclaim money)',
+    content:
+      'The Money Restoration Module (MRM) is the official MHA/I4C module for fraud VICTIMS to claim back money that was frozen or recovered along the trail. Portal: mrm-ncrp.mha.gov.in. Use it with your existing NCRP complaint number after reporting on cybercrime.gov.in / 1930. MRM is the victim path; GRM is the innocent-receiver/wrongful-freeze path — Unhold should route the user to the right one.',
+    source: 'MHA/I4C MRM portal (verified live 2026-06)',
+    source_url: 'https://mrm-ncrp.mha.gov.in/',
+    source_type: 'regulator',
+    confidence: 'high',
+    currency: 'current',
+    tags: ['mrm', 'victim', 'official', 'restoration'],
+    intended_use: ['next_steps_guidance', 'intake_classification'],
+  },
+  {
+    key: 'grm_vs_io_vs_court',
+    title: 'Which route: GRM vs direct IO vs Ombudsman vs court',
+    content:
+      'Decision guide. Innocent account wrongly frozen in a cyber case → use the GRM portal (ncrp-grievanceredressal.mha.gov.in) AND submit a written representation to the Investigating Officer in parallel. Victim who lost money → MRM (mrm-ncrp.mha.gov.in). Bank misconduct (over-froze whole account, won\'t explain, ignored an IO release) after 30 days → RBI Ombudsman (cms.rbi.org.in). No progress in reasonable time → High Court writ under Art. 226 (many partial-release writs succeeded in 2026) — needs a lawyer; Unhold does not file. Start with the official portal; escalate only if it stalls.',
+    source: 'docs/RESEARCH_FREEZE_DOMAIN.md + GRM/MRM portals 2026',
+    source_url: 'https://ncrp-grievanceredressal.mha.gov.in/',
+    source_type: 'regulator',
+    confidence: 'high',
+    currency: 'current',
+    tags: ['routing', 'grm', 'mrm', 'ombudsman', 'court'],
+    intended_use: ['next_steps_guidance'],
+  },
+  {
+    key: 'scam_warning_unfreeze_agents',
+    title: 'Warning: fake "unfreeze agents" and lawyers',
+    content:
+      'Desperate users with frozen accounts are targeted by fake "unfreeze agents" and lawyers who demand money up front and promise quick unfreezing. The official routes — NCRP/1930, GRM, MRM, the Investigating Officer, RBI Ombudsman — are FREE. Never pay anyone (including anyone claiming to be police) to "release" your account. Unhold must surface this warning prominently and never imply it can guarantee an unfreeze.',
+    source: 'Consumer press + community reports 2025-2026',
+    source_url: '',
+    source_type: 'consumer_press',
+    confidence: 'med',
+    currency: 'current',
+    tags: ['scam', 'warning', 'safety'],
+    intended_use: ['next_steps_guidance'],
+  },
 ];
