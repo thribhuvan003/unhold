@@ -1,7 +1,19 @@
 # Supermemory — persistent memory for this project
 
-Every Claude session has **long-term memory** via the Supermemory MCP server.
-Use it so knowledge carries across sessions instead of being re-derived each time.
+This project has **long-term memory** via Supermemory so knowledge carries across
+sessions instead of being re-derived each time. There are two surfaces:
+
+- **App runtime (code):** the official TypeScript SDK, wrapped in
+  [`lib/memory/index.ts`](../lib/memory/index.ts) — `remember()`, `recall()`,
+  `buildContext()`, `memoryEnabled()`. Backend is Supermemory **cloud**; the key
+  is `SUPERMEMORY_API_KEY` (server-only, in `.env.local`, gitignored — see
+  `.env.example`). Set `SUPERMEMORY_BASE_URL` to target a local
+  `npx supermemory local` server instead. With no key, every call is a safe
+  no-op. CLI recorder: `node --env-file=.env.local scripts/memory/record.mjs "fact"`.
+- **Claude sessions (optional MCP):** the `supermemory` MCP tools below, available
+  only when that MCP server is connected (`/mcp`).
+
+Either way the container tag is always `lienliberator`.
 
 ## The one rule
 

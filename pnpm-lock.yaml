@@ -86,6 +86,9 @@ importers:
       sharp:
         specifier: 0.34.2
         version: 0.34.2
+      supermemory:
+        specifier: 4.24.12
+        version: 4.24.12
       tailwind-merge:
         specifier: 3.3.0
         version: 3.3.0
@@ -3731,6 +3734,10 @@ packages:
   supabase@2.24.3:
     resolution: {integrity: sha512-mh9pi4C5pM159GyYE+Rv9qL8kg1kqzimQ4FBr6UH/WhzB/VcDaA+vpn/VeRC3CGVKr+d89Ra5MjDWg+/UoPpXg==}
     engines: {npm: '>=8'}
+    hasBin: true
+
+  supermemory@4.24.12:
+    resolution: {integrity: sha512-xAFextuqk4JuoW33jJaFGqT1oMppN2IgfWUrV18Fv3qAAZ6M1SR1tb+7EBq8vrEQIx4iY2MQh5p+qnfL6lI8Yw==}
     hasBin: true
 
   supports-color@7.2.0:
@@ -8000,6 +8007,8 @@ snapshots:
       tar: 7.4.3
     transitivePeerDependencies:
       - supports-color
+
+  supermemory@4.24.12: {}
 
   supports-color@7.2.0:
     dependencies:
