@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { buildIntakeSystemPrompt, buildIntakeUserMessage } from '@/lib/agents/prompts/intake';
-import { extractJsonText, isNvidiaLlmConfigured, nvidiaChatCompletion } from '@/lib/llm/nvidia';
+import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { buildIntakeManifest } from '@/lib/agents/intake/manifest';
 import { classifyIntakeFromRules } from '@/lib/agents/intake/rules';
 import type { IntakeClassifierInput } from '@/lib/agents/intake/types';
@@ -60,7 +60,7 @@ export async function loadIntakeClassifierInput(
 }
 
 async function classifyWithLlm(input: IntakeClassifierInput): Promise<IntakeClassificationOutput> {
-  if (!isNvidiaLlmConfigured()) {
+  if (!isLlmConfigured()) {
     return classifyIntakeFromRules(input);
   }
 
@@ -73,10 +73,10 @@ async function classifyWithLlm(input: IntakeClassifierInput): Promise<IntakeClas
     return classifyIntakeFromRules(input);
   }
 
-  const text = await nvidiaChatCompletion({
-    model,
+  const text = await chatCompletion({
     max_tokens: 2048,
     temperature: 0.2,
+    response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: buildIntakeSystemPrompt() },
       { role: 'user', content: buildIntakeUserMessage(input) },

@@ -1,14 +1,14 @@
 import 'server-only';
 
 import { buildNoticeAnalyzerSystemPrompt, buildNoticeAnalyzerUserText } from '@/lib/agents/notice/prompt';
-import { extractJsonText, isNvidiaLlmConfigured, nvidiaChatCompletion } from '@/lib/llm/nvidia';
+import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { NoticeAnalysisOutputSchema, type NoticeAnalysisOutput } from '@/lib/agents/schemas';
 import { hasGrantedConsent } from '@/lib/consent/record';
 import { retrieveRelevantContext } from '@/lib/rag/retrieve';
 import { redactPiiText } from '@/lib/redaction/pii';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { EVIDENCE_BUCKET } from '@/lib/evidence/storage-path';
-import type { LlmContentPart } from '@/lib/llm/nvidia';
+import type { LlmContentPart } from '@/lib/llm/chat';
 
 /** NVIDIA NIM vision input only accepts these formats — not application/pdf (D2: PDF deferred). */
 const SUPPORTED_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/gif']);
@@ -47,7 +47,7 @@ function redactOutput(output: NoticeAnalysisOutput): NoticeAnalysisOutput {
  * or unsupported input. The caller surfaces a manual-entry fallback on null.
  */
 export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeAnalysisOutput | null> {
-  if (!isNvidiaLlmConfigured()) return null;
+  if (!isLlmConfigured()) return null;
 
   // Consent is required before any notice content reaches a third-party AI. Fail closed.
   if (!(await hasGrantedConsent(input.case_id, 'ai_ocr_processing'))) return null;
@@ -99,11 +99,11 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
     }
   }
 
-  // Model routing: a strong, fast instruction-follower in JSON mode for text
-  // (reliable enum/schema output, ~4s) vs the multimodal default for image OCR.
+  // Provider routing (lib/llm/chat): text → Groq llama-3.3-70b in JSON mode
+  // (~0.3s, reliable enum/schema), NVIDIA fallback; image → NVIDIA multimodal OCR.
   const isText = input.input_kind === 'text';
-  const raw = await nvidiaChatCompletion({
-    model: isText ? (process.env.NVIDIA_TEXT_MODEL ?? 'meta/llama-3.3-70b-instruct') : undefined,
+  const raw = await chatCompletion({
+    vision: !isText,
     response_format: isText ? { type: 'json_object' } : undefined,
     max_tokens: 2048,
     temperature: 0.1,

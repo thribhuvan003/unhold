@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { buildVerifierSystemPrompt, buildVerifierUserText } from '@/lib/agents/prompts/verifier';
-import { extractJsonText, isNvidiaLlmConfigured, nvidiaChatCompletion } from '@/lib/llm/nvidia';
+import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { VerifierResultOutputSchema, type VerifierResultOutput } from '@/lib/agents/schemas';
 import { validateVerifierOutput } from '@/lib/agents/validators';
 import { hasGrantedConsent } from '@/lib/consent/record';
@@ -81,7 +81,7 @@ export async function loadVerifierInput(evidenceId: string): Promise<VerifierInp
 }
 
 async function extractWithLlm(input: VerifierInput): Promise<VerifierResultOutput | null> {
-  if (!isNvidiaLlmConfigured()) return null;
+  if (!isLlmConfigured()) return null;
   // ai_ocr_processing consent is not yet grantable anywhere in the product UI
   // (tracked as a follow-up) — this check fails safe until that's wired up.
   if (!(await hasGrantedConsent(input.case_id, 'ai_ocr_processing'))) return null;
@@ -96,7 +96,8 @@ async function extractWithLlm(input: VerifierInput): Promise<VerifierResultOutpu
   const buffer = Buffer.from(await fileData.arrayBuffer());
   const dataUri = `data:${input.mime_type};base64,${buffer.toString('base64')}`;
 
-  const text = await nvidiaChatCompletion({
+  const text = await chatCompletion({
+    vision: true,
     max_tokens: 2048,
     temperature: 0.1,
     messages: [

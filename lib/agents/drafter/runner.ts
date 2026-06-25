@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { buildTemplateFallback, type TemplateLevel } from '@/lib/agents/fallback/index';
-import { extractJsonText, isNvidiaLlmConfigured, nvidiaChatCompletion } from '@/lib/llm/nvidia';
+import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { buildDrafterSystemPrompt } from '@/lib/agents/prompts/drafter';
 import { routeModel } from '@/lib/agents/router';
 import {
@@ -133,7 +133,7 @@ export async function loadDrafterContext(
 async function draftWithLlm(
   ctx: DrafterCaseContext,
 ): Promise<LetterDraftOutput | null> {
-  if (!isNvidiaLlmConfigured()) return null;
+  if (!isLlmConfigured()) return null;
   if (!(await hasGrantedConsent(ctx.case_id, 'cross_border_ai'))) return null;
 
   const model = routeModel('DRAFTER', {
@@ -142,10 +142,10 @@ async function draftWithLlm(
   });
   if (model === 'RULE_ENGINE' || model === 'HUMAN_OPS') return null;
 
-  const text = await nvidiaChatCompletion({
-    model,
+  const text = await chatCompletion({
     max_tokens: 4096,
     temperature: 0.4,
+    response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: buildDrafterSystemPrompt(ctx.level) },
       {
