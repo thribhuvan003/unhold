@@ -99,7 +99,12 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
     }
   }
 
+  // Model routing: a strong, fast instruction-follower in JSON mode for text
+  // (reliable enum/schema output, ~4s) vs the multimodal default for image OCR.
+  const isText = input.input_kind === 'text';
   const raw = await nvidiaChatCompletion({
+    model: isText ? (process.env.NVIDIA_TEXT_MODEL ?? 'meta/llama-3.3-70b-instruct') : undefined,
+    response_format: isText ? { type: 'json_object' } : undefined,
     max_tokens: 2048,
     temperature: 0.1,
     messages: [
