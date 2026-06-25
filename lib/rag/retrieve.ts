@@ -6,6 +6,7 @@ import 'server-only';
 
 import { retrieveGrKnowledge, type GrKnowledgeChunk } from './grm-knowledge';
 import { embedText } from './embed';
+import { rerankPassages } from './rerank';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export type RetrievedChunk = GrKnowledgeChunk & {
@@ -50,13 +51,24 @@ export async function retrieveRelevantContext(query: string, max = 4): Promise<R
         fn: string,
         args: Record<string, unknown>,
       ) => Promise<{ data: MatchRow[] | null; error: unknown }>;
+      // Recall: pull a wider candidate pool by vector similarity, then rerank.
+      const candidateCount = Math.max(max * 3, 12);
       const { data, error } = await rpc('match_knowledge_chunks', {
         query_embedding: `[${embedding.join(',')}]`,
-        match_count: max,
+        match_count: candidateCount,
       });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        return (data as MatchRow[]).map((d) => ({
+        const rows = data as MatchRow[];
+        // Precision: cross-encoder rerank the candidates, keep the top `max`.
+        // On reranker failure, fall back to the vector order.
+        const order = await rerankPassages(
+          query,
+          rows.map((r) => `${r.title}\n${r.content}`),
+          max,
+        );
+        const top = order ? order.map((i) => rows[i]).filter(Boolean) : rows.slice(0, max);
+        return top.map((d) => ({
           id: d.id,
           title: d.title,
           content: d.content,
