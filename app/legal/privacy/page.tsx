@@ -13,7 +13,7 @@ export default function PrivacyPage() {
 
       <section className="mt-8 space-y-4 text-sm leading-relaxed text-slate-800">
         <p>
-          LienLiberator processes case and evidence data to help you track bank freeze matters.
+          Unhold processes case and evidence data to help you track bank freeze matters.
           Financial case data is retained while your case is active and for three years after
           closure. Audit logs are retained for eight years.
         </p>

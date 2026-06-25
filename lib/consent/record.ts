@@ -13,7 +13,7 @@ const CONSENT_TEXT_BY_TYPE: Partial<Record<ConsentType, string>> = {
   evidence_upload: DISCLAIMER_BLOCKS.G,
   ai_ocr_processing: DISCLAIMER_BLOCKS.F,
   cross_border_ai: DISCLAIMER_BLOCKS.F,
-  escalation_send: `I consent to LienLiberator preparing RBI CMS escalation materials. ${DISCLAIMER_BLOCKS.C}`,
+  escalation_send: `I consent to Unhold preparing RBI CMS escalation materials. ${DISCLAIMER_BLOCKS.C}`,
   public_stats_opt_in: DISCLAIMER_BLOCKS.E,
   whatsapp_sms_reminders: 'I consent to receive case reminders via WhatsApp or SMS.',
   fee_agreement: DISCLAIMER_BLOCKS.D,

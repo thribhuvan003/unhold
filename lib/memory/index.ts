@@ -3,7 +3,7 @@ import 'server-only';
 import Supermemory from 'supermemory';
 
 /**
- * Persistent long-term memory for LienLiberator, backed by Supermemory.
+ * Persistent long-term memory for Unhold, backed by Supermemory.
  *
  * Everything is scoped to a stable `containerTag` so this project's memory stays
  * isolated from other projects. In this repo the tag is always `lienliberator`

@@ -1,5 +1,5 @@
 /**
- * LienLiberator — Build harness state machine types
+ * Unhold — Build harness state machine types
  *
  * Product runtime agents (INTAKE, DRAFTER, …) live in lib/agents/.
  * This module types the **development harness** loop only.

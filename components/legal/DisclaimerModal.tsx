@@ -54,7 +54,7 @@ export function DisclaimerModal({ open, onAccept, onDecline }: DisclaimerModalPr
           <div className="mt-4">
             <ConsentCheckbox
               id="intake-disclaimer-accept"
-              label="I have read and agree to the above. I understand LienLiberator is not a law firm and does not guarantee outcomes."
+              label="I have read and agree to the above. I understand Unhold is not a law firm and does not guarantee outcomes."
               checked={accepted}
               onChange={setAccepted}
             />
