@@ -10,6 +10,7 @@ import { enqueueHumanGate } from '@/lib/ops/human-gate';
 import { appendSwarmEvent } from '@/lib/swarm/append-event';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { EVIDENCE_BUCKET } from '@/lib/evidence/storage-path';
+import { downscaleForVision } from '@/lib/evidence/prepare-image';
 import type { Database, Json } from '@/supabase/database.types';
 import type { AgentRunResult } from '@/lib/agents/runner';
 
@@ -93,8 +94,10 @@ async function extractWithLlm(input: VerifierInput): Promise<VerifierResultOutpu
 
   if (error || !fileData) return null;
 
-  const buffer = Buffer.from(await fileData.arrayBuffer());
-  const dataUri = `data:${input.mime_type};base64,${buffer.toString('base64')}`;
+  const original = Buffer.from(await fileData.arrayBuffer());
+  // Downscale before vision OCR — big latency win on multi-MB phone photos.
+  const { buffer, mime } = await downscaleForVision(original, input.mime_type ?? 'image/jpeg');
+  const dataUri = `data:${mime};base64,${buffer.toString('base64')}`;
 
   const text = await chatCompletion({
     vision: true,

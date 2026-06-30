@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { downscaleForVision } from '@/lib/evidence/prepare-image';
 import { buildNoticeAnalyzerSystemPrompt, buildNoticeAnalyzerUserText } from '@/lib/agents/notice/prompt';
 import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { NoticeAnalysisOutputSchema, type NoticeAnalysisOutput } from '@/lib/agents/schemas';
@@ -69,8 +70,10 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
     const { data: fileData, error } = await supabase.storage.from(EVIDENCE_BUCKET).download(input.storage_path);
     if (error || !fileData) return null;
 
-    const buffer = Buffer.from(await fileData.arrayBuffer());
-    const dataUri = `data:${input.mime_type};base64,${buffer.toString('base64')}`;
+    const original = Buffer.from(await fileData.arrayBuffer());
+    // Downscale before vision OCR — big latency win on multi-MB phone photos.
+    const { buffer: imageBuffer, mime: imageMime } = await downscaleForVision(original, input.mime_type);
+    const dataUri = `data:${imageMime};base64,${imageBuffer.toString('base64')}`;
     content = [
       { type: 'text', text: userText },
       { type: 'image_url', image_url: { url: dataUri } },
