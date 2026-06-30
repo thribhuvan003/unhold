@@ -70,7 +70,7 @@ function detectFreezeReason(input: IntakeClassifierInput): IntakeClassificationO
   if (blob.includes('kyc') || blob.includes('re-kyc')) return 'kyc_expired';
   if (blob.includes('cheque') && blob.includes('dishonour')) return 'cheque_dishonour';
   if (blob.includes('bnss') || blob.includes('police notice')) return 'police_notice_bnss106';
-  if (blob.includes('str') || blob.includes('suspicious transaction')) return 'bank_str';
+  if (/\bstr\b/.test(blob) || blob.includes('suspicious transaction')) return 'bank_str';
   if (blob.includes('nomination') || blob.includes('death')) return 'death_nomination_dispute';
   return 'cyber_upi_chain';
 }

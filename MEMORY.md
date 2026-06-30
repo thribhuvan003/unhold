@@ -241,3 +241,19 @@ This makes the project maximally useful for the exact user: panicked innocent re
 **Rejected**: Treating those as product failures. They are local verification-shell issues, not app behavior.
 
 **Tag:** lienliberator
+
+---
+
+## 2026-06-30: Real-user acceptance scenarios + workflow access guards
+
+**Decision**: Added a deterministic real-user acceptance fixture/test for 8 high-value Unhold scenarios: cyber partial/full freeze, vague wrongful full freeze, GRM-ready NCRP case, MRM-style victim case, tax attachment, court order, KYC/re-KYC freeze, and multi-bank cyber trail.
+
+**Why**: These scenarios reflect the real use cases the product must handle before deeper RAG/multi-agent work. The tests verify intake classification, freeze type, victim role, checklist evidence types, tax DB boundary mapping, and copy-only letter posture without requiring live LLM calls.
+
+**Bug found/fixed**: Intake rules classified words like "instructions" and "restricted" as `bank_str` because STR detection used a raw substring check. It now uses token-level `\bstr\b` matching plus "suspicious transaction".
+
+**Security/product decision**: Added explicit auth + case access guards to `/api/v1/cases/[id]/user-actions` and `/api/v1/cases/[id]/escalations`. GET requires viewer access; POST/PATCH require editor access. Contract tests confirm unauthenticated/non-owner side effects are blocked and owner flow still works.
+
+**Rejected**: Heavy Playwright end-to-end upload/job simulation in this slice; deterministic unit/contract seams give better signal until storage/job workers are explicitly mocked or seeded.
+
+**Tag:** lienliberator
