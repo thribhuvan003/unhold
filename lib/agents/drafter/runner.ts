@@ -3,6 +3,7 @@ import 'server-only';
 import { buildTemplateFallback, type TemplateLevel } from '@/lib/agents/fallback/index';
 import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { buildDrafterSystemPrompt } from '@/lib/agents/prompts/drafter';
+import { retrieveRelevantContext } from '@/lib/rag/retrieve';
 import { routeModel } from '@/lib/agents/router';
 import {
   LetterDraftOutputSchema,
@@ -142,12 +143,36 @@ async function draftWithLlm(
   });
   if (model === 'RULE_ENGINE' || model === 'HUMAN_OPS') return null;
 
+  // Ground the letter in the curated 2026 corpus (BNSS 106/107 case law, MHA SOP,
+  // RBI Ombudsman) so the draft can cite current law accurately. Best-effort.
+  let grounding = '';
+  try {
+    const query =
+      `Escalation letter ${ctx.level} to ${LEVEL_CHANNEL[ctx.level]} for an innocent bank/UPI freeze case; ` +
+      `lien limited to the disputed amount. ${String(ctx.intake_json.narration ?? '')} ${String(ctx.intake_json.freeze_reason ?? '')}`;
+    const chunks = await retrieveRelevantContext(query, 5);
+    if (chunks.length > 0) {
+      grounding =
+        '\n\nGROUNDING — current (2026) India freeze/unfreeze law you may cite accurately where relevant. ' +
+        'Use ONLY items tagged [current]/[high]; never cite [verify]/[low] items as settled law, and never invent a citation.\n' +
+        chunks
+          .map(
+            (c) =>
+              `- [${c.currency ?? '?'}/${c.confidence ?? '?'}] ${c.title}: ${c.content}` +
+              (c.source ? ` (Source: ${c.source})` : ''),
+          )
+          .join('\n');
+    }
+  } catch {
+    // grounding is best-effort
+  }
+
   const text = await chatCompletion({
     max_tokens: 4096,
     temperature: 0.4,
     response_format: { type: 'json_object' },
     messages: [
-      { role: 'system', content: buildDrafterSystemPrompt(ctx.level) },
+      { role: 'system', content: buildDrafterSystemPrompt(ctx.level) + grounding },
       {
         role: 'user',
         content: JSON.stringify({

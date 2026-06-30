@@ -5,6 +5,7 @@ const chatCompletionMock = vi.fn();
 const isLlmConfiguredMock = vi.fn();
 const hasGrantedConsentMock = vi.fn();
 const storageDownloadMock = vi.fn();
+const extractPdfTextMock = vi.fn();
 
 vi.mock('@/lib/llm/chat', async () => {
   const actual = await vi.importActual<typeof import('@/lib/llm/chat')>('@/lib/llm/chat');
@@ -23,6 +24,10 @@ vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     storage: { from: () => ({ download: () => storageDownloadMock() }) },
   }),
+}));
+
+vi.mock('@/lib/evidence/prepare-pdf', () => ({
+  extractPdfText: (...args: unknown[]) => extractPdfTextMock(...args),
 }));
 
 const VALID_MODEL_JSON = JSON.stringify({
@@ -60,6 +65,7 @@ describe('analyzeNotice', () => {
     isLlmConfiguredMock.mockReset();
     hasGrantedConsentMock.mockReset();
     storageDownloadMock.mockReset();
+    extractPdfTextMock.mockReset();
   });
 
   async function importRunner() {
@@ -84,9 +90,17 @@ describe('analyzeNotice', () => {
     expect(chatCompletionMock).not.toHaveBeenCalled();
   });
 
-  it('returns null for an unsupported image mime (e.g. PDF — deferred)', async () => {
+  it('reads a digital PDF via text extraction and returns validated output', async () => {
     isLlmConfiguredMock.mockReturnValue(true);
     hasGrantedConsentMock.mockResolvedValue(true);
+    storageDownloadMock.mockResolvedValue({
+      data: { arrayBuffer: async () => new TextEncoder().encode('%PDF-1.4 digital notice').buffer },
+      error: null,
+    });
+    extractPdfTextMock.mockResolvedValue(
+      'STATE BANK OF INDIA lien of Rs 2000 on your account from a Cyber Crime Police Station NCRP complaint',
+    );
+    chatCompletionMock.mockResolvedValue(VALID_MODEL_JSON);
     const { analyzeNotice } = await importRunner();
     const out = await analyzeNotice({
       case_id: 'c1',
@@ -94,8 +108,27 @@ describe('analyzeNotice', () => {
       storage_path: 'c1/notice.pdf',
       mime_type: 'application/pdf',
     });
+    expect(out).not.toBeNull();
+    expect(out?.freeze_reason).toBe('cyber_upi_chain');
+    expect(extractPdfTextMock).toHaveBeenCalled();
+  });
+
+  it('returns null for a scanned PDF with no extractable text (falls back to photo upload)', async () => {
+    isLlmConfiguredMock.mockReturnValue(true);
+    hasGrantedConsentMock.mockResolvedValue(true);
+    storageDownloadMock.mockResolvedValue({
+      data: { arrayBuffer: async () => new TextEncoder().encode('%PDF-1.4 scanned image').buffer },
+      error: null,
+    });
+    extractPdfTextMock.mockResolvedValue('');
+    const { analyzeNotice } = await importRunner();
+    const out = await analyzeNotice({
+      case_id: 'c1',
+      input_kind: 'image',
+      storage_path: 'c1/scan.pdf',
+      mime_type: 'application/pdf',
+    });
     expect(out).toBeNull();
-    expect(storageDownloadMock).not.toHaveBeenCalled();
     expect(chatCompletionMock).not.toHaveBeenCalled();
   });
 

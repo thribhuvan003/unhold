@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { downscaleForVision } from '@/lib/evidence/prepare-image';
+import { extractPdfText } from '@/lib/evidence/prepare-pdf';
 import { buildNoticeAnalyzerSystemPrompt, buildNoticeAnalyzerUserText } from '@/lib/agents/notice/prompt';
 import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat';
 import { NoticeAnalysisOutputSchema, type NoticeAnalysisOutput } from '@/lib/agents/schemas';
@@ -12,7 +13,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { EVIDENCE_BUCKET } from '@/lib/evidence/storage-path';
 import type { LlmContentPart } from '@/lib/llm/chat';
 
-/** NVIDIA NIM vision input only accepts these formats — not application/pdf (D2: PDF deferred). */
+/** Raster formats handled via vision OCR. PDFs are read via text extraction (prepare-pdf). */
 const SUPPORTED_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/gif']);
 
 export type NoticeAnalyzerInput = {
@@ -54,43 +55,50 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
   // Consent is required before any notice content reaches a third-party AI. Fail closed.
   if (!(await hasGrantedConsent(input.case_id, 'ai_ocr_processing'))) return null;
 
-  const userText = buildNoticeAnalyzerUserText(
-    input.input_kind,
-    input.pasted_text ?? null,
-    input.frozen_amount_paise ?? null,
-  );
-
   let content: string | LlmContentPart[];
+  let isVisionInput = false;
+  // Text used both to prompt and to query the RAG corpus (empty for image OCR).
+  let groundingQuery = '';
 
   if (input.input_kind === 'image') {
-    if (!input.storage_path || !input.mime_type || !SUPPORTED_IMAGE_MIMES.has(input.mime_type)) {
-      return null;
-    }
+    if (!input.storage_path || !input.mime_type) return null;
     const supabase = createAdminClient();
     const { data: fileData, error } = await supabase.storage.from(EVIDENCE_BUCKET).download(input.storage_path);
     if (error || !fileData) return null;
-
     const original = Buffer.from(await fileData.arrayBuffer());
-    // Downscale before vision OCR — big latency win on multi-MB phone photos.
-    const { buffer: imageBuffer, mime: imageMime } = await downscaleForVision(original, input.mime_type);
-    const dataUri = `data:${imageMime};base64,${imageBuffer.toString('base64')}`;
-    content = [
-      { type: 'text', text: userText },
-      { type: 'image_url', image_url: { url: dataUri } },
-    ];
+
+    if (input.mime_type === 'application/pdf') {
+      // Digital PDF (bank notice / statement) → extract text and analyze as text
+      // (grounded, fast). Scanned PDFs have no extractable text → return null →
+      // the caller surfaces the photo-upload / manual-entry fallback.
+      const pdfText = await extractPdfText(original);
+      if (pdfText.length < 40) return null;
+      groundingQuery = pdfText;
+      content = buildNoticeAnalyzerUserText('text', pdfText, input.frozen_amount_paise ?? null);
+    } else if (SUPPORTED_IMAGE_MIMES.has(input.mime_type)) {
+      // Downscale before vision OCR — big latency win on multi-MB phone photos.
+      const { buffer, mime } = await downscaleForVision(original, input.mime_type);
+      content = [
+        { type: 'text', text: buildNoticeAnalyzerUserText('image', null, input.frozen_amount_paise ?? null) },
+        { type: 'image_url', image_url: { url: `data:${mime};base64,${buffer.toString('base64')}` } },
+      ];
+      isVisionInput = true;
+    } else {
+      return null; // unsupported mime
+    }
   } else {
     const text = (input.pasted_text ?? '').trim();
     if (!text) return null;
-    content = userText;
+    groundingQuery = text;
+    content = buildNoticeAnalyzerUserText('text', text, input.frozen_amount_paise ?? null);
   }
 
-  // Ground the analysis in the curated 2026 freeze/unfreeze corpus (RAG). Text
-  // input is used as the retrieval query; failures are non-fatal (ungrounded).
+  // Ground the analysis in the curated 2026 freeze/unfreeze corpus (RAG) using the
+  // notice text (pasted or PDF-extracted). Best-effort; empty for image OCR.
   let grounding = '';
-  const queryText = (input.pasted_text ?? '').trim();
-  if (queryText) {
+  if (groundingQuery) {
     try {
-      const chunks = await retrieveRelevantContext(queryText, 5);
+      const chunks = await retrieveRelevantContext(groundingQuery, 5);
       grounding = chunks
         .map(
           (c) =>
@@ -103,12 +111,11 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
     }
   }
 
-  // Provider routing (lib/llm/chat): text → Groq llama-3.3-70b in JSON mode
-  // (~0.3s, reliable enum/schema), NVIDIA fallback; image → NVIDIA multimodal OCR.
-  const isText = input.input_kind === 'text';
+  // text / PDF text → Groq llama-3.3-70b in JSON mode (~0.3s, reliable schema);
+  // image → Groq vision (llama-4-scout), NVIDIA fallback.
   const raw = await chatCompletion({
-    vision: !isText,
-    response_format: isText ? { type: 'json_object' } : undefined,
+    vision: isVisionInput,
+    response_format: isVisionInput ? undefined : { type: 'json_object' },
     max_tokens: 2048,
     temperature: 0.1,
     messages: [
