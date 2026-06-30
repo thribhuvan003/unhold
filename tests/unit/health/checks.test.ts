@@ -31,10 +31,16 @@ describe('collectHealthChecks', () => {
     expect(report.checks.find((c) => c.key === 'GUEST_JWT_SECRET')?.configured).toBe(false);
   });
 
-  it('missing NVIDIA key keeps ok=true (required) but ai_ready=false (degrades, not errors)', () => {
-    const report = collectHealthChecks({ ...FULL_ENV, NVIDIA_API_KEYS: '' });
+  it('missing both Groq and NVIDIA keeps ok=true (required) but ai_ready=false (degrades, not errors)', () => {
+    const report = collectHealthChecks({ ...FULL_ENV, NVIDIA_API_KEYS: '', GROQ_API_KEYS: '' });
     expect(report.ok).toBe(true);
     expect(report.ai_ready).toBe(false);
+  });
+
+  it('Groq alone makes ai_ready=true (Groq is the primary generation provider)', () => {
+    const report = collectHealthChecks({ ...FULL_ENV, NVIDIA_API_KEYS: '', GROQ_API_KEYS: 'gsk-1,gsk-2' });
+    expect(report.ai_ready).toBe(true);
+    expect(report.checks.find((c) => c.key === 'GROQ_API_KEYS')?.configured).toBe(true);
   });
 
   it('accepts single-key NVIDIA fallbacks', () => {

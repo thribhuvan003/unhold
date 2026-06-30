@@ -24,3 +24,4 @@ export function assertEvidenceUploadConstraints(mimeType: string, fileSizeBytes:
 }
 
 export const EVIDENCE_BUCKET = 'evidence';
+export const BUNDLE_BUCKET = 'bundles';

@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { runDrafterJob } from '@/lib/agents/drafter/runner';
+import { runEvidenceBundleJob } from '@/lib/agents/evidence/runner';
 import { runIntakeJob } from '@/lib/agents/intake/runner';
 import { runVerifierJob } from '@/lib/agents/verifier/runner';
 import {
@@ -40,18 +41,12 @@ export async function runAgentJob(job: AgentJobRow): Promise<AgentRunResult> {
   if (job.job_type === 'verifier_extract') {
     return runVerifierJob(job);
   }
+  if (job.job_type === 'evidence_bundle') {
+    return runEvidenceBundleJob(job);
+  }
 
   const schema = OUTPUT_SCHEMA_BY_JOB[job.job_type];
   if (!schema) {
-    if (job.agent_role === 'EVIDENCE') {
-      return {
-        output: {
-          bundle_sha256: null,
-          manifest_json: {},
-          status: 'pending_implementation',
-        },
-      };
-    }
     throw new Error(`unknown_job_type: ${job.job_type}`);
   }
 

@@ -3,17 +3,17 @@ import { VerifierResultOutputSchema, type VerifierResultOutput } from '@/lib/age
 import { validateVerifierOutput } from '@/lib/agents/validators';
 import { redactExtractedFields, redactForgeryFlags, redactMismatches, redactPiiText } from '@/lib/redaction/pii';
 
-const nvidiaChatCompletionMock = vi.fn();
-const isNvidiaLlmConfiguredMock = vi.fn();
+const chatCompletionMock = vi.fn();
+const isLlmConfiguredMock = vi.fn();
 const hasGrantedConsentMock = vi.fn();
 const storageDownloadMock = vi.fn();
 
-vi.mock('@/lib/llm/nvidia', async () => {
-  const actual = await vi.importActual<typeof import('@/lib/llm/nvidia')>('@/lib/llm/nvidia');
+vi.mock('@/lib/llm/chat', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/llm/chat')>('@/lib/llm/chat');
   return {
     ...actual,
-    nvidiaChatCompletion: (...args: unknown[]) => nvidiaChatCompletionMock(...args),
-    isNvidiaLlmConfigured: () => isNvidiaLlmConfiguredMock(),
+    chatCompletion: (...args: unknown[]) => chatCompletionMock(...args),
+    isLlmConfigured: () => isLlmConfiguredMock(),
   };
 });
 
@@ -161,8 +161,8 @@ describe('redactMismatches', () => {
 
 describe('runVerifier', () => {
   beforeEach(() => {
-    nvidiaChatCompletionMock.mockReset();
-    isNvidiaLlmConfiguredMock.mockReset();
+    chatCompletionMock.mockReset();
+    isLlmConfiguredMock.mockReset();
     hasGrantedConsentMock.mockReset();
     storageDownloadMock.mockReset();
   });
@@ -183,11 +183,11 @@ describe('runVerifier', () => {
 
     expect(output.human_review_required).toBe(true);
     expect(output.confidence).toBe(0);
-    expect(nvidiaChatCompletionMock).not.toHaveBeenCalled();
+    expect(chatCompletionMock).not.toHaveBeenCalled();
   });
 
   it('does not skip a supported image mime type', async () => {
-    isNvidiaLlmConfiguredMock.mockReturnValue(false);
+    isLlmConfiguredMock.mockReturnValue(false);
     const { runVerifier } = await importRunner();
     const output = await runVerifier({
       evidence_id: 'ev-1',
@@ -200,11 +200,11 @@ describe('runVerifier', () => {
     // Falls back to no-OCR because the LLM isn't configured, but it did
     // reach that branch rather than being skipped for format reasons.
     expect(output.human_review_required).toBe(true);
-    expect(nvidiaChatCompletionMock).not.toHaveBeenCalled();
+    expect(chatCompletionMock).not.toHaveBeenCalled();
   });
 
   it('short-circuits to no-OCR when consent has not been granted', async () => {
-    isNvidiaLlmConfiguredMock.mockReturnValue(true);
+    isLlmConfiguredMock.mockReturnValue(true);
     hasGrantedConsentMock.mockResolvedValue(false);
     const { runVerifier } = await importRunner();
 
@@ -219,17 +219,17 @@ describe('runVerifier', () => {
     expect(output.human_review_required).toBe(true);
     expect(hasGrantedConsentMock).toHaveBeenCalledWith('case-1', 'ai_ocr_processing');
     expect(storageDownloadMock).not.toHaveBeenCalled();
-    expect(nvidiaChatCompletionMock).not.toHaveBeenCalled();
+    expect(chatCompletionMock).not.toHaveBeenCalled();
   });
 
   it('returns the redacted, validated LLM output on a successful extraction', async () => {
-    isNvidiaLlmConfiguredMock.mockReturnValue(true);
+    isLlmConfiguredMock.mockReturnValue(true);
     hasGrantedConsentMock.mockResolvedValue(true);
     storageDownloadMock.mockResolvedValue({
       data: { arrayBuffer: async () => new TextEncoder().encode('fake-image-bytes').buffer },
       error: null,
     });
-    nvidiaChatCompletionMock.mockResolvedValue(
+    chatCompletionMock.mockResolvedValue(
       JSON.stringify({
         confidence: 0.9,
         field_confidence: { bank_name: 0.9 },
@@ -261,13 +261,13 @@ describe('runVerifier', () => {
   });
 
   it('falls back to no-OCR when the model response is not parsable JSON', async () => {
-    isNvidiaLlmConfiguredMock.mockReturnValue(true);
+    isLlmConfiguredMock.mockReturnValue(true);
     hasGrantedConsentMock.mockResolvedValue(true);
     storageDownloadMock.mockResolvedValue({
       data: { arrayBuffer: async () => new TextEncoder().encode('fake-image-bytes').buffer },
       error: null,
     });
-    nvidiaChatCompletionMock.mockResolvedValue('not json at all');
+    chatCompletionMock.mockResolvedValue('not json at all');
 
     const { runVerifier } = await importRunner();
     const output = await runVerifier({
@@ -283,13 +283,13 @@ describe('runVerifier', () => {
   });
 
   it('falls back to no-OCR (keeping forgery_risk) when the model returns an internally inconsistent result', async () => {
-    isNvidiaLlmConfiguredMock.mockReturnValue(true);
+    isLlmConfiguredMock.mockReturnValue(true);
     hasGrantedConsentMock.mockResolvedValue(true);
     storageDownloadMock.mockResolvedValue({
       data: { arrayBuffer: async () => new TextEncoder().encode('fake-image-bytes').buffer },
       error: null,
     });
-    nvidiaChatCompletionMock.mockResolvedValue(
+    chatCompletionMock.mockResolvedValue(
       JSON.stringify({
         confidence: 0.95,
         field_confidence: {},

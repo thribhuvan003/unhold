@@ -23,7 +23,7 @@ export interface HealthCheck {
 export interface HealthReport {
   /** True when every `required` dependency is configured. */
   ok: boolean;
-  /** True when at least one NVIDIA key is configured (analyzer + agents). */
+  /** True when generation is configured (Groq primary, or NVIDIA fallback). */
   ai_ready: boolean;
   checks: HealthCheck[];
 }
@@ -35,6 +35,7 @@ function isSet(value: string | undefined): boolean {
 }
 
 export function collectHealthChecks(env: EnvLike = process.env): HealthReport {
+  const groqConfigured = isSet(env.GROQ_API_KEYS) || isSet(env.GROQ_API_KEY);
   const nvidiaConfigured =
     isSet(env.NVIDIA_API_KEYS) || isSet(env.NVIDIA_API_KEY) || isSet(env.NVIDIA_NIM_API_KEY);
 
@@ -73,10 +74,16 @@ export function collectHealthChecks(env: EnvLike = process.env): HealthReport {
       hint: 'Bearer secret for internal cron / job-processor routes.',
     },
     {
+      key: 'GROQ_API_KEYS',
+      configured: groqConfigured,
+      severity: 'ai',
+      hint: 'Groq key(s) — PRIMARY for all generation (analyzer, drafter). Absent → falls back to NVIDIA.',
+    },
+    {
       key: 'NVIDIA_API_KEYS',
       configured: nvidiaConfigured,
       severity: 'ai',
-      hint: 'NVIDIA key(s) for the analyzer. Absent → analyzer degrades, not errors.',
+      hint: 'NVIDIA key(s) — embeddings (RAG) + chat fallback. Absent → RAG grounding degrades.',
     },
     {
       key: 'UPSTASH_REDIS_REST_URL',
@@ -88,5 +95,5 @@ export function collectHealthChecks(env: EnvLike = process.env): HealthReport {
 
   const ok = checks.filter((c) => c.severity === 'required').every((c) => c.configured);
 
-  return { ok, ai_ready: nvidiaConfigured, checks };
+  return { ok, ai_ready: groqConfigured || nvidiaConfigured, checks };
 }
