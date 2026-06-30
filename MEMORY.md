@@ -215,3 +215,29 @@ This makes the project maximally useful for the exact user: panicked innocent re
 
 ---
 (Append only. Never contradict without explicit flag.)
+
+---
+
+## 2026-06-30: Letter copy UX + verification harness cleanup
+
+**Decision**: Keep the letter page copy-only, but make the approved draft button actually copy the mail-ready text when no parent `onCopy` handler is passed. The copied format is `Subject: ...` followed by a blank line and the body.
+
+**Why**: The page rendered approved letters but did not wire `onCopy`, so the enabled "Copy to clipboard" button could do nothing. That is a real user-facing failure for a stressed user preparing bank/GRM submissions.
+
+**Rejected**: Adding auto-send, email APIs, or broader drafter/RAG rewrites in this slice. Official channels remain user-submitted only.
+
+**Verification**: Added `tests/unit/components/LetterPreview.test.tsx`; full gates were run with `corepack pnpm` and Git Bash for the shell script.
+
+**Tag:** lienliberator
+
+---
+
+## 2026-06-30: Windows verification command convention
+
+**Decision**: On this Windows workspace, use `corepack pnpm ...` instead of bare `pnpm`, and run `scripts/verify-no-auto-send.sh` via `C:\Program Files\Git\bin\bash.exe`.
+
+**Why**: Bare `pnpm` resolved to 11.7.0 while `package.json` declares pnpm 10.12.1, causing `node_modules` purge prompts in a non-interactive shell. Bare `bash` resolved to WSL, but WSL has no installed distribution here.
+
+**Rejected**: Treating those as product failures. They are local verification-shell issues, not app behavior.
+
+**Tag:** lienliberator

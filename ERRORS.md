@@ -121,3 +121,35 @@ Append future entries below.
 - Run in isolation it passes 21/21 twice (2.1–3.1s). It's a concurrency timeout flake under full-suite load, already noted in auto-memory ("flaky ~3.5s verifier timing test — re-run to confirm green").
 
 **Rule**: Do NOT treat this single PDF-OCR timeout as a regression. Re-run isolated to confirm green. If it ever needs fixing, raise that one test's timeout rather than chasing logic.
+
+---
+
+## 2026-06-30: Bare pnpm and bare bash fail on this Windows workspace
+
+**What didn't work**:
+- `pnpm vitest ...` picked up pnpm 11.7.0 instead of the project-declared pnpm 10.12.1 and aborted with `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`.
+- Setting `CI=true` avoided the prompt, but the command timed out while reconciling dependencies.
+- `bash scripts/verify-no-auto-send.sh` resolved to `C:\Windows\System32\bash.exe` and failed because WSL has no installed distribution.
+
+**What worked instead**:
+- `corepack pnpm install --frozen-lockfile`
+- `corepack pnpm <script>`
+- `C:\Program Files\Git\bin\bash.exe scripts/verify-no-auto-send.sh`
+
+**Note for next time**:
+- Use `corepack pnpm` for all repo verification in this workspace.
+- Use Git Bash explicitly for shell scripts.
+
+---
+
+## 2026-06-30: Notice test timeout under full-suite load
+
+**What didn't work**:
+- `tests/unit/agents/notice.test.ts > analyzeNotice > returns null when the LLM is not configured` exceeded Vitest's 5s default once during full-suite parallel execution.
+
+**What worked instead**:
+- Raised only that test timeout to `60_000`, matching the already documented verifier PDF flake treatment.
+- Re-ran full unit suite: 22 files, 176 tests passed.
+
+**Note for next time**:
+- Treat this as full-suite load/import timing, not a notice analyzer logic regression, unless the test fails with an assertion or fails repeatedly after the timeout.

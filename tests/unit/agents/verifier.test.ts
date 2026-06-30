@@ -184,7 +184,7 @@ describe('runVerifier', () => {
     expect(output.human_review_required).toBe(true);
     expect(output.confidence).toBe(0);
     expect(chatCompletionMock).not.toHaveBeenCalled();
-  });
+  }, 60_000);
 
   it('does not skip a supported image mime type', async () => {
     isLlmConfiguredMock.mockReturnValue(false);

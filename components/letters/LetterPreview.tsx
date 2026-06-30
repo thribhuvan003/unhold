@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Copy } from 'lucide-react';
 import { LETTER_DISCLAIMER } from '@/lib/constants/disclaimers';
 import { Button } from '@/components/ui/Button';
@@ -23,6 +24,19 @@ export function LetterPreview({
   onCopy,
 }: LetterPreviewProps) {
   const canExport = approved && placeholdersMissing.length === 0;
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    if (!canExport) return;
+    if (onCopy) {
+      onCopy();
+      setCopied(true);
+      return;
+    }
+
+    await navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`);
+    setCopied(true);
+  }
 
   return (
     <article data-testid="letter-preview" className="u-letter animate-fade-up">
@@ -44,11 +58,11 @@ export function LetterPreview({
         type="button"
         variant={canExport ? 'secondary' : 'ghost'}
         disabled={!canExport}
-        onClick={onCopy}
+        onClick={handleCopy}
         className={cn('mt-5 w-full sm:w-auto', !canExport && 'opacity-50')}
       >
         <Copy className="h-4 w-4" aria-hidden="true" />
-        {canExport ? 'Copy to clipboard' : 'Approve draft to enable copy'}
+        {canExport ? (copied ? 'Copied' : 'Copy to clipboard') : 'Approve draft to enable copy'}
       </Button>
     </article>
   );

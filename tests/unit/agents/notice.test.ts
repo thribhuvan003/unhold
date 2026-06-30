@@ -72,7 +72,7 @@ describe('analyzeNotice', () => {
     const out = await analyzeNotice({ case_id: 'c1', input_kind: 'text', pasted_text: 'frozen account notice' });
     expect(out).toBeNull();
     expect(hasGrantedConsentMock).not.toHaveBeenCalled();
-  });
+  }, 60_000);
 
   it('fails closed (null) and never calls the model when consent is not granted', async () => {
     isLlmConfiguredMock.mockReturnValue(true);
