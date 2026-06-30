@@ -58,19 +58,22 @@ function groqProvider(): Provider | null {
   return {
     name: 'groq',
     baseUrl: process.env.GROQ_BASE_URL ?? 'https://api.groq.com/openai/v1/chat/completions',
-    model: process.env.GROQ_MODEL ?? 'llama-3.3-70b-versatile',
+    // qwen3.6-27b: multimodal, fast (~0.5s), reliable JSON with thinking off.
+    // Replaces llama-3.3-70b-versatile (deprecated on Groq, retires 2026-08-16).
+    model: process.env.GROQ_MODEL ?? 'qwen/qwen3.6-27b',
     keys,
   };
 }
 
-/** Groq multimodal model (llama-4-scout) for image OCR. */
+/** Groq multimodal model (qwen3.6-27b) for image OCR. */
 function groqVisionProvider(): Provider | null {
   const keys = groqKeys();
   if (keys.length === 0) return null;
   return {
     name: 'groq-vision',
     baseUrl: process.env.GROQ_BASE_URL ?? 'https://api.groq.com/openai/v1/chat/completions',
-    model: process.env.GROQ_VISION_MODEL ?? 'meta-llama/llama-4-scout-17b-16e-instruct',
+    // Replaces llama-4-scout (deprecated on Groq, retires 2026-07-17).
+    model: process.env.GROQ_VISION_MODEL ?? 'qwen/qwen3.6-27b',
     keys,
   };
 }
@@ -104,13 +107,18 @@ export function isLlmConfigured(): boolean {
 }
 
 async function tryProvider(provider: Provider, options: ChatOptions): Promise<string | null> {
+  const model = options.model ?? provider.model;
+  // Qwen3 reasoning models emit <think> blocks that break JSON mode and slow
+  // responses; disable thinking for clean, fast structured output.
+  const isReasoner = /qwen/i.test(model);
   const body = JSON.stringify({
-    model: options.model ?? provider.model,
+    model,
     messages: options.messages.map((m) => ({ role: m.role, content: m.content })),
     max_tokens: options.max_tokens ?? 2048,
     temperature: options.temperature ?? 0.2,
     top_p: options.top_p ?? 0.95,
     stream: false,
+    ...(isReasoner ? { reasoning_effort: 'none' } : {}),
     ...(options.response_format ? { response_format: options.response_format } : {}),
   });
 

@@ -111,8 +111,8 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
     }
   }
 
-  // text / PDF text → Groq llama-3.3-70b in JSON mode (~0.3s, reliable schema);
-  // image → Groq vision (llama-4-scout), NVIDIA fallback.
+  // text / PDF text → Groq qwen3.6-27b in JSON mode (thinking off, ~0.5s);
+  // image → Groq qwen3.6-27b vision, NVIDIA fallback.
   const raw = await chatCompletion({
     vision: isVisionInput,
     response_format: isVisionInput ? undefined : { type: 'json_object' },
