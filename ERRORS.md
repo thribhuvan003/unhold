@@ -153,3 +153,17 @@ Append future entries below.
 
 **Note for next time**:
 - Treat this as full-suite load/import timing, not a notice analyzer logic regression, unless the test fails with an assertion or fails repeatedly after the timeout.
+
+---
+
+## 2026-06-30: Local Next.js dev server is unreliable for live verification (token sink)
+
+**What didn't work** (≫2 attempts across the session):
+- Repeatedly starting `pnpm dev` in the background to run live API / eval / consistency checks. Failure modes seen: port already held ("Another next dev server is already running"); `nohup pnpm dev &` detaching so the wrapper exited 0 while the server died; first-request route **compilation (5–30s)** misread as real latency; and background eval/consistency runs hitting a server that wasn't up (empty output). ~18 background task files, several failed/stale.
+
+**What worked instead**:
+- **Server-independent verification**: `pnpm typecheck` + `pnpm test:unit/contract/golden`, plus DIRECT probes against the real services from a one-off node script run in the repo dir — Groq chat+vision, NVIDIA embed/rerank, Supabase REST + `pg` pooler, and `unpdf`/`sharp`. Deterministic, fast, no dev server. This is how qwen3.6-27b, the image downscale, and PDF extraction were all verified.
+- When a dev server IS truly needed (UI/flow E2E): start exactly ONE via `run_in_background` (no `&`, no `nohup`), kill stale instances first (`taskkill //PID <pid> //F`), then poll with `curl --retry --retry-connrefused` before testing.
+
+**Note for next time**:
+- Default to server-independent checks for any model / RAG / PDF / image / API-contract work. Reserve the dev server for genuine end-to-end UI verification, and never read first-request latency as production latency.
