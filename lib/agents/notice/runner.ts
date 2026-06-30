@@ -5,6 +5,7 @@ import { chatCompletion, extractJsonText, isLlmConfigured } from '@/lib/llm/chat
 import { NoticeAnalysisOutputSchema, type NoticeAnalysisOutput } from '@/lib/agents/schemas';
 import { hasGrantedConsent } from '@/lib/consent/record';
 import { retrieveRelevantContext } from '@/lib/rag/retrieve';
+import { remember } from '@/lib/memory';
 import { redactPiiText } from '@/lib/redaction/pii';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { EVIDENCE_BUCKET } from '@/lib/evidence/storage-path';
@@ -117,7 +118,13 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
 
   try {
     const parsed = JSON.parse(extractJsonText(raw)) as unknown;
-    return redactOutput(NoticeAnalysisOutputSchema.parse(parsed));
+    const output = redactOutput(NoticeAnalysisOutputSchema.parse(parsed));
+    // Case-scoped long-term memory (non-PII), best-effort. No-op without a key.
+    void remember(
+      `Notice classified as ${output.freeze_reason} (severity ${output.severity}).`,
+      `case:${input.case_id}`,
+    ).catch(() => {});
+    return output;
   } catch {
     return null;
   }

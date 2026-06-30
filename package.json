@@ -20,6 +20,7 @@
     "test:e2e:smoke": "playwright test tests/e2e --grep @smoke",
     "test:e2e": "playwright test tests/e2e",
     "test:agents:golden": "vitest run tests/unit/agents/golden",
+    "eval:notice": "node --env-file=.env.local scripts/eval/run.mjs",
     "verify:no-auto-send": "bash scripts/verify-no-auto-send.sh",
     "owner:git-config": "bash scripts/owner/git-config.sh",
     "owner:push": "bash scripts/owner/git-push.sh",
