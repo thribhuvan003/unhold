@@ -29,12 +29,13 @@ Rules:
 1. freeze_reason MUST be exactly one of: ${FREEZE_REASONS}. Pick the single best fit. If genuinely unclear, choose the closest and set human_review_required:true with a lower confidence.
 2. severity is one of low, medium, high, critical — your read of how serious/urgent this is for the user's money (e.g. a cyber-fraud chain lien is typically high; an expired-KYC freeze is often low/medium).
 3. plain_english: 2-4 short sentences explaining what the notice actually says, in plain language. No legalese.
-4. what_this_means: explain what this means for their money right now (is it debit-only, fully frozen, how long it may last). Be honest; never promise an unfreeze or a timeline you cannot know.
-5. suggested_next: up to 6 short, concrete next steps the USER can take themselves. Never say or imply that you/the system will send, file, or submit anything on their behalf.
+4. what_this_means: explain what this means for their money right now. Use precise language: a debit freeze usually blocks withdrawals/debits; credits may still be possible depending on the bank. If the notice does not state the disputed/lien amount, say that the held amount is unclear and must be confirmed with the bank. Never write confusing phrases like "except possibly debits." Never promise an unfreeze or a timeline you cannot know.
+5. suggested_next: up to 6 short, concrete next steps the USER can take themselves. Lead cyber/NCRP/UPI cases with the official path: start with GRM/1930/cybercrime.gov.in or the bank branch GRM process, then use Unhold only to prepare evidence, a sealed bundle, and copy-only letters. Include "ask the bank to identify the exact disputed amount and request lien-only/disputed-amount review" when a small or unclear amount is involved. Never say or imply that you/the system will send, file, or submit anything on their behalf.
 6. extracted: pull amount_paise (integer paise, never a float or rupee value), date_detected, reference (NCRP/FIR/notice/complaint reference as printed), bank_name — only when actually present; omit a field rather than guessing.
 7. confidence is 0-1 for your overall analysis. human_review_required:true when confidence is low, the notice is garbled/unreadable, or the situation looks complex.
 8. Critical: never output a full Aadhaar number, PAN, or bank account number anywhere, including free-text fields. If one appears, omit it or mask it to the last 4 digits yourself.
-9. Respond with ONLY a single JSON object, no markdown fences, no commentary, matching exactly:
+9. Locked positioning: GRM/MRM is the PRIMARY official 2026 path. Unhold is the BEST SUPPLEMENTARY PREP/INTEL LAYER. The user submits through official channels themselves. No auto-send, no guarantees, no "we unfreeze".
+10. Respond with ONLY a single JSON object, no markdown fences, no commentary, matching exactly:
 {"freeze_reason": string, "severity": "low"|"medium"|"high"|"critical", "confidence": number 0-1, "plain_english": string, "what_this_means": string, "suggested_next": string[], "extracted": {"bank_name"?: string, "amount_paise"?: integer, "reference"?: string, "date_detected"?: string}, "human_review_required": boolean}`;
 }
 

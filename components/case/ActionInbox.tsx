@@ -37,7 +37,10 @@ export function ActionInbox({ actions }: ActionInboxProps) {
           </div>
           <div>
             <h3 className="type-display text-base">Action inbox</h3>
-            <p className="mt-0.5 text-sm text-[var(--ink-muted)]">All caught up.</p>
+            <p className="mt-0.5 text-sm text-[var(--ink-muted)]">
+              Start by uploading your freeze notice and bank statement. New tasks will appear here as your case
+              progresses.
+            </p>
           </div>
         </Card>
       </section>

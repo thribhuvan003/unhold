@@ -134,7 +134,7 @@ export default function GuestReportPage() {
         </h1>
         <p className="type-lead text-[0.9375rem]">
           {phase === 'hero'
-            ? 'Paste your bank freeze notice or SMS and get a plain-English explanation in seconds. Then we help you act on it.'
+            ? 'Paste or type the text from your bank freeze SMS/notice. After the quick report, you can upload screenshots and statements into your GRM-ready bundle.'
             : 'A few guided questions to complete your case. Data stored securely in Supabase — not localStorage.'}
         </p>
       </header>
@@ -145,9 +145,13 @@ export default function GuestReportPage() {
             value={noticeText}
             onChange={(e) => setNoticeText(e.target.value)}
             rows={6}
-            placeholder="e.g. Your SBI account has been debit-frozen on the instruction of… NCRP ref…"
+            placeholder="e.g. Your SBI account has been debit-frozen on NCRP/cyber cell instructions. Ref: ... Date: ..."
             className="w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--paper)] p-3 text-sm"
           />
+          <p className="type-caption text-ink-faint">
+            Have only a screenshot? Type the visible words here first. You can upload the image after your case
+            workspace opens.
+          </p>
 
           <label className="flex items-start gap-2 text-sm text-[var(--ink-muted)]">
             <input

@@ -11,6 +11,11 @@ vi.mock('@/lib/evidence/sha256', () => ({
   computeSha256HexInBrowser: async () => 'a'.repeat(64),
 }));
 
+const routerRefreshMock = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ refresh: routerRefreshMock }),
+}));
+
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe('EvidenceUploader', () => {
@@ -19,6 +24,7 @@ describe('EvidenceUploader', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    routerRefreshMock.mockClear();
     container = document.createElement('div');
     document.body.appendChild(container);
     act(() => {
@@ -90,6 +96,7 @@ describe('EvidenceUploader', () => {
     });
 
     expect(container.textContent).toContain('AI is checking');
+    expect(routerRefreshMock).toHaveBeenCalled();
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);

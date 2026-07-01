@@ -53,5 +53,5 @@ export const motion = {
 
 export const brand = {
   publicName: 'Unhold',
-  tagline: 'Unfreeze your bank account — step by step',
+  tagline: 'Prepare your official freeze grievance',
 } as const;

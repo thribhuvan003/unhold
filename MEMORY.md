@@ -93,6 +93,45 @@ Guest report hero (first impression) is highest leverage for the panicking-user 
 - Use same agent dispatch style for future batches (RESEARCHER + FRONTEND + REVIEWER/VERIFIER).
 
 **Tag:** lienliberator
+
+---
+
+## 2026-07-01: Mobile normal-user UX repair after Codex browser QA
+
+**Decision**: Fix the real phone-user confusion found in browser QA without adding a large new OCR flow.
+
+**Changed**:
+- Landing headline changed from an outcome-sounding "unfreeze" promise to "Prepare your official freeze grievance".
+- Guest report now tells screenshot-only users to type visible notice text first, then upload screenshots in the workspace.
+- Notice analyzer prompt and deterministic post-processing now enforce GRM-first guidance, correct debit-freeze wording, exact disputed-amount/lien-only review, and no auto-send/no-guarantee positioning.
+- Analysis result cards show the official GRM/MRM-first prep-layer note directly above the explanation.
+- Empty Today/Action Inbox states no longer say "swarm tick" or "All caught up"; they point users to upload freeze notice + bank statement and submit via official channels themselves.
+- Evidence upload calls `router.refresh()` after SHA confirm so the server-rendered checklist can update.
+- L1 letter requests create a durable draft placeholder row and the UI shows "Preparing draft" after refresh instead of looking stuck.
+- Case evidence upload UI is hidden for unauthorized viewers.
+- `package.json` author email fixed to `thribhuvan003@gmail.com`.
+
+**Why**: Browser QA showed backend calls were mostly clean, but a stressed mobile user could still misunderstand the first action, screenshot flow, debit-freeze meaning, checklist progress, and queued letter status.
+
+**Rejected**:
+- Full first-screen image OCR/upload in this slice. It is useful, but bigger than the current UX repair; copy now clearly explains the current text-first flow.
+- Fake database actions just to fill the inbox. Empty states remain truthful and helpful.
+- Auto-send or official submission automation. User still submits via GRM/bank/Ombudsman/IO.
+
+**Verification**:
+- Focused tests: notice analyzer, evidence uploader, next steps, workflow access passed.
+- Full unit: 195/195 passed.
+- Contract: 49/49 passed.
+- Golden: 2/2 passed.
+- Typecheck passed.
+- Lint: 0 errors, existing 9 warnings.
+- No-auto-send script passed.
+- Production build passed.
+- Codex browser mobile smoke: landing headline/copy OK; guest analyzer helper visible; analyzer output included GRM-first card, no bad "except possibly debits" phrase, exact disputed amount warning, lien-only next step, no unexpected error.
+
+**Security note**: `oo.txt` contains live production secrets. Do not commit it. Rotate shared keys in Vercel/Supabase/NVIDIA/Groq/Upstash/Supermemory when practical.
+
+**Tag:** lienliberator
 **Cites:** REMAINING_WORK.md (Batch 5 section), MANIFEST active_slice + slice-14 def, slice-orchestration.json, components/intake/NoticeAnalysisCard.tsx + ui/HyperText.tsx
 
 ---

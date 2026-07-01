@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { enqueueAgentJob } from '@/lib/jobs/enqueue';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { assertCaseAccess, requireRequestAuth } from '@/lib/api/case-access';
 import {
   getRequestId,
@@ -11,6 +12,11 @@ import {
 import { ApiError } from '@/lib/api/errors';
 
 const VALID_LEVELS = new Set(['L1', 'L2', 'L3']);
+const CHANNEL_BY_LEVEL = {
+  L1: 'branch_manager',
+  L2: 'nodal_officer',
+  L3: 'rbi_cms',
+} as const;
 
 export async function GET(
   request: NextRequest,
@@ -50,7 +56,7 @@ export async function POST(
     await assertCaseAccess(caseId, auth, 'editor');
 
     const body = (await parseJsonBody(request, requestId)) as { level?: string };
-    const level = body.level ?? 'L1';
+    const level = (body.level ?? 'L1') as 'L1' | 'L2' | 'L3';
     if (!VALID_LEVELS.has(level)) {
       throw new ApiError(400, 'validation_failed', 'Invalid level');
     }
@@ -62,6 +68,32 @@ export async function POST(
       idempotency_key: `draft_letter:${caseId}:${level}:${Date.now()}`,
       payload: { case_id: caseId, level },
     });
+
+    const admin = createAdminClient();
+    const { error: placeholderError } = await admin
+      .from('escalations')
+      .upsert(
+        {
+          case_id: caseId,
+          level,
+          channel: CHANNEL_BY_LEVEL[level],
+          status: 'draft',
+          created_by_agent: 'DRAFTER',
+          metadata_json: {
+            queued: true,
+            job_id: result.job_id ?? null,
+          },
+        },
+        { onConflict: 'case_id,level', ignoreDuplicates: true },
+      );
+
+    if (placeholderError) {
+      console.warn('[escalations] draft placeholder failed', {
+        caseId,
+        level,
+        message: placeholderError.message,
+      });
+    }
 
     return jsonSuccess(result, { status: result.enqueued ? 201 : 200 });
   } catch (error) {

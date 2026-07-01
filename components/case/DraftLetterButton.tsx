@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Loader2, FilePlus2 } from 'lucide-react';
 
 interface DraftLetterButtonProps {
@@ -12,6 +13,7 @@ interface DraftLetterButtonProps {
 type Phase = 'idle' | 'requesting' | 'requested' | 'error';
 
 export function DraftLetterButton({ caseId, level, guestToken }: DraftLetterButtonProps) {
+  const router = useRouter();
   const [phase, setPhase] = useState<Phase>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +35,7 @@ export function DraftLetterButton({ caseId, level, guestToken }: DraftLetterButt
         throw new Error(json.error?.message ?? json.error ?? 'Could not start your letter');
       }
       setPhase('requested');
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
       setPhase('error');
@@ -42,7 +45,7 @@ export function DraftLetterButton({ caseId, level, guestToken }: DraftLetterButt
   if (phase === 'requested') {
     return (
       <p className="type-caption text-ink-faint">
-        Preparing your {level} letter — refresh this page in a moment to review and copy it.
+        Letter request received. Your {level} draft is being prepared for review and copy-only use.
       </p>
     );
   }

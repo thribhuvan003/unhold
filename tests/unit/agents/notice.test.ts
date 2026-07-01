@@ -153,6 +153,25 @@ describe('analyzeNotice', () => {
     expect(storageDownloadMock).not.toHaveBeenCalled();
   });
 
+  it('normalizes cyber notice output to GRM-first and fixes confusing debit-freeze wording', async () => {
+    isLlmConfiguredMock.mockReturnValue(true);
+    hasGrantedConsentMock.mockResolvedValue(true);
+    chatCompletionMock.mockResolvedValue(
+      JSON.stringify({
+        ...JSON.parse(VALID_MODEL_JSON),
+        what_this_means:
+          'Your account is currently frozen, which means you cannot make any transactions except possibly debits.',
+        suggested_next: ['Visit your branch with the notice.'],
+      }),
+    );
+    const { analyzeNotice } = await importRunner();
+    const out = await analyzeNotice({ case_id: 'c1', input_kind: 'text', pasted_text: 'NCRP cyber freeze' });
+    expect(out?.what_this_means).toContain('blocked from withdrawals or debit transactions');
+    expect(out?.what_this_means).not.toContain('except possibly debits');
+    expect(out?.suggested_next.join(' ')).toContain('official GRM path');
+    expect(out?.suggested_next.join(' ')).toContain('lien-only');
+  });
+
   it('analyzes an image via vision and redacts PII echoed into free-text', async () => {
     isLlmConfiguredMock.mockReturnValue(true);
     hasGrantedConsentMock.mockResolvedValue(true);

@@ -43,6 +43,33 @@ function redactOutput(output: NoticeAnalysisOutput): NoticeAnalysisOutput {
   };
 }
 
+function normalizeOutput(output: NoticeAnalysisOutput): NoticeAnalysisOutput {
+  const normalized: NoticeAnalysisOutput = {
+    ...output,
+    what_this_means: output.what_this_means.replace(
+      /cannot make any transactions except possibly debits/gi,
+      'may be blocked from withdrawals or debit transactions; credits may still be possible depending on the bank',
+    ),
+    suggested_next: [...output.suggested_next],
+  };
+
+  if (['cyber_upi_chain', 'suspected_mule', 'police_notice_bnss106'].includes(output.freeze_reason)) {
+    const joined = normalized.suggested_next.join(' ').toLowerCase();
+    if (!joined.includes('grm')) {
+      normalized.suggested_next.unshift(
+        'Start with the official GRM path through your bank branch or cybercrime.gov.in / 1930; Unhold helps you prepare the evidence bundle and copy-only letters.',
+      );
+    }
+    if (!joined.includes('disputed') && !joined.includes('lien-only')) {
+      normalized.suggested_next.push(
+        'Ask the bank to identify the exact disputed amount and request lien-only / disputed-amount review instead of a blanket full-account freeze.',
+      );
+    }
+  }
+
+  return normalized;
+}
+
 /**
  * Analyze a freeze notice (image via vision OCR, or pasted text). Returns null
  * — never a fabricated reason — when analysis can't be done safely: LLM not
@@ -128,7 +155,7 @@ export async function analyzeNotice(input: NoticeAnalyzerInput): Promise<NoticeA
 
   try {
     const parsed = JSON.parse(extractJsonText(raw)) as unknown;
-    const output = redactOutput(NoticeAnalysisOutputSchema.parse(parsed));
+    const output = normalizeOutput(redactOutput(NoticeAnalysisOutputSchema.parse(parsed)));
     // Case-scoped long-term memory (non-PII), best-effort. No-op without a key.
     void remember(
       `Notice classified as ${output.freeze_reason} (severity ${output.severity}).`,

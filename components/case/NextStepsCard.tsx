@@ -149,9 +149,13 @@ export function NextStepsCard({
         ) : (
           <div className="mt-6 flex items-start gap-3 rounded-[var(--radius-md)] bg-white/8 p-4 backdrop-blur-sm">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--sage)]" aria-hidden="true" />
-            <p className="text-sm leading-relaxed text-white/78">
-              No pending actions — check back after the next swarm tick.
-            </p>
+            <div className="space-y-1 text-sm leading-relaxed text-white/78">
+              <p className="font-medium text-white">Start with the official GRM path.</p>
+              <p>
+                Upload your freeze SMS/notice and bank statement below. Unhold prepares your bundle and copy-only
+                letters; you submit them yourself through your bank, GRM, Ombudsman, or IO.
+              </p>
+            </div>
           </div>
         )}
 

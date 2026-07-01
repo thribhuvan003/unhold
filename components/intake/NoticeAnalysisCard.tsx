@@ -25,6 +25,11 @@ export function NoticeAnalysisCard({ result }: { result: NoticeAnalysisResult })
         {result.human_review_required ? <Badge tone="warn">Worth a human check</Badge> : null}
       </div>
 
+      <div className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--paper)] p-3 text-sm text-[var(--ink-muted)]">
+        Start with the official GRM/MRM path. Unhold helps you prepare evidence, a sealed bundle, and copy-only
+        letters; you submit everything yourself.
+      </div>
+
       <div className="space-y-1">
         <p className="type-eyebrow text-ink-faint">What this notice says</p>
         <p className="text-sm text-[var(--ink)]">{result.plain_english}</p>

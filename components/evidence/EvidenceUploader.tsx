@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AlertTriangle, CheckCircle2, FileUp, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/ui/cn';
@@ -71,6 +72,7 @@ export function EvidenceUploader({
   guestToken,
   defaultEvidenceType = 'freeze_sms',
 }: EvidenceUploaderProps) {
+  const router = useRouter();
   const [evidenceType, setEvidenceType] = useState<EvidenceType>(defaultEvidenceType);
   const [phase, setPhase] = useState<UploadPhase>('idle');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -184,6 +186,7 @@ export function EvidenceUploader({
       setStatusMessage('Evidence uploaded — SHA-256 verified.');
       setPendingEvidenceId(urlJson.evidence_id);
       setPhase('verifying');
+      router.refresh();
     } catch (error) {
       setPhase('error');
       setStatusMessage(error instanceof Error ? error.message : 'Upload failed');

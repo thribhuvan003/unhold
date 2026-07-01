@@ -56,7 +56,7 @@ describe('NextStepsCard', () => {
     expect(html).not.toContain('Low priority');
   });
 
-  it('shows empty state when no open actions', () => {
+  it('shows first-step guidance when no open actions', () => {
     const html = renderToStaticMarkup(
       <NextStepsCard
         caseId="case-1"
@@ -64,7 +64,8 @@ describe('NextStepsCard', () => {
       />,
     );
 
-    expect(html).toContain('No pending actions');
+    expect(html).toContain('Start with the official GRM path');
+    expect(html).toContain('Upload your freeze SMS/notice and bank statement');
   });
 
   it('uses 44px minimum touch target on action button', () => {

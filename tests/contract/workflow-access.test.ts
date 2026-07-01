@@ -17,6 +17,7 @@ const actionInsertMock = vi.fn();
 const actionUpdateMock = vi.fn();
 const caseUpdateMock = vi.fn();
 const enqueueAgentJobMock = vi.fn();
+const escalationUpsertMock = vi.fn();
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: async () => ({
@@ -89,6 +90,14 @@ vi.mock('@/lib/supabase/admin', () => ({
           },
         };
       }
+      if (table === 'escalations') {
+        return {
+          upsert: (row: unknown) => {
+            escalationUpsertMock(row);
+            return Promise.resolve({ error: null });
+          },
+        };
+      }
       throw new Error(`unexpected table: ${table}`);
     },
   }),
@@ -109,6 +118,7 @@ describe('workflow route access guards', () => {
     actionInsertMock.mockClear();
     actionUpdateMock.mockClear();
     caseUpdateMock.mockClear();
+    escalationUpsertMock.mockClear();
     enqueueAgentJobMock.mockReset().mockResolvedValue({ enqueued: true, job_id: 'job-1' });
   });
 
@@ -175,6 +185,14 @@ describe('workflow route access guards', () => {
         job_type: 'draft_letter',
         agent_role: 'DRAFTER',
         payload: { case_id: caseId, level: 'L1' },
+      }),
+    );
+    expect(escalationUpsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        case_id: caseId,
+        level: 'L1',
+        status: 'draft',
+        metadata_json: expect.objectContaining({ queued: true, job_id: 'job-1' }),
       }),
     );
   });

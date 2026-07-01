@@ -68,6 +68,7 @@ export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps)
         {levels.map((level) => {
           const letter = byLevel.get(level);
           const hasDraft = letter?.hasDraft ?? false;
+          const isPreparing = Boolean(letter && !hasDraft);
           return (
             <li key={level} className="u-card flex flex-wrap items-start justify-between gap-3 p-4">
               <div className="flex items-start gap-3">
@@ -75,7 +76,9 @@ export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps)
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium text-[var(--ink)]">{level} letter</span>
-                    {letter ? (
+                    {isPreparing ? (
+                      <Badge tone="forest">Preparing draft</Badge>
+                    ) : letter ? (
                       <Badge tone={STATUS_TONE[letter.status]}>{STATUS_LABEL[letter.status]}</Badge>
                     ) : (
                       <Badge tone="neutral">Not drafted yet</Badge>
@@ -92,6 +95,10 @@ export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps)
                   View &amp; copy
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
+              ) : isPreparing ? (
+                <p className="type-caption max-w-[14rem] text-ink-faint">
+                  Draft request received. Refresh in a moment if it does not appear automatically.
+                </p>
               ) : level === 'L1' ? (
                 <DraftLetterButton caseId={caseId} level="L1" guestToken={guestToken} />
               ) : null}
