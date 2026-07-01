@@ -18,6 +18,7 @@ export default function GuestReportPage() {
   const [aiConsent, setAiConsent] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<NoticeAnalysisResult | null>(null);
+  const [analysisAttempted, setAnalysisAttempted] = useState(false);
 
   // Case carried from the analyze path into the form phase (null on the skip path)
   const [caseId, setCaseId] = useState<string | null>(null);
@@ -57,6 +58,7 @@ export default function GuestReportPage() {
     if (!text || !aiConsent || analyzing) return;
     setAnalyzing(true);
     setError(null);
+    setAnalysisAttempted(true);
     try {
       const { id, token } = await createGuestCase(true);
       setCaseId(id);
@@ -188,6 +190,12 @@ export default function GuestReportPage() {
       ) : (
         <div className="animate-fade-up stagger-1 space-y-6">
           {analysis ? <NoticeAnalysisCard result={analysis} /> : null}
+          {analysisAttempted && !analysis ? (
+            <div className="u-alert u-alert-warn">
+              AI could not read this notice clearly enough. You can still continue manually: upload the screenshot
+              and bank statement in the case workspace, then prepare your official GRM/bank submission yourself.
+            </div>
+          ) : null}
           <GuidedIntakeForm
             onComplete={completeIntake}
             submitting={submitting}
