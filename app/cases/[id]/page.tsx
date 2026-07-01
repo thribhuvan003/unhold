@@ -5,6 +5,7 @@ import { DocumentChecklist } from '@/components/case/DocumentChecklist';
 import { getDocumentChecklist, getFreezeReasonLabel } from '@/lib/intake/document-checklist';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { LettersPanel, type LetterSummary } from '@/components/case/LettersPanel';
+import { BankVisitScript } from '@/components/case/BankVisitScript';
 import { BundleButton } from '@/components/case/BundleButton';
 import { NextStepsCard } from '@/components/case/NextStepsCard';
 import { ActionInbox } from '@/components/case/ActionInbox';
@@ -160,7 +161,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
         ) : null}
         <p className="type-lead max-w-prose text-[0.9375rem]">
           {data.authorized
-            ? 'Upload evidence, complete actions, and review AI activity â€” nothing is sent to your bank automatically.'
+            ? 'Upload evidence, complete actions, and review AI activity — nothing is sent to your bank automatically.'
             : 'Sign in or use your guest link to view this case.'}
         </p>
         {data.authorized ? (
@@ -202,7 +203,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
       {data.authorized ? (
         <CaseSection
           label="Understand your freeze notice"
-          description="Paste your bank's freeze notice or SMS and get a plain-English explanation. Guidance only â€” nothing is sent."
+          description="Paste your bank's freeze notice or SMS and get a plain-English explanation. Guidance only — nothing is sent."
           stagger={2}
         >
           <NoticeAnalyzer caseId={id} guestToken={guestToken} initialAnalysis={data.noticeAnalysis} />
@@ -212,7 +213,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
       {data.authorized ? (
         <CaseSection
           label="Documents to gather"
-          description="Based on your freeze, here's what helps your case â€” and why."
+          description="Based on your freeze, here's what helps your case — and why."
           stagger={3}
         >
           <DocumentChecklist
@@ -234,8 +235,25 @@ export default async function CaseDetailPage({ params }: PageProps) {
 
       {data.authorized ? (
         <CaseSection
+          label="Prepare for your bank visit"
+          description="What to bring, what to say, what to ask — so you walk in ready."
+          stagger={4}
+        >
+          <BankVisitScript
+            freezeType={data.freezeReason}
+            amountInr={
+              data.frozenAmountPaise != null
+                ? Math.round(data.frozenAmountPaise / 100).toLocaleString('en-IN')
+                : null
+            }
+          />
+        </CaseSection>
+      ) : null}
+
+      {data.authorized ? (
+        <CaseSection
           label="Evidence"
-          description="Upload documents - each file is SHA-256 verified and checked automatically."
+          description="Upload documents - each file is tamper-proof verified and checked automatically."
           stagger={5}
         >
           <EvidenceUploader caseId={id} guestToken={guestToken} />

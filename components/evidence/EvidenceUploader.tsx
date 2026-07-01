@@ -183,7 +183,7 @@ export function EvidenceUploader({
         throw new Error(confirmJson.error?.message ?? 'Confirm failed');
       }
 
-      setStatusMessage('Evidence uploaded — SHA-256 verified.');
+      setStatusMessage('Evidence uploaded — tamper-proof verified.');
       setPendingEvidenceId(urlJson.evidence_id);
       setPhase('verifying');
       router.refresh();
@@ -202,7 +202,7 @@ export function EvidenceUploader({
             Upload evidence
           </h3>
           <p className="type-caption mt-1">
-            JPEG, PNG, or PDF up to 25MB. SHA-256 verified on confirm.
+            JPEG, PNG, or PDF up to 25MB. Tamper-proof verified on confirm.
           </p>
         </div>
         {phase !== 'idle' ? <UploadPhaseBadge phase={phase} pollTimedOut={pollTimedOut} /> : null}

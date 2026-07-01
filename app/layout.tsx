@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Red_Hat_Mono, Schibsted_Grotesk } from 'next/font/google';
 import './globals.css';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { BottomTabBar } from '@/components/layout/BottomTabBar';
 import { brand } from '@/lib/ui/tokens';
 
 const bricolage = Bricolage_Grotesque({
@@ -41,10 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main
           id="main-content"
           tabIndex={-1}
-          className="u-main-skip-target mx-auto w-full max-w-5xl flex-1 px-4 py-9 sm:px-5 sm:py-11"
+          className="u-main-skip-target mx-auto w-full max-w-5xl flex-1 px-4 py-9 pb-20 sm:px-5 sm:py-11 sm:pb-11"
         >
           {children}
         </main>
+        <BottomTabBar />
         <footer className="border-t border-border bg-surface py-9">
           <div className="mx-auto max-w-5xl px-4 text-center sm:px-5">
             <p className="type-caption">

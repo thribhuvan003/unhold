@@ -39,9 +39,9 @@ const STATUS_TONE: Record<EscalationStatus, 'neutral' | 'forest' | 'success' | '
 };
 
 const LEVEL_DESC: Record<'L1' | 'L2' | 'L3', string> = {
-  L1: 'Branch manager — your first formal letter.',
-  L2: 'Nodal officer — escalate after L1, with proof you sent it.',
-  L3: 'RBI / Ombudsman — final escalation after L2.',
+  L1: 'First letter to your bank branch manager.',
+  L2: 'Escalation to the nodal officer — use if the branch does not respond in 7 days.',
+  L3: 'Complaint to the RBI Banking Ombudsman — final step if L1 and L2 do not work.',
 };
 
 interface LettersPanelProps {
@@ -108,8 +108,8 @@ export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps)
       </ul>
 
       <p className="type-caption text-ink-faint">
-        Letters are copy-only. You send them by email or post — and you must upload proof you sent each one
-        before the next level unlocks.
+        Letters are copy-only — you send them by email or post yourself. Once you confirm you sent one, the
+        next level unlocks. This keeps your case on track and builds a strong paper trail.
       </p>
     </div>
   );

@@ -48,10 +48,11 @@ export function BundleButton({ caseId, guestToken }: BundleButtonProps) {
   return (
     <div className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
       <div>
-        <p className="text-sm font-medium text-[var(--ink)]">Sealed package for your bank</p>
+        <p className="text-sm font-medium text-[var(--ink)]">Official submission package</p>
         <p className="type-caption text-ink-faint">
-          Bundle your verified documents into one SHA-256 sealed PDF with a cover page and manifest — ready to
-          attach to your letter.
+          Combines your verified documents into one sealed PDF with a cover page and manifest — ready to
+          attach to your bank letter or GRM submission. Includes your bank letter, evidence summary, uploaded
+          documents, and a checklist.
         </p>
       </div>
 
@@ -62,7 +63,7 @@ export function BundleButton({ caseId, guestToken }: BundleButtonProps) {
         className="u-btn u-btn-secondary inline-flex min-h-[44px] items-center gap-2 px-4 text-sm disabled:opacity-50"
       >
         {phase === 'creating' ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Package className="h-4 w-4" aria-hidden />}
-        {phase === 'creating' ? 'Sealing…' : 'Create sealed package'}
+        {phase === 'creating' ? 'Preparing…' : 'Create submission package'}
       </button>
 
       {phase === 'error' ? (
@@ -78,10 +79,10 @@ export function BundleButton({ caseId, guestToken }: BundleButtonProps) {
             className="u-btn u-btn-primary inline-flex min-h-[44px] items-center gap-2 px-4 text-sm"
           >
             <Download className="h-4 w-4" aria-hidden />
-            Download sealed package
+            Download official submission package
           </a>
           <p className="type-caption text-ink-faint">
-            {result.evidence_count} document{result.evidence_count === 1 ? '' : 's'} sealed · SHA-256{' '}
+            {result.evidence_count} document{result.evidence_count === 1 ? '' : 's'} sealed · tamper-proof verified{' '}
             <span className="type-mono-data">{result.manifest_sha256.slice(0, 12)}…</span> · link expires in 1 hour.
           </p>
         </div>

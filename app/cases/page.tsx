@@ -96,9 +96,26 @@ export default function CasesPage() {
       </div>
 
       {error ? (
-        <div role="alert" className="u-alert u-alert-error">
-          {error}
-        </div>
+        // 401 = no guest session yet (first visit). Show CTA instead of scary error.
+        error.toLowerCase().includes('auth') || error.toLowerCase().includes('unauthorized') ? (
+          <Card className="animate-fade-up px-8 py-14 text-center">
+            <FolderOpen className="mx-auto h-10 w-10 text-[var(--ink-faint)]" strokeWidth={1.25} aria-hidden="true" />
+            <p className="type-display mt-4 text-lg">No cases yet</p>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--ink-muted)]">
+              Start by reporting your freeze. No account needed — takes 2 minutes.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/guest/report" className="u-btn u-btn-primary">
+                Start my freeze review
+              </Link>
+              <Link href="/cases/new" className="u-btn u-btn-ghost text-[var(--ink)]">
+                New case
+              </Link>
+            </div>
+          </Card>
+        ) : (
+          <div role="alert" className="u-alert u-alert-error">{error}</div>
+        )
       ) : null}
 
       {loading ? (

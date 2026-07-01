@@ -74,10 +74,14 @@ describe('real-user acceptance scenarios', () => {
     );
 
     expect(draft.disclaimer_block).toBe('DRAFT ONLY — REVIEW BEFORE USE');
-    expect(draft.subject).toContain('Account No. XXXXXX1234');
+    // Account number must stay masked (last 4 only) — never the full number.
+    expect(draft.subject).toContain('XXXXXX1234');
     expect(draft.body).toContain('To,');
     expect(draft.body).toContain('Subject:');
     expect(draft.body).toContain('NCRP');
+    // Full formal letter: must include declaration + annexure sections.
+    expect(draft.body).toContain('DECLARATION');
+    expect(draft.body).toContain('ANNEXURE');
     expect(draft.placeholders_missing).toEqual([]);
   });
 });

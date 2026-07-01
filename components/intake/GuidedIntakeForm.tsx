@@ -122,51 +122,45 @@ export function GuidedIntakeForm({ onComplete, submitting, prefill }: GuidedInta
   }
 
   const meta = STEP_META[step];
-  const progressPercent = Math.round(((step + 1) / TOTAL_STEPS) * 100);
 
   return (
     <div className="space-y-5">
       <div className="u-card animate-fade-in overflow-hidden p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Badge tone="forest" className="gap-1">
-              <Sparkles className="h-3 w-3" aria-hidden="true" />
-              Guided intake
-            </Badge>
-            <span className="text-xs text-[var(--ink-muted)]">You stay in control</span>
-          </div>
+          <Badge tone="forest" className="gap-1">
+            <Sparkles className="h-3 w-3" aria-hidden="true" />
+            ✦ Guided intake
+          </Badge>
           <span aria-live="polite" className="type-mono-data text-ink-faint">
-            {step + 1}/{TOTAL_STEPS}
+            {step + 1} / {TOTAL_STEPS}
           </span>
         </div>
 
         <div
-          className="u-progress-track mt-3 h-2"
+          className="mt-3 flex gap-1"
           role="progressbar"
           aria-valuenow={step + 1}
           aria-valuemin={1}
           aria-valuemax={TOTAL_STEPS}
           aria-label={`Intake progress: step ${step + 1} of ${TOTAL_STEPS}`}
         >
-          <div
-            className="u-progress-fill bg-forest"
-            style={{ width: `${progressPercent}%` }}
-          />
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                height: 5,
+                borderRadius: 3,
+                background: i <= step ? '#3684c8' : '#dcdad3',
+              }}
+            />
+          ))}
         </div>
 
-        <ol className="mt-3 flex gap-1.5 overflow-x-auto pb-1 sm:gap-2" aria-hidden="true">
-          {STEP_META.map((s, i) => (
-            <li
-              key={s.title}
-              className={cn(
-                'u-chip shrink-0',
-                i === step ? 'u-chip-active' : i < step ? 'u-chip-done' : 'u-chip-pending',
-              )}
-            >
-              {s.title}
-            </li>
-          ))}
-        </ol>
+        <div className="mt-2 flex items-center justify-between">
+          <span className="text-sm font-semibold text-[var(--ink)]">{meta.title}</span>
+          <span className="text-xs text-[var(--ink-muted)]">You stay in control</span>
+        </div>
       </div>
 
       <div

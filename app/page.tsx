@@ -11,7 +11,7 @@ const steps = [
   {
     icon: FileCheck,
     title: '2. Unhold preps your case',
-    desc: 'AI reads your freeze notice, builds the right evidence checklist + a SHA-256 sealed bundle, and drafts GRM-ready representations.',
+    desc: 'AI reads your freeze notice, builds the right evidence checklist + a tamper-proof document package, and drafts GRM-ready representations.',
   },
   {
     icon: Shield,
@@ -35,9 +35,9 @@ export default function HomePage() {
           <h1 className="type-display-xl mt-4">{brand.tagline}</h1>
           <p className="type-lead mt-5 max-w-xl">
             Account frozen over a cyber-fraud complaint? <strong>Start with the official process</strong> —
-            file on the NCRP portal or call <strong>1930</strong>, and use the government <strong>GRM/MRM</strong> path.
+            file on the NCRP portal or call <strong>1930</strong>, and use the government <strong>GRM/MRM (government grievance and recovery portals)</strong> path.
             Unhold is your prep layer: it reads your freeze notice, builds the right evidence checklist and a
-            SHA-256 sealed bundle, and drafts your representations — so your official submission is as strong as
+            tamper-proof document package, and drafts your representations — so your official submission is as strong as
             possible. You send everything yourself. No auto-send, no guarantees.
           </p>
 

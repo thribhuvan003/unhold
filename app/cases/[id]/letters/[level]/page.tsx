@@ -2,10 +2,12 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { LetterPreview } from '@/components/letters/LetterPreview';
+import { BankContactFinder } from '@/components/case/BankContactFinder';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { GUEST_COOKIE_NAME, verifyGuestToken } from '@/lib/auth/guest';
 import { assertCaseAccess, type RequestAuth } from '@/lib/api/case-access';
+import { getBankContacts } from '@/lib/banks/official-contacts';
 
 type PageProps = {
   params: Promise<{ id: string; level: string }>;
@@ -53,6 +55,26 @@ export default async function LetterPage({ params }: PageProps) {
   // No escalation at this level → the letter was never requested.
   if (!escalation) notFound();
 
+  // Resolve the case's bank so we can suggest an official recipient contact.
+  const { data: caseRow } = await admin
+    .from('cases')
+    .select('bank_id')
+    .eq('id', id)
+    .maybeSingle();
+  let bankSlug: string | null = null;
+  if (caseRow?.bank_id) {
+    const { data: bankRow } = await admin
+      .from('banks')
+      .select('slug')
+      .eq('id', caseRow.bank_id)
+      .maybeSingle();
+    bankSlug = bankRow?.slug ?? null;
+  }
+  // Suggest the recipient email for this letter level from official sources.
+  const bank = bankSlug ? getBankContacts(bankSlug) : null;
+  const suggestedContact = bank?.contacts.find((c) => c.level === level && c.email);
+  const recipientEmail = suggestedContact?.email;
+
   // Escalation exists but the drafter job hasn't produced the letter body yet:
   // show a friendly "being prepared" state instead of a raw 404.
   if (!escalation.letter_body || !escalation.letter_subject) {
@@ -81,17 +103,27 @@ export default async function LetterPage({ params }: PageProps) {
 
   return (
     <main style={{ maxWidth: 720, margin: '0 auto', padding: 16 }}>
-      <h1 style={{ fontSize: 20, marginBottom: 16 }}>{level} letter draft</h1>
+      <div style={{ marginBottom: 16 }}>
+        <Link href={`/cases/${id}`} style={{ fontSize: 13, opacity: 0.75 }}>
+          ← Back to your case
+        </Link>
+        <h1 style={{ fontSize: 22, marginTop: 8, fontWeight: 700 }}>{level} letter draft</h1>
+      </div>
+
       <LetterPreview
         subject={escalation.letter_subject}
         body={escalation.letter_body}
         level={level}
         placeholdersMissing={metadata.placeholders_missing ?? []}
         approved={escalation.status === 'approved' || escalation.approved_at != null}
+        recipientEmail={recipientEmail}
       />
-      <p style={{ marginTop: 16, fontSize: 13, opacity: 0.7 }}>
-        Copy-only — you must send this letter yourself via email or post.
-      </p>
+
+      {bankSlug ? (
+        <div style={{ marginTop: 20 }}>
+          <BankContactFinder bankSlug={bankSlug} targetLevel={level as 'L1' | 'L2' | 'L3'} />
+        </div>
+      ) : null}
     </main>
   );
 }

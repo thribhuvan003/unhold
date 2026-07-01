@@ -72,6 +72,7 @@ describe('LetterPreview', () => {
 
     const button = container.querySelector('button') as HTMLButtonElement;
     expect(button.disabled).toBe(true);
-    expect(container.textContent).toContain('Missing fields: ACCOUNT_LAST4');
+    expect(container.textContent).toContain('Fill these before sending');
+    expect(container.textContent).toContain('ACCOUNT_LAST4');
   });
 });
