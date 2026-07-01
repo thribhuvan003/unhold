@@ -28,7 +28,7 @@ export function BundleButton({ caseId, guestToken }: BundleButtonProps) {
       const json = await res.json();
       if (res.status === 403) {
         throw new Error(
-          "Sealing a package needs an account. You can upload and check documents as a guest — sign in to download the sealed bundle.",
+          "Creating an official submission package needs an account. You can upload and check documents as a guest — sign in to download the package.",
         );
       }
       if (res.status === 422) {
@@ -82,7 +82,7 @@ export function BundleButton({ caseId, guestToken }: BundleButtonProps) {
             Download official submission package
           </a>
           <p className="type-caption text-ink-faint">
-            {result.evidence_count} document{result.evidence_count === 1 ? '' : 's'} sealed · tamper-proof verified{' '}
+            {result.evidence_count} document{result.evidence_count === 1 ? '' : 's'} sealed · hash-verified{' '}
             <span className="type-mono-data">{result.manifest_sha256.slice(0, 12)}…</span> · link expires in 1 hour.
           </p>
         </div>

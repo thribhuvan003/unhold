@@ -29,10 +29,13 @@ export default function NewCasePage() {
         headers,
         body: JSON.stringify({
           bank_slug: 'state-bank-of-india',
-          freeze_reason: 'cyber_upi_chain',
           victim_role: result.victimRole,
           frozen_amount_paise: result.frozenAmountPaise,
-          intake_json: result.intakeJson,
+          intake_json: {
+            ...result.intakeJson,
+            bank_unconfirmed: true,
+            provisional_bank_slug: 'state-bank-of-india',
+          },
           consent_accepted: true,
           ai_consent_accepted: result.aiConsentAccepted,
         }),
@@ -51,12 +54,12 @@ export default function NewCasePage() {
     <section className="mx-auto max-w-xl space-y-8">
       <header className="animate-fade-up space-y-2">
         <p className="font-mono text-[10px] font-medium uppercase tracking-widest text-[var(--forest)]">
-          SBI · cyber UPI chain
+          Official GRM/MRM prep
         </p>
         <h1 className="font-display text-3xl font-semibold text-[var(--ink)]">New case</h1>
         <p className="text-sm leading-relaxed text-[var(--ink-muted)]">
-          A few guided questions help our AI route your case correctly — you review everything before it goes
-          anywhere.
+          A few guided questions help prepare your official bank/GRM package. You review and submit everything
+          yourself.
         </p>
       </header>
 

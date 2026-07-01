@@ -10,6 +10,7 @@ import {
   parseJsonBody,
 } from '@/lib/api/response';
 import { ApiError } from '@/lib/api/errors';
+import { createDrafterDraftNow } from '@/lib/agents/drafter/runner';
 
 const VALID_LEVELS = new Set(['L1', 'L2', 'L3']);
 const CHANNEL_BY_LEVEL = {
@@ -92,6 +93,16 @@ export async function POST(
         caseId,
         level,
         message: placeholderError.message,
+      });
+    }
+
+    try {
+      await createDrafterDraftNow(caseId, level, result.job_id ?? `inline:${caseId}:${level}`);
+    } catch (draftError) {
+      console.warn('[escalations] inline draft failed; queued job will retry', {
+        caseId,
+        level,
+        message: draftError instanceof Error ? draftError.message : String(draftError),
       });
     }
 

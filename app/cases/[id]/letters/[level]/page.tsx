@@ -72,7 +72,8 @@ export default async function LetterPage({ params }: PageProps) {
   }
   // Suggest the recipient email for this letter level from official sources.
   const bank = bankSlug ? getBankContacts(bankSlug) : null;
-  const suggestedContact = bank?.contacts.find((c) => c.level === level && c.email);
+  const suggestedContact =
+    level === 'L1' ? null : bank?.contacts.find((c) => c.level === level && c.email);
   const recipientEmail = suggestedContact?.email;
 
   // Escalation exists but the drafter job hasn't produced the letter body yet:
@@ -111,6 +112,8 @@ export default async function LetterPage({ params }: PageProps) {
       </div>
 
       <LetterPreview
+        caseId={id}
+        escalationId={escalation.id}
         subject={escalation.letter_subject}
         body={escalation.letter_body}
         level={level}

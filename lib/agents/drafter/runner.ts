@@ -313,3 +313,13 @@ export async function runDrafterJob(job: AgentJobRow): Promise<AgentRunResult> {
     cost_usd: 0,
   };
 }
+
+export async function createDrafterDraftNow(
+  caseId: string,
+  level: TemplateLevel,
+  jobId = 'inline-draft',
+): Promise<string> {
+  const ctx = await loadDrafterContext(caseId, level);
+  const draft = await runDrafter(ctx);
+  return persistDraft(ctx, draft, jobId);
+}

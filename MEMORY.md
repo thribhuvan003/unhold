@@ -296,3 +296,37 @@ This makes the project maximally useful for the exact user: panicked innocent re
 **Rejected**: Heavy Playwright end-to-end upload/job simulation in this slice; deterministic unit/contract seams give better signal until storage/job workers are explicitly mocked or seeded.
 
 **Tag:** lienliberator
+---
+
+## 2026-07-01: Normal-user release blockers fixed after multi-agent audit
+
+**Decision**: Ship a focused blocker fix for the post-redesign audit instead of continuing broader UI expansion.
+
+**Changed**:
+- Letter drafts now have a visible "I reviewed this draft" approval control before copy/Gmail/mail-app export unlocks.
+- Letter route passes the case/escalation IDs needed to approve the draft.
+- Escalation POST still queues the drafter job, but also attempts an inline draft immediately so production is not fully dependent on the external cron for first draft creation.
+- Gmail/mailto draft actions no longer place the full formal letter body in the URL; they open a shorter attachment-focused email draft. Full letter text remains available via "Copy letter".
+- Official contact suggestions were corrected/downgraded: no L1 auto-recipient, HDFC/Axis/ICICI risky emails fixed or moved to general support, and copy keeps "verify with branch" framing.
+- Guided intake now supports "I'm not sure yet" for role and fund recognition.
+- New case visible copy no longer says "SBI / cyber UPI chain"; backend still uses a provisional SBI slug because the create-case API requires a bank_slug until a bank selector is added.
+- User-facing copy changed from "tamper-proof" to "hash-verified" / official submission package wording.
+
+**Why**:
+- Audit found normal users could get stuck at "Approve this draft" without an approve button, and production could leave drafts in "Preparing draft" if cron secrets were not configured.
+- Wrong bank contact emails are worse than no email suggestion. Safer contact cards are better for a stressed user.
+- Normal users need uncertainty choices and plain labels, not hardcoded bank/classification or internal proof-gate language.
+
+**Rejected / deferred**:
+- Full bank selector in intake. It is needed, but this patch only removes misleading visible copy and stores the default as provisional.
+- Full image cleanup/OCR preview.
+- IO representation, court/lawyer brief, and extra letter types.
+- Auto-send. Gmail/mail app opens a user-controlled draft only; no automatic submission.
+
+**Verification**:
+- `corepack pnpm typecheck` passed.
+- Focused component tests passed: LetterPreview + GuidedIntakeForm.
+- `corepack pnpm lint` passed with 0 errors and existing warnings.
+- `scripts/verify-no-auto-send.sh` passed via Git Bash.
+
+**Tag:** lienliberator

@@ -55,8 +55,8 @@ const STEP_META = [
 export function GuidedIntakeForm({ onComplete, submitting, prefill }: GuidedIntakeFormProps) {
   const [step, setStep] = useState(0);
   const [narration, setNarration] = useState('');
-  const [userRole, setUserRole] = useState<'sender' | 'receiver' | null>(null);
-  const [recognizesFunds, setRecognizesFunds] = useState<'yes' | 'no' | null>(null);
+  const [userRole, setUserRole] = useState<'sender' | 'receiver' | 'unsure' | null>(null);
+  const [recognizesFunds, setRecognizesFunds] = useState<'yes' | 'no' | 'unsure' | null>(null);
   const [amountInr, setAmountInr] = useState(
     prefill?.frozenAmountPaise ? String(Math.round(prefill.frozenAmountPaise / 100)) : '',
   );
@@ -90,6 +90,8 @@ export function GuidedIntakeForm({ onComplete, submitting, prefill }: GuidedInta
       narration,
       user_role: userRole ?? 'receiver',
       admits_unknown_funds: recognizesFunds === 'no',
+      user_role_uncertain: userRole === 'unsure',
+      fund_source_uncertain: recognizesFunds === 'unsure',
     };
     if (hasAmount) intakeJson.amount_inr = amount;
     if (/^\d{14}$/.test(ncrpId.trim())) intakeJson.ncrp_id = ncrpId.trim();
@@ -218,6 +220,12 @@ export function GuidedIntakeForm({ onComplete, submitting, prefill }: GuidedInta
                 checked={userRole === 'receiver'}
                 onChange={() => setUserRole('receiver')}
               />
+              <RadioOption
+                name="user_role"
+                label="I'm not sure yet"
+                checked={userRole === 'unsure'}
+                onChange={() => setUserRole('unsure')}
+              />
             </fieldset>
           ) : null}
 
@@ -235,6 +243,12 @@ export function GuidedIntakeForm({ onComplete, submitting, prefill }: GuidedInta
                 label="No — some of it isn't familiar to me"
                 checked={recognizesFunds === 'no'}
                 onChange={() => setRecognizesFunds('no')}
+              />
+              <RadioOption
+                name="recognizes_funds"
+                label="I'm not sure yet"
+                checked={recognizesFunds === 'unsure'}
+                onChange={() => setRecognizesFunds('unsure')}
               />
             </fieldset>
           ) : null}
@@ -347,8 +361,8 @@ function IntakeRecap({
   ncrpId,
 }: {
   narration: string;
-  userRole: 'sender' | 'receiver' | null;
-  recognizesFunds: 'yes' | 'no' | null;
+  userRole: 'sender' | 'receiver' | 'unsure' | null;
+  recognizesFunds: 'yes' | 'no' | 'unsure' | null;
   amountInr: string;
   ncrpId: string;
 }) {
@@ -365,7 +379,9 @@ function IntakeRecap({
           <dd className="mt-0.5">
             {userRole === 'sender'
               ? 'You sent the money and your account is frozen.'
-              : "Money you didn't expect came in and is now frozen."}
+              : userRole === 'receiver'
+                ? "Money you didn't expect came in and is now frozen."
+                : "You're not sure yet which situation applies."}
           </dd>
         </div>
         <div>
@@ -373,7 +389,9 @@ function IntakeRecap({
           <dd className="mt-0.5">
             {recognizesFunds === 'no'
               ? "You don't recognize all of the frozen funds."
-              : 'You recognize where the frozen funds came from.'}
+              : recognizesFunds === 'yes'
+                ? 'You recognize where the frozen funds came from.'
+                : "You're not sure yet where all the frozen funds came from."}
           </dd>
         </div>
         {amountInr.trim() ? (
@@ -390,8 +408,7 @@ function IntakeRecap({
         ) : null}
       </dl>
       <p className="mt-3 text-xs text-[var(--ink-faint)]">
-        Our AI will use these answers to help classify and route your case — a human always reviews anything
-        before it&apos;s acted on.
+        These answers help prepare your checklist and letters. You still review and submit everything yourself.
       </p>
     </div>
   );
