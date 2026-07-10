@@ -1,0 +1,11 @@
+-- 015_knowledge_chunks_rls.sql
+-- Security fix: knowledge_chunks (the curated RAG corpus) shipped with RLS
+-- DISABLED, so anyone with the public anon key could read or modify every row
+-- via the Supabase Data API (flagged by the security advisor, lint 0013).
+--
+-- The server reads this table only via the service-role admin client
+-- (lib/rag/retrieve.ts -> match_knowledge_chunks RPC), and the service role
+-- bypasses RLS. So enabling RLS with NO policy is the correct fix: anon and
+-- authenticated get no Data-API access, while server-side retrieval is
+-- unaffected. Applied to prod 2026-07-05 via migration enable_rls_knowledge_chunks.
+ALTER TABLE public.knowledge_chunks ENABLE ROW LEVEL SECURITY;

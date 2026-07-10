@@ -1,0 +1,41 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "regions": ["bom1"],
+  "functions": {
+    "app/api/v1/internal/cron/tick/route.ts": { "maxDuration": 300, "memory": 1024 },
+    "app/api/v1/internal/cron/reminders/route.ts": { "maxDuration": 300, "memory": 1024 },
+    "app/api/v1/internal/cron/rankings/route.ts": { "maxDuration": 300, "memory": 1024 },
+    "app/api/v1/internal/jobs/process/route.ts": { "maxDuration": 300, "memory": 1024 },
+    "app/api/v1/cases/*/evidence/bundle/route.ts": { "maxDuration": 120, "memory": 1024 },
+    "app/api/v1/**/route.ts": { "maxDuration": 60, "memory": 512 }
+  },
+  "crons": [
+    { "path": "/api/v1/internal/cron/reminders", "schedule": "30 3 * * *" },
+    { "path": "/api/v1/internal/cron/rankings", "schedule": "30 20 * * *" },
+    { "path": "/api/v1/internal/cron/tick", "schedule": "0 4 * * *" },
+    { "path": "/api/v1/internal/jobs/process", "schedule": "0 2 * * *" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/leaderboard(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, s-maxage=300, stale-while-revalidate=600" }]
+    }
+  ],
+  "rewrites": [{ "source": "/healthz", "destination": "/api/v1/health" }]
+}

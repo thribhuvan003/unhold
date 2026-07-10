@@ -1,0 +1,47 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# debug
+npm-debug.log*
+pnpm-debug.log*
+
+# typescript
+*.tsbuildinfo
+
+# harness session state (MANIFEST.json is committed)
+.claude/session/
+
+# supabase local
+.supabase/
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+
+# misc
+.DS_Store
+coverage/
+.vercel
+
+# crash dumps
+*.stackdump
+
+# root-level screenshots / scratch captures (never commit dev screenshots)
+/*.jpeg
+/*.jpg
+/*.png
+
+# scratch / MCP tooling dirs
+.playwright-mcp/
+mcps/

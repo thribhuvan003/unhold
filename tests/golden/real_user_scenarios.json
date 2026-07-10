@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "description": "Real-user acceptance scenarios for Unhold Phase 1. These are deterministic fixtures for no-LLM tests: classification, checklist readiness, and copy-only letter posture. GRM/MRM remain official paths; Unhold prepares evidence and drafts only.",
+  "cases": [
+    {
+      "id": "RU01",
+      "title": "Cyber fraud UPI chain with full salary-account freeze over a partial disputed amount",
+      "input": {
+        "case_id": "real-user-01",
+        "evidence_count": 3,
+        "intake_json": {
+          "narration": "Salary account fully frozen after Rs. 12000 UPI credit linked to cyber fraud complaint NCRP 30912345678901. Current balance Rs. 85000. I do not know the sender.",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi",
+          "freeze_type_hint": "total_freeze",
+          "ncrp_id": "30912345678901",
+          "amount_inr": 12000
+        },
+        "manifest": [
+          { "source_id": "freeze_sms", "field": "narration", "value": "debit freeze cyber complaint NCRP 30912345678901 amount Rs. 12000" },
+          { "source_id": "bank_statement", "field": "salary_credits", "value": "salary credits visible" }
+        ],
+        "evidence_types": ["freeze_sms", "bank_statement", "pan_card"]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "freeze_type": "total_freeze",
+        "victim_role": "innocent_receiver",
+        "playbook_slug": "innocent_receiver_upi_chain_sbi",
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "bank_statement", "ncrp_acknowledgement", "pan_card"]
+      }
+    },
+    {
+      "id": "RU02",
+      "title": "Wrongful vague full freeze with no disputed amount",
+      "input": {
+        "case_id": "real-user-02",
+        "evidence_count": 2,
+        "intake_json": {
+          "narration": "Account frozen as per cyber cell instructions. No disputed amount or FIR number was shared. I am a student freelancer.",
+          "user_role": "innocent_receiver",
+          "bank_slug": "hdfc",
+          "freeze_type_hint": "total_freeze"
+        },
+        "manifest": [
+          { "source_id": "freeze_notice", "field": "narration", "value": "Account frozen as per cyber cell instructions" }
+        ],
+        "evidence_types": ["freeze_sms", "bank_statement", "aadhaar_masked"]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "freeze_type": "total_freeze",
+        "victim_role": "innocent_receiver",
+        "playbook_slug": "innocent_receiver_upi_chain_generic",
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "bank_statement", "ncrp_acknowledgement"]
+      }
+    },
+    {
+      "id": "RU03",
+      "title": "GRM-ready NCRP case",
+      "input": {
+        "case_id": "real-user-03",
+        "evidence_count": 3,
+        "intake_json": {
+          "narration": "NCRP complaint already filed for cyber UPI lien. Need GRM preparation at bank branch.",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi",
+          "freeze_type_hint": "partial_lien",
+          "ncrp_id": "30912345678902"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "ncrp_id", "value": "30912345678902" }
+        ],
+        "evidence_types": ["freeze_sms", "bank_statement", "ncrp_acknowledgement", "pan_card"]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "freeze_type": "partial_lien",
+        "victim_role": "innocent_receiver",
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "bank_statement", "ncrp_acknowledgement", "pan_card"]
+      }
+    },
+    {
+      "id": "RU04",
+      "title": "MRM-style victim recovery case",
+      "input": {
+        "case_id": "real-user-04",
+        "evidence_count": 3,
+        "intake_json": {
+          "narration": "I am the victim. I lost Rs. 48000 through UPI fraud and filed NCRP. Need money recovery preparation.",
+          "user_role": "victim",
+          "bank_slug": "sbi",
+          "freeze_type_hint": "partial_lien",
+          "ncrp_id": "30912345678903"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "user_role", "value": "victim" }
+        ],
+        "evidence_types": ["freeze_sms", "bank_statement", "ncrp_acknowledgement", "pan_card"]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "freeze_type": "partial_lien",
+        "victim_role": "victim",
+        "playbook_slug": "victim_upi_chain_sbi",
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "bank_statement", "ncrp_acknowledgement", "pan_card"]
+      }
+    },
+    {
+      "id": "RU05",
+      "title": "IT/GST attachment",
+      "input": {
+        "case_id": "real-user-05",
+        "evidence_count": 2,
+        "intake_json": {
+          "narration": "Income Tax notice under Section 226(3) says bank account attached for outstanding demand.",
+          "freeze_reason_hint": "tax_attachment",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi"
+        },
+        "manifest": [
+          { "source_id": "tax_notice", "field": "narration", "value": "Income Tax attachment under Section 226(3)" }
+        ],
+        "evidence_types": ["freeze_sms", "bank_statement", "pan_card"]
+      },
+      "expected": {
+        "freeze_reason": "tax_attachment",
+        "freeze_type": "debit_freeze",
+        "victim_role": "innocent_receiver",
+        "human_review_required": true,
+        "refuse_to_classify": false,
+        "checklist_db_reason": "tax_gst_attachment",
+        "checklist_includes": ["freeze_sms", "bank_statement", "court_order", "pan_card"]
+      }
+    },
+    {
+      "id": "RU06",
+      "title": "Court order freeze",
+      "input": {
+        "case_id": "real-user-06",
+        "evidence_count": 2,
+        "intake_json": {
+          "narration": "Account frozen as per court order in criminal case number 442/2026.",
+          "freeze_reason_hint": "court_order",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi"
+        },
+        "manifest": [
+          { "source_id": "court_notice", "field": "narration", "value": "court order in case 442/2026" }
+        ],
+        "evidence_types": ["freeze_sms", "court_order", "bank_statement"]
+      },
+      "expected": {
+        "freeze_reason": "court_order",
+        "freeze_type": "debit_freeze",
+        "victim_role": "innocent_receiver",
+        "human_review_required": true,
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "court_order", "bank_statement"]
+      }
+    },
+    {
+      "id": "RU07",
+      "title": "KYC or dormant account freeze",
+      "input": {
+        "case_id": "real-user-07",
+        "evidence_count": 2,
+        "intake_json": {
+          "narration": "Debit restrictions because KYC expired and re-KYC is pending.",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi"
+        },
+        "manifest": [
+          { "source_id": "bank_sms", "field": "narration", "value": "KYC expired re-KYC pending" }
+        ],
+        "evidence_types": ["freeze_sms", "pan_card", "aadhaar_masked"]
+      },
+      "expected": {
+        "freeze_reason": "kyc_expired",
+        "freeze_type": "debit_freeze",
+        "victim_role": "innocent_receiver",
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "pan_card", "aadhaar_masked"]
+      }
+    },
+    {
+      "id": "RU08",
+      "title": "Multi-bank cyber trail",
+      "input": {
+        "case_id": "real-user-08",
+        "evidence_count": 4,
+        "intake_json": {
+          "narration": "Same cyber fraud trail has frozen SBI and HDFC accounts. One UPI transaction of Rs. 15000 is disputed, but both accounts are restricted.",
+          "user_role": "innocent_receiver",
+          "bank_slug": "hdfc",
+          "freeze_type_hint": "total_freeze",
+          "multiple_banks": ["sbi", "hdfc"]
+        },
+        "manifest": [
+          { "source_id": "freeze_notice_sbi", "field": "narration", "value": "SBI freeze cyber fraud trail" },
+          { "source_id": "freeze_notice_hdfc", "field": "narration", "value": "HDFC freeze same cyber fraud trail" }
+        ],
+        "evidence_types": ["freeze_sms", "bank_statement", "pan_card"]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "freeze_type": "total_freeze",
+        "victim_role": "innocent_receiver",
+        "playbook_slug": "innocent_receiver_upi_chain_generic",
+        "refuse_to_classify": false,
+        "checklist_includes": ["freeze_sms", "bank_statement", "ncrp_acknowledgement", "pan_card"]
+      }
+    }
+  ]
+}

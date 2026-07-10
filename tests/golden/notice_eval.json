@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "description": "Live eval set for the Notice Analyzer (Groq + RAG + rerank). Each case is a freeze-notice text with the expected freeze_reason enum and whether the explanation should be grounded in the lien-only / disputed-amount principle. Scored by classification accuracy + LLM-as-judge faithfulness.",
+  "cases": [
+    {
+      "id": "N01",
+      "notice": "STATE BANK OF INDIA: A lien of Rs 2,000 has been marked on your account ending 1234 on instructions from Cyber Crime Police Station vide NCRP Acknowledgement No 30912345678 dated 10/06/2026, in a reported online fraud. Contact the investigating officer.",
+      "expected_freeze_reason": ["cyber_upi_chain", "police_notice_bnss106"],
+      "expect_lien_only_grounding": true
+    },
+    {
+      "id": "N02",
+      "notice": "Dear Customer, your account has been debit frozen as your KYC has expired. Please complete re-KYC at your branch to restore full operations.",
+      "expected_freeze_reason": ["kyc_expired"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N03",
+      "notice": "NOTICE under Section 226(3) of the Income-Tax Act, 1961: The Income Tax Department has attached your bank account towards outstanding tax demand. The bank is directed to remit the amount.",
+      "expected_freeze_reason": ["tax_attachment"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N04",
+      "notice": "As per the order of the Hon'ble Court in Civil Suit No. 442/2026, your bank account stands frozen until further orders of the court.",
+      "expected_freeze_reason": ["court_order"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N05",
+      "notice": "Your account has been placed under debit freeze pursuant to a requisition received from the Cyber Crime Cell under Section 106 of the Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023.",
+      "expected_freeze_reason": ["police_notice_bnss106", "cyber_upi_chain"],
+      "expect_lien_only_grounding": true
+    },
+    {
+      "id": "N06",
+      "notice": "Your account is under review following a Suspicious Transaction Report (STR) raised by the bank's risk team. Transactions are temporarily restricted.",
+      "expected_freeze_reason": ["bank_str"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N07",
+      "notice": "A hold has been placed on your account due to a dishonoured cheque presented for clearing. Please maintain sufficient balance.",
+      "expected_freeze_reason": ["cheque_dishonour"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N08",
+      "notice": "Your account has been flagged by our systems as a possible mule account used in fraudulent activity and has been frozen pending verification.",
+      "expected_freeze_reason": ["suspected_mule"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N09",
+      "notice": "Operations on this account are suspended due to a nomination dispute following the demise of the account holder. Legal heirs must complete formalities.",
+      "expected_freeze_reason": ["death_nomination_dispute"],
+      "expect_lien_only_grounding": false
+    },
+    {
+      "id": "N10",
+      "notice": "Lien marked Rs 9,500 — funds received via UPI traced to a cyber fraud complaint (NCRP). You appear as a layer-2 recipient. Account debit frozen by bank on police request.",
+      "expected_freeze_reason": ["cyber_upi_chain", "police_notice_bnss106"],
+      "expect_lien_only_grounding": true
+    },
+    {
+      "id": "N11",
+      "notice": "Your salary account has been fully frozen. We received a communication from a police station in another state regarding a fraudulent transaction of Rs 1,500 credited to your account three months ago.",
+      "expected_freeze_reason": ["cyber_upi_chain", "police_notice_bnss106"],
+      "expect_lien_only_grounding": true
+    },
+    {
+      "id": "N12",
+      "notice": "Re-KYC overdue: as mandated by RBI periodic KYC norms, your account has limited functionality until updated documents are submitted.",
+      "expected_freeze_reason": ["kyc_expired"],
+      "expect_lien_only_grounding": false
+    }
+  ]
+}
