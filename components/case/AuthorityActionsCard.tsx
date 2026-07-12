@@ -3,7 +3,11 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Copy, ExternalLink, Printer } from 'lucide-react';
-import { buildIoNocLetter, GRM_PORTAL_URL, type IoNocValues } from '@/lib/letters/io-noc-template';
+import {
+  buildIoNocLetter,
+  CYBERCRIME_CITIZEN_PORTAL_URL,
+  type IoNocValues,
+} from '@/lib/letters/io-noc-template';
 import { cn } from '@/lib/ui/cn';
 
 export type AuthorityLetterFields = {
@@ -26,10 +30,10 @@ type AuthorityActionsCardProps = {
 
 /**
  * Cyber-track authority actions the bank ladder cannot replace:
- * 1) Official GRM portal
+ * 1) Official citizen NCRP/cybercrime entry point
  * 2) Ready-to-copy IO / cyber-cell NOC representation
  *
- * You still send everything yourself — Unhold never contacts police or GRM.
+ * You still send everything yourself — Unhold never contacts police or government systems.
  */
 export function AuthorityActionsCard({ l1Sent, fields }: AuthorityActionsCardProps) {
   const t = useTranslations('AuthorityActionsCard');
@@ -88,12 +92,12 @@ export function AuthorityActionsCard({ l1Sent, fields }: AuthorityActionsCardPro
       <h2 className="type-display mt-1.5 text-lg text-[var(--ink)]">{t('title')}</h2>
       <p className="mt-2 text-[0.84375rem] leading-relaxed text-[var(--ink-muted)]">{t('intro')}</p>
 
-      {/* GRM — official government path */}
+      {/* Public citizen entry point — never link a citizen to the staff-only CFCFRMS login. */}
       <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--color-sky)]/30 bg-[var(--color-sky-mist)] px-3.5 py-3">
         <p className="text-[0.84375rem] font-semibold text-[var(--ink)]">{t('grmTitle')}</p>
         <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">{t('grmBody')}</p>
         <a
-          href={GRM_PORTAL_URL}
+          href={CYBERCRIME_CITIZEN_PORTAL_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="u-btn u-btn-secondary mt-2.5 flex min-h-[44px] w-full items-center justify-center gap-2 text-sm font-semibold no-underline"

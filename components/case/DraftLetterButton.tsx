@@ -7,12 +7,11 @@ import { Loader2, FilePlus2 } from 'lucide-react';
 interface DraftLetterButtonProps {
   caseId: string;
   level: 'L1' | 'L2' | 'L3';
-  guestToken?: string;
 }
 
 type Phase = 'idle' | 'requesting' | 'requested' | 'error';
 
-export function DraftLetterButton({ caseId, level, guestToken }: DraftLetterButtonProps) {
+export function DraftLetterButton({ caseId, level }: DraftLetterButtonProps) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +25,6 @@ export function DraftLetterButton({ caseId, level, guestToken }: DraftLetterButt
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(guestToken ? { 'X-Guest-Token': guestToken } : {}),
         },
         body: JSON.stringify({ level }),
       });

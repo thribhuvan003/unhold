@@ -6,7 +6,6 @@ import { cn } from '@/lib/ui/cn';
 
 interface BundleButtonProps {
   caseId: string;
-  guestToken?: string;
   /** Called after a successful seal so the letter send path can unlock without a full reload. */
   onSealed?: (result: BundleResult) => void;
   /** Compact chrome for the letter workspace. */
@@ -25,7 +24,6 @@ export type BundleResult = {
 /** "Your proof pack" card — seals checked papers into one PDF via the bundle API. */
 export function BundleButton({
   caseId,
-  guestToken,
   onSealed,
   compact = false,
   className,
@@ -41,7 +39,6 @@ export function BundleButton({
     try {
       const res = await fetch(`/api/v1/cases/${caseId}/evidence/bundle`, {
         method: 'POST',
-        headers: guestToken ? { 'X-Guest-Token': guestToken } : {},
       });
       const json = await res.json();
       if (res.status === 403) {

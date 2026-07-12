@@ -17,6 +17,7 @@ export function LegalPositionNote({ position, className }: LegalPositionNoteProp
   const t = useTranslations('LegalPositionNote');
   const locale = useLocale();
   const contested = position.currency === 'contested';
+  const caution = position.currency === 'caution';
   // Under /hi show the reviewed Hindi explanation as the primary text, with the
   // English claim kept visible below it — English is the citable ammunition.
   const claimHi = locale === 'hi' ? position.claimHi : undefined;
@@ -26,7 +27,7 @@ export function LegalPositionNote({ position, className }: LegalPositionNoteProp
     <div
       className={cn(
         'rounded-[var(--radius-md)] border px-3 py-2.5 text-sm leading-relaxed',
-        contested
+        contested || caution
           ? 'border-[var(--warn)]/30 bg-[var(--warn-muted)] text-[var(--ink)]'
           : 'border-[var(--success)]/25 bg-[var(--success-muted)] text-[var(--ink)]',
         className,
@@ -47,12 +48,12 @@ export function LegalPositionNote({ position, className }: LegalPositionNoteProp
         <span
           className={cn(
             'rounded-full px-2 py-0.5 font-bold uppercase tracking-wide',
-            contested
+            contested || caution
               ? 'bg-[var(--warn)]/20 text-[var(--warn-strong,var(--ink))]'
               : 'bg-[var(--success)]/20 text-[var(--success)]',
           )}
         >
-          {contested ? t('contested') : t('current')}
+          {contested ? t('contested') : caution ? t('caution') : t('current')}
         </span>
         <a
           href={position.sourceUrl}

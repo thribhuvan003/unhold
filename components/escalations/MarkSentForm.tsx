@@ -11,7 +11,6 @@ type MarkSentFormProps = {
   caseId: string;
   escalationId: string;
   level: string;
-  guestToken?: string;
   proofGateBlocked?: boolean;
   blockedReason?: string;
   onSuccess?: () => void;
@@ -30,7 +29,6 @@ export function MarkSentForm({
   caseId,
   escalationId,
   level,
-  guestToken,
   proofGateBlocked = false,
   blockedReason,
   onSuccess,
@@ -60,7 +58,6 @@ export function MarkSentForm({
     }
 
     const jsonHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (guestToken) jsonHeaders['X-Guest-Token'] = guestToken;
 
     setPhase('uploading');
     try {

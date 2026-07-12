@@ -80,29 +80,26 @@ type TrackLetterCopy = {
 // excess and the branch can correct it — so we ask to restrict/limit the lien,
 // never to "release the freeze". (Bank-officer review: demanding release is the
 // one thing that makes the branch file the letter as "customer doesn't get it".)
-const CYBER_AMOUNT_RULE = (disputed: boolean, amountInr: string, amount: number): string =>
-  disputed && amount < 50000
-    ? `The disputed amount (approx. Rs. ${amountInr}) is below Rs. 50,000, for which the MHA SOP 2026 provides for quicker restoration; a lien beyond this sum is not required, and the hold on the balance above it should be lifted.`
-    : disputed
-      ? `A lien beyond the disputed amount (approx. Rs. ${amountInr}) is not required to secure it; the hold on the balance above that sum should be lifted.`
-      : 'A lien beyond the specific disputed amount is not required; the hold on the balance above it should be lifted.';
+const CYBER_AMOUNT_RULE = (disputed: boolean, amountInr: string, amount: number): string => {
+  void amount;
+  return disputed
+    ? `Please confirm in writing whether the amount currently held is approximately Rs. ${amountInr}, the authority that ordered the hold, and whether any further review is needed.`
+    : 'Please confirm in writing the exact amount currently held, the authority that ordered the hold, and whether any further review is needed.';
+};
 
 const TRACK_LETTER_COPY: Record<UnfreezeTrack, TrackLetterCopy> = {
   cyber: {
-    // Kept to ONE line: a bank officer actions a fact-first letter and
-    // deprioritises a statutory lecture. Enough legal grounding to be correct
-    // (SOP + BNSS 106), not a paragraph that reads as a template.
     legalGrounding:
-      'Under the MHA/I4C SOP (Jan 2026) a hold should be limited to the disputed amount — BNSS Section 106 permits seizure, not a full debit freeze (which needs a Section 107 order). Please apply this and register the grievance under GRM.',
+      'Please register this as a formal grievance, provide the written freeze details, and tell me the next official step. I understand that the bank and investigating authority decide any release or modification.',
     declaration:
       'I declare that I had no knowledge of any fraud. The funds are legitimate. I am cooperating fully.',
     attachments:
       'the freeze SMS/notice, bank statement, photo ID (masked), and proof of legitimate funds (a salary slip or invoice)',
     situationFallback: 'I am an innocent account holder with no connection to any fraud.',
     l1KeyRequests: (disputed, amountInr) =>
-      `2. If the lien covers more than ${
-        disputed ? `the disputed amount (approx. Rs. ${amountInr})` : 'the disputed amount'
-      }, restrict it to that amount and lift the hold on the balance above it — a freeze beyond the disputed sum is the branch's own excess to correct and does not need the investigating agency's approval.\n3. Register this as a formal grievance (GRM) and forward it to your controlling office. I am separately approaching the investigating officer for release of the disputed amount itself, which I understand the branch cannot lift on its own.`,
+      `2. Please confirm whether the amount currently held is ${
+        disputed ? `approximately Rs. ${amountInr}` : 'the amount shown in the freeze record'
+      }, the authority that ordered it, and whether any further documents are needed from me.\n3. Register this as a formal grievance and provide a reference number. If an investigating authority is involved, please identify it and explain the next official step.`,
     amountRule: CYBER_AMOUNT_RULE,
   },
   branch: {
@@ -307,8 +304,8 @@ async function draftWithLlm(
   let grounding = '';
   try {
     const query =
-      `Escalation letter ${ctx.level} to ${LEVEL_CHANNEL[ctx.level]} for an innocent bank/UPI freeze case; ` +
-      `lien limited to the disputed amount. ${String(ctx.intake_json.narration ?? '')} ${String(ctx.intake_json.freeze_reason ?? '')}`;
+      `Escalation letter ${ctx.level} to ${LEVEL_CHANNEL[ctx.level]} for a bank/UPI freeze case; ` +
+      `request written hold details, the ordering authority, and the next official step. ${String(ctx.intake_json.narration ?? '')} ${String(ctx.intake_json.freeze_reason ?? '')}`;
     const chunks = await retrieveRelevantContext(query, 5);
     if (chunks.length > 0) {
       grounding =

@@ -282,7 +282,7 @@
       "NEVER pay any agent, lawyer, or caller who promises to unfreeze your account for a fee. Official routes are free.",
       "The police will NOT call you asking for payment to release your account.",
       "Do not share OTPs, PINs, card numbers, or net-banking passwords with anyone.",
-      "Only use official portals: cybercrime.gov.in, 1930, ncrp-grievanceredressal.mha.gov.in, cms.rbi.org.in."
+      "Only use official citizen portals: cybercrime.gov.in, 1930, mrm-ncrp.mha.gov.in, cms.rbi.org.in."
     ]
   },
   "DemoPage": {
@@ -535,11 +535,11 @@
   },
   "AuthorityActionsCard": {
     "eyebrow": "What actually unfreezes a cyber freeze",
-    "title": "Authority actions — IO letter & GRM",
-    "intro": "Your branch cannot lift a cyber freeze alone. Use the government GRM route and a written representation to the Investigating Officer (IO) for a NOC / release. You send these yourself — Unhold never contacts the police or GRM.",
-    "grmTitle": "Official GRM (government review)",
-    "grmBody": "I4C/MHA grievance path for wrongly frozen cyber-linked accounts. File with your NCRP number where you have one. Free. Primary official route.",
-    "grmCta": "Open GRM portal ↗",
+    "title": "Authority actions — IO letter & official reporting",
+    "intro": "Your branch may need instructions from the investigating authority before it can change a cyber-related hold. Use a written representation to the Investigating Officer (IO). If you need to report cybercrime or access NCRP, use the official citizen portal. You send everything yourself — Unhold never contacts the police or government systems.",
+    "grmTitle": "Official cybercrime portal (citizen access)",
+    "grmBody": "Use this public government portal to report cybercrime or access your NCRP account. It is not a promise that filing there will release a hold. For a frozen account, also get written freeze details and acknowledgement from your bank.",
+    "grmCta": "Open official citizen portal ↗",
     "ioTitle": "Letter to the Investigating Officer (for NOC)",
     "ioBodyReady": "Use the freeze details from your bank letter. Fill any blanks (police station name). Attach your proof pack. Send by post/email/hand delivery to that cyber cell.",
     "ioBodyEarly": "You can draft this early — but you need the cyber cell / station name from the bank (Letter 1 asks for it). Blanks stay until you fill them.",
@@ -574,18 +574,19 @@
     "addPapers": "Add my papers →"
   },
   "DisproportionateFreezeCard": {
-    "title": "Your strongest right: only the disputed amount should be held",
+    "title": "Get the exact hold details in writing",
     "totalFreezeIntro": "Your case shows your whole account is blocked (a total freeze).",
     "debitFreezeIntro": "Your case indicates outgoing payments from your account are blocked (a debit freeze) — confirm the exact type with your bank in writing.",
-    "positionLead": "Here is the legal position — with the source, and where it is not yet settled:",
-    "demandLabel": "Demand this in writing at your branch:",
-    "quote": "As per the MHA/I4C SOP dated 02-01-2026 and recent High Court rulings, any hold must be a lien limited to the disputed amount shown in the NCRP trail. I request immediate release of the undisputed balance in my account — {holdClause} — and written confirmation of the exact lien amount, the legal provision used, and the Investigating Officer’s details.",
-    "holdClauseWithAmount": "only the disputed amount (approx. ₹{amount}) may be held as lien",
-    "holdClauseNoAmount": "only the disputed amount may be held as lien",
-    "knowYourRights": "know your rights →"
+    "positionLead": "Unhold cannot tell you whether this restriction is lawful in your specific case. Get the facts and the official route in writing before you escalate.",
+    "demandLabel": "Ask your branch for this in writing:",
+    "quote": "Please confirm {holdClause}, the authority that ordered the restriction, the NCRP/FIR or other reference number, and the documents or review needed for my case. Please provide a grievance reference and acknowledgement of this request.",
+    "holdClauseWithAmount": "whether the amount currently held is approximately ₹{amount}",
+    "holdClauseNoAmount": "the exact amount currently held",
+    "knowYourRights": "read the official-process guide →"
   },
   "LegalPositionNote": {
     "contested": "Contested — under Supreme Court appeal",
+    "caution": "Needs legal confirmation",
     "current": "Current law"
   },
     "PapersChecklist": {
@@ -607,8 +608,8 @@
       "unreadable": "We couldn't read this clearly — please add a sharper, well-lit photo of the full page. Make sure all four corners and the text are visible.",
       "flaggedIntro": "Saved with its digital seal. One thing is worth a quick check before you use it:",
       "flaggedMismatch": "the {field} here ({found}) looks different from your notice ({expected}). It may be fine — just make sure you uploaded the right document.",
-      "savedHuman": "Saved with its digital seal. A human reviews it before it is used in any letter.",
-      "noIssues": "No issues found automatically ({pct}% sure — a first check, not a guarantee). A human double-checks anything unclear before it is used.",
+      "savedHuman": "Saved with its digital seal. The file was not auto-read; review the original carefully before you use it in a letter.",
+      "noIssues": "No issues found automatically ({pct}% confidence — a first check, not a guarantee). Review the original document yourself before you use it.",
       "replaceDifferent": "Replace with a different photo",
       "extrasTitle": "Have more? These also help",
       "optional": "(optional)",

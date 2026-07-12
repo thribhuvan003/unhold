@@ -79,14 +79,14 @@ function normalizeOutput(output: NoticeAnalysisOutput): NoticeAnalysisOutput {
 
   if (['cyber_upi_chain', 'suspected_mule', 'police_notice_bnss106'].includes(output.freeze_reason)) {
     const joined = normalized.suggested_next.join(' ').toLowerCase();
-    if (!joined.includes('grm')) {
+    if (!joined.includes('branch')) {
       normalized.suggested_next.unshift(
-        'Start with the official GRM path through your bank branch or cybercrime.gov.in / 1930; Unhold helps you prepare the evidence bundle and copy-only letters.',
+        'Take a written request to your bank branch and ask for acknowledgement, the exact amount under hold, the ordering authority, and the NCRP/FIR reference. Use cybercrime.gov.in or 1930 to report cybercrime or access NCRP where applicable.',
       );
     }
-    if (!joined.includes('disputed') && !joined.includes('lien-only')) {
+    if (!joined.includes('exact amount')) {
       normalized.suggested_next.push(
-        'Ask the bank to identify the exact disputed amount and request lien-only / disputed-amount review instead of a blanket full-account freeze.',
+        'Do not assume what kind of restriction applies. Ask the bank to confirm the exact amount under hold and the written authority for it before you send an escalation.',
       );
     }
   }

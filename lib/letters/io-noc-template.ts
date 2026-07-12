@@ -23,7 +23,7 @@ The Investigating Officer / Station House Officer
 {{POLICE_STATION}}
 (Cyber cell / police station that ordered the freeze)
 
-Subject: Request for written NOC / release order under BNSS Section 106(3) — freeze on A/c XXXXXX{{ACCOUNT_LAST4}} at {{BANK_NAME}} — NCRP / complaint ref {{NCRP_ID}}
+Subject: Request for written freeze details and release review — A/c XXXXXX{{ACCOUNT_LAST4}} at {{BANK_NAME}} — NCRP / complaint ref {{NCRP_ID}}
 
 Respected Sir / Madam,
 
@@ -33,11 +33,11 @@ Respected Sir / Madam,
 
 3. I have already written to my bank for the exact freeze details (authority, FIR/NCRP number, amount held, and whether the hold is a lien or a full freeze). I am cooperating fully.
 
-4. Under the MHA/I4C SOP (January 2026), a hold should be limited to the disputed amount. A full debit freeze is not the default tool for a mere lien situation. Where investigation finds no involvement, the police may send the bank a Section 106(3) BNSS release notice / NOC so the bank can lift the hold.
+4. I request that my case be reviewed on its own facts. Please tell me the exact amount under hold, the written direction or complaint reference relied upon, and any documents or verification needed from me. I understand that only the competent authority can decide whether to modify or release a hold.
 
-I therefore request you to, within the SOP timeline (about 15 days where applicable):
+I therefore request you to:
 (a) Confirm in writing the complaint number, the exact amount ordered to be held, and my status in the investigation;
-(b) If I am not an accused / if there is no material against me, issue a written NOC / no-objection / Section 106(3) release direction to {{BANK_NAME}} so the freeze or excess lien on my account is lifted;
+(b) If the review supports it, issue a written no-objection or release direction to {{BANK_NAME}};
 (c) If video verification or further documents are required, inform me of the date, mode, and list of papers.
 
 Enclosed (as available): bank freeze SMS/notice, account statement showing the disputed credit and my normal activity, masked ID, and proof of legitimate funds (salary / invoice / family transfer as applicable).
@@ -111,5 +111,5 @@ export function buildIoNocLetter(values: IoNocValues): { subject: string; body: 
   };
 }
 
-/** Official GRM portal for wrongly frozen cyber-linked accounts (verified contacts). */
-export const GRM_PORTAL_URL = 'https://ncrp-grievanceredressal.mha.gov.in/';
+/** Public citizen entry point for reporting cybercrime or accessing NCRP. */
+export const CYBERCRIME_CITIZEN_PORTAL_URL = 'https://www.cybercrime.gov.in/';

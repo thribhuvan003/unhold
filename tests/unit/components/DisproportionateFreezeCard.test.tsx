@@ -36,7 +36,7 @@ describe('DisproportionateFreezeCard', () => {
     container.remove();
   });
 
-  it('renders the SOP demand with the amount for a total freeze', () => {
+  it('asks for written hold details with the amount for a total freeze', () => {
     act(() => {
       root.render(
         withIntl(<DisproportionateFreezeCard freezeType="total_freeze" frozenAmountInr="15,000" />),
@@ -44,32 +44,26 @@ describe('DisproportionateFreezeCard', () => {
     });
 
     expect(container.textContent).toContain('a total freeze');
-    expect(container.textContent).toContain('MHA/I4C SOP dated 02-01-2026');
-    expect(container.textContent).toContain('release of the undisputed balance');
-    expect(container.textContent).toContain(
-      'only the disputed amount (approx. ₹15,000) may be held as lien',
-    );
+    expect(container.textContent).toContain('Unhold cannot tell you whether this restriction is lawful');
+    expect(container.textContent).toContain('whether the amount currently held is approximately ₹15,000');
     const links = Array.from(container.querySelectorAll('a')) as HTMLAnchorElement[];
     const knowYourRights = links.find((a) => a.getAttribute('href') === '/guides/sop-2026');
-    expect(knowYourRights?.textContent).toContain('know your rights');
+    expect(knowYourRights?.textContent).toContain('official-process guide');
   });
 
-  it('surfaces the legal claims with sources and honestly flags the contested one', () => {
+  it('does not present a legal conclusion or external legal-source links', () => {
     act(() => {
       root.render(
         withIntl(<DisproportionateFreezeCard freezeType="total_freeze" frozenAmountInr="15,000" />),
       );
     });
 
-    // Regression guard: the HC blanket-freeze rulings must not be presented as
-    // settled law (they are under Supreme Court appeal).
-    expect(container.textContent).toContain('under Supreme Court appeal');
-    expect(container.textContent).toContain('Current law');
-    // Every legal claim carries a source link.
+    expect(container.textContent).not.toContain('Current law');
+    expect(container.textContent).not.toContain('under Supreme Court appeal');
     const sourceLinks = Array.from(container.querySelectorAll('a')).filter((a) =>
       (a.getAttribute('href') ?? '').startsWith('http'),
     );
-    expect(sourceLinks.length).toBeGreaterThanOrEqual(2);
+    expect(sourceLinks).toHaveLength(0);
   });
 
   it('renders for a debit freeze without an amount', () => {
@@ -78,7 +72,7 @@ describe('DisproportionateFreezeCard', () => {
     });
 
     expect(container.textContent).toContain('a debit freeze');
-    expect(container.textContent).toContain('only the disputed amount may be held as lien');
+    expect(container.textContent).toContain('the exact amount currently held');
     expect(container.textContent).not.toContain('approx.');
   });
 

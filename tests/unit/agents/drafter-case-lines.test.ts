@@ -17,11 +17,11 @@ describe('isDraftOverwritable — never clobber an approved/sent letter', () => 
   });
 });
 
-describe('buildCaseAwareLines — freeze-reason-aware legal grounding', () => {
-  it('cites BNSS 106/107 and the MHA SOP for a cyber/police freeze', () => {
+describe('buildCaseAwareLines — freeze-reason-aware, factual grounding', () => {
+  it('requests written facts without asserting a legal outcome for a cyber/police freeze', () => {
     const lines = buildCaseAwareLines({}, '25000', 'cyber_upi_chain');
-    expect(lines.LEGAL_GROUNDING).toMatch(/BNSS Section 106/);
-    expect(lines.LEGAL_GROUNDING).toMatch(/Section 107/);
+    expect(lines.LEGAL_GROUNDING).toMatch(/written freeze details/i);
+    expect(lines.LEGAL_GROUNDING).not.toMatch(/BNSS|Section 107/i);
     expect(lines.DECLARATION_LINE).toMatch(/no knowledge of any fraud/);
   });
 
@@ -53,16 +53,16 @@ describe('buildCaseAwareLines — freeze-reason-aware legal grounding', () => {
     expect(kyc.LEGAL_GROUNDING).not.toBe(court.LEGAL_GROUNDING);
   });
 
-  it('only applies the sub-₹50k MHA SOP rule on the cyber track', () => {
+  it('asks for the held amount on the cyber track without a sub-₹50k promise', () => {
     const cyber = buildCaseAwareLines({}, '10000', 'cyber_upi_chain');
     const court = buildCaseAwareLines({}, '10000', 'court_order');
-    expect(cyber.AMOUNT_RULE_LINE).toMatch(/MHA SOP 2026/);
+    expect(cyber.AMOUNT_RULE_LINE).toMatch(/amount currently held/i);
     expect(court.AMOUNT_RULE_LINE).not.toMatch(/MHA SOP/);
   });
 
-  it('defaults to the cyber track when freeze reason is unknown/unset', () => {
+  it('defaults to factual cyber-track wording when freeze reason is unknown/unset', () => {
     const lines = buildCaseAwareLines({}, '25000', null);
-    expect(lines.LEGAL_GROUNDING).toMatch(/BNSS Section 106/);
+    expect(lines.LEGAL_GROUNDING).toMatch(/written freeze details/i);
   });
 
   it('never asks the branch to RELEASE funds it cannot lift (court/tax)', () => {
@@ -76,15 +76,12 @@ describe('buildCaseAwareLines — freeze-reason-aware legal grounding', () => {
     expect(tax.L1_KEY_REQUESTS).not.toMatch(/release/i);
     expect(tax.L1_KEY_REQUESTS).toMatch(/tax\/GST notice/i);
 
-    // Cyber: the branch can't lift an LEA lien either (bank-officer review), so
-    // L1 asks it to RESTRICT an over-broad lien to the disputed amount and
-    // routes the actual release to the investigating officer — never "release
-    // the undisputed balance" (the impossible demand that got the letter binned).
+    // Cyber: request facts and the next authority; never an asserted release outcome.
     const cyber = buildCaseAwareLines({}, '25000', 'cyber_upi_chain');
     expect(cyber.L1_KEY_REQUESTS).not.toMatch(/release the undisputed balance/i);
-    expect(cyber.L1_KEY_REQUESTS).toMatch(/restrict it to that amount/i);
-    expect(cyber.L1_KEY_REQUESTS).toMatch(/investigating officer/i);
-    expect(cyber.L1_KEY_REQUESTS).toMatch(/GRM/);
+    expect(cyber.L1_KEY_REQUESTS).toMatch(/confirm whether the amount currently held/i);
+    expect(cyber.L1_KEY_REQUESTS).toMatch(/investigating authority/i);
+    expect(cyber.L1_KEY_REQUESTS).toMatch(/formal grievance/i);
   });
 
   it('only claims "proof of legitimate funds" on the cyber track', () => {

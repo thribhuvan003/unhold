@@ -186,10 +186,10 @@ describe('verifierEvidencePatch', () => {
     expect(isReadable(patch.vision_confidence, patch.forgery_flag)).toBe(true);
   });
 
-  it('propagates the forgery flag so a flagged document never counts', () => {
+  it('propagates a possible-inconsistency flag without treating it as forensic proof', () => {
     const patch = verifierEvidencePatch(fullOutput({ forgery_risk: true, confidence: 0.9 }), true);
     expect(patch.forgery_flag).toBe(true);
-    expect(isReadable(patch.vision_confidence, patch.forgery_flag)).toBe(false);
+    expect(isReadable(patch.vision_confidence, patch.forgery_flag)).toBe(true);
   });
 
   it('caps an irrelevant/wrong document to a low score even if the model over-reports confidence', () => {

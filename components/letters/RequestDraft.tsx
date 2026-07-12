@@ -8,7 +8,6 @@ import { DraftPendingRefresh } from '@/components/letters/DraftPendingRefresh';
 type RequestDraftProps = {
   caseId: string;
   level: 'L1' | 'L2' | 'L3';
-  guestToken?: string;
 };
 
 /**
@@ -16,7 +15,7 @@ type RequestDraftProps = {
  * case page): asks the drafter for this level once, then hands over to the
  * auto-refreshing pending state. Without this, the link was a 404 dead end.
  */
-export function RequestDraft({ caseId, level, guestToken }: RequestDraftProps) {
+export function RequestDraft({ caseId, level }: RequestDraftProps) {
   const [phase, setPhase] = useState<'requesting' | 'pending' | 'error'>('requesting');
   const [error, setError] = useState<string | null>(null);
   const fired = useRef(false);
@@ -27,7 +26,6 @@ export function RequestDraft({ caseId, level, guestToken }: RequestDraftProps) {
     void (async () => {
       try {
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (guestToken) headers['X-Guest-Token'] = guestToken;
         const res = await fetch(`/api/v1/cases/${caseId}/escalations`, {
           method: 'POST',
           headers,
@@ -50,7 +48,7 @@ export function RequestDraft({ caseId, level, guestToken }: RequestDraftProps) {
         setPhase('error');
       }
     })();
-  }, [caseId, level, guestToken]);
+  }, [caseId, level]);
 
   if (phase === 'pending') {
     return <DraftPendingRefresh caseId={caseId} level={level} />;

@@ -148,8 +148,6 @@ export const transitionRequestSchema = z.object({
 });
 
 export const guestSessionResponseSchema = z.object({
-  device_token: z.string(),
-  guest_session_id: z.string().uuid(),
   expires_at: z.string().datetime(),
 });
 

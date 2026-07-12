@@ -275,7 +275,7 @@ async function applyVerifierSideEffects(
   if (human_gate_required) {
     await enqueueHumanGate({
       case_id: input.case_id,
-      queue_reason: output.forgery_risk ? 'verifier_forgery_risk' : 'verifier_low_confidence',
+      queue_reason: output.forgery_risk ? 'verifier_possible_inconsistency' : 'verifier_low_confidence',
       priority: output.forgery_risk ? 90 : 50,
       metadata: { evidence_id: input.evidence_id, confidence: output.confidence },
     });

@@ -44,14 +44,14 @@ describe('LegalPositionNote', () => {
     container.remove();
   });
 
-  it('renders a current position with its source and a "Current law" badge', () => {
+  it('renders a cautionary position with its source and a legal-confirmation badge', () => {
     act(() => {
       root.render(withIntl(<LegalPositionNote position={DISPUTED_AMOUNT_RULE} />));
     });
 
     expect(container.textContent).toContain(DISPUTED_AMOUNT_RULE.claim);
-    expect(container.textContent).toContain('Current law');
-    expect(container.textContent).not.toContain('under Supreme Court appeal');
+    expect(container.textContent).toContain('Needs legal confirmation');
+    expect(container.textContent).not.toContain('Current law');
     const link = container.querySelector('a') as HTMLAnchorElement;
     expect(link.getAttribute('href')).toBe(DISPUTED_AMOUNT_RULE.sourceUrl);
     expect(link.getAttribute('target')).toBe('_blank');

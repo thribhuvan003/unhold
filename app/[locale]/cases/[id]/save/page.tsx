@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -16,20 +16,17 @@ export default function SaveCasePage() {
   const t = useTranslations('SaveCasePage');
   const params = useParams();
   const caseId = typeof params.id === 'string' ? params.id : '';
-  const [bootstrap, setBootstrap] = useState<CaseBootstrap | null>(null);
-
-  useEffect(() => {
+  const [bootstrap] = useState<CaseBootstrap | null>(() => {
+    if (typeof window === 'undefined') return null;
     try {
       const raw = sessionStorage.getItem(SAVE_CASE_STORAGE_KEY);
-      if (!raw) return;
+      if (!raw) return null;
       const parsed = JSON.parse(raw) as CaseBootstrap;
-      if (parsed.caseId === caseId) {
-        setBootstrap(parsed);
-      }
+      return parsed.caseId === caseId ? parsed : null;
     } catch {
-      // ignore corrupt storage
+      return null;
     }
-  }, [caseId]);
+  });
 
   const publicId = bootstrap?.publicId ?? '—';
 

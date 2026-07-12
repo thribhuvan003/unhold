@@ -47,10 +47,9 @@ const LEVEL_DESC: Record<'L1' | 'L2' | 'L3', string> = {
 interface LettersPanelProps {
   caseId: string;
   letters: LetterSummary[];
-  guestToken?: string;
 }
 
-export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps) {
+export function LettersPanel({ caseId, letters }: LettersPanelProps) {
   const byLevel = new Map(letters.map((l) => [l.level, l]));
   const levels: Array<'L1' | 'L2' | 'L3'> = ['L1', 'L2', 'L3'];
   const anyDraft = letters.some((l) => l.hasDraft);
@@ -100,7 +99,7 @@ export function LettersPanel({ caseId, letters, guestToken }: LettersPanelProps)
                   Draft request received. Refresh in a moment if it does not appear automatically.
                 </p>
               ) : level === 'L1' ? (
-                <DraftLetterButton caseId={caseId} level="L1" guestToken={guestToken} />
+                <DraftLetterButton caseId={caseId} level="L1" />
               ) : null}
             </li>
           );

@@ -176,7 +176,6 @@ export default async function PapersPage({ params }: PageProps) {
 
       <PapersChecklist
         caseId={id}
-        guestToken={guestToken}
         initialDocs={data.initialDocs}
         initialShas={data.initialShas}
         coreDocs={data.coreDocs}
@@ -188,7 +187,7 @@ export default async function PapersPage({ params }: PageProps) {
 
       {data.letterUnlocked ? (
         <>
-          <BundleButton caseId={id} guestToken={guestToken} />
+          <BundleButton caseId={id} />
           <section className="rounded-[var(--radius-lg)] border border-[var(--success)]/22 bg-[var(--success)]/7 p-4">
             <p className="text-sm font-semibold text-[var(--ink)]">
               Good work — your first letter is ready.

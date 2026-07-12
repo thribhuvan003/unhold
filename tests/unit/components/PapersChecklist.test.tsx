@@ -75,7 +75,7 @@ describe('PapersChecklist', () => {
     expect(container.textContent).toContain('Freeze SMS or notice');
     expect(container.textContent).toContain('bank calls this: freeze intimation');
     expect(container.textContent).toContain('✓ Checked');
-    expect(container.textContent).toContain('No issues found automatically (91% sure');
+    expect(container.textContent).toContain('No issues found automatically (91% confidence');
   });
 
   it('does NOT count a blank/unreadable document as added, and asks for a clearer photo', () => {
@@ -252,7 +252,7 @@ describe('PapersChecklist', () => {
     });
 
     expect(container.textContent).not.toContain('AI is checking this document for you');
-    expect(container.textContent).toContain('A human reviews it before it is used');
+    expect(container.textContent).toContain('review the original carefully before you use it');
     expect(container.textContent).toContain('1 of 3 added');
   });
 

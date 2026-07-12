@@ -21,16 +21,13 @@ export default function StartPage() {
     setSubmitting(true);
     setError(null);
     try {
-      let headers: Record<string, string> = {
+      const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         'Idempotency-Key': crypto.randomUUID(),
       };
 
       const sessionRes = await fetch('/api/v1/guest/sessions', { method: 'POST' });
-      const sessionJson = await sessionRes.json();
-      if (sessionRes.ok) {
-        headers = { ...headers, 'X-Guest-Token': sessionJson.device_token };
-      }
+      if (!sessionRes.ok) throw new Error('Could not start a secure guest session. Please try again.');
 
       // "Other / not sure" keeps a provisional slug for the DB row only — the
       // user-visible bank name comes from intake_json and is never guessed.

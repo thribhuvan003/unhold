@@ -35,7 +35,6 @@ type RowState = {
 
 interface PapersChecklistProps {
   caseId: string;
-  guestToken?: string;
   /** Papers already uploaded, with their latest automated-check result (null = unknown). */
   initialDocs: Partial<Record<PaperType, PaperVerification>>;
   /** sha256 of each already-uploaded paper, so a re-used file is caught across slots. */
@@ -106,7 +105,6 @@ function rowCounts(row: RowState): boolean {
 
 export function PapersChecklist({
   caseId,
-  guestToken,
   initialDocs,
   initialShas,
   officialTerms = true,
@@ -148,7 +146,6 @@ export function PapersChecklist({
 
   function authHeaders(json = true): Record<string, string> {
     const headers: Record<string, string> = json ? { 'Content-Type': 'application/json' } : {};
-    if (guestToken) headers['X-Guest-Token'] = guestToken;
     return headers;
   }
 

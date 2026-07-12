@@ -49,12 +49,12 @@ const VERIFIED = '2026-07-02';
 function officialRoutes(): ContactEntry[] {
   return [
     {
-      role: 'GRM — Cyber Freeze Grievance Redressal (I4C/MHA)',
-      role_plain: 'Government review route for wrongly frozen cyber-linked accounts',
-      portal: 'https://ncrp-grievanceredressal.mha.gov.in/',
+      role: 'National Cyber Crime Reporting Portal (NCRP)',
+      role_plain: 'Official citizen portal for reporting cybercrime and accessing NCRP',
+      portal: 'https://www.cybercrime.gov.in/',
       notes:
-        'Primary route for NCRP/cyber-fraud freezes. File through your bank branch or at this portal. Needs your NCRP acknowledgement number where applicable.',
-      source_url: 'https://ncrp-grievanceredressal.mha.gov.in/',
+        'Use the public citizen portal to report cybercrime or access NCRP. For a frozen account, also submit a written request at your bank branch and obtain acknowledgement. Do not use the separate CFCFRMS staff-login portal.',
+      source_url: 'https://www.cybercrime.gov.in/',
       verified_date: VERIFIED,
       level: 'L1',
     },
@@ -359,11 +359,11 @@ export function getRegionalGrievanceContact(
   const bank = getBankContacts(bankSlug);
   if (!bank) {
     return {
-      role_plain: 'Official GRM route',
-      notes: 'Use the GRM portal or visit your nearest branch with the sealed bundle.',
+      role_plain: 'Official citizen cybercrime portal',
+      notes: 'Use the public NCRP portal to report cybercrime or access NCRP, and visit your nearest branch with the evidence bundle for a written acknowledgement.',
       recommendedAction: 'branch_visit_primary',
-      portal: 'https://ncrp-grievanceredressal.mha.gov.in/',
-      source_url: 'https://ncrp-grievanceredressal.mha.gov.in/',
+      portal: 'https://www.cybercrime.gov.in/',
+      source_url: 'https://www.cybercrime.gov.in/',
       verified_date: VERIFIED,
     };
   }
@@ -436,11 +436,11 @@ export function getRegionalGrievanceContact(
 
   // Generic safe fallback
   return {
-    portal: 'https://ncrp-grievanceredressal.mha.gov.in/',
-    role_plain: 'Bank Grievance / GRM',
-    notes: 'The most reliable action is to take your sealed evidence bundle and letter in person to the nearest branch of your bank and request acknowledgement. Use official GRM portal or published nodal emails for written follow-up.',
+    portal: 'https://www.cybercrime.gov.in/',
+    role_plain: 'Bank grievance and official cybercrime reporting',
+    notes: 'Take your evidence bundle and letter to the nearest branch and request acknowledgement. Use published bank contacts for written follow-up. Use the public NCRP portal to report cybercrime or access NCRP; it is not an account-unfreeze portal.',
     recommendedAction: 'branch_visit_primary',
-    source_url: 'https://ncrp-grievanceredressal.mha.gov.in/',
+    source_url: 'https://www.cybercrime.gov.in/',
     verified_date: VERIFIED,
   };
 }

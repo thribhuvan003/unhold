@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/v1/guest/sessions/route';
-import { verifyGuestToken, GUEST_COOKIE_NAME } from '@/lib/auth/guest';
+import { GUEST_COOKIE_NAME } from '@/lib/auth/guest';
 import { errorEnvelopeSchema, guestSessionResponseSchema } from '@/lib/validation/api-schemas';
 
 const insertMock = vi.fn();
@@ -20,14 +20,15 @@ describe('POST /api/v1/guest/sessions', () => {
     insertMock.mockResolvedValue({ error: null });
   });
 
-  it('returns device_token JWT and guest_session_id', async () => {
+  it('keeps the guest token out of the response body', async () => {
     const request = new NextRequest('http://localhost/api/v1/guest/sessions', { method: 'POST' });
     const response = await POST(request);
     const json = await response.json();
 
     expect(response.status).toBe(200);
     expect(guestSessionResponseSchema.safeParse(json).success).toBe(true);
-    expect(verifyGuestToken(json.device_token)?.sub).toBe(json.guest_session_id);
+    expect(json).not.toHaveProperty('device_token');
+    expect(json).not.toHaveProperty('guest_session_id');
     expect(response.headers.get('x-request-id')).toBeTruthy();
   });
 

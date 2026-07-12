@@ -31,11 +31,7 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
-    const response = jsonSuccess({
-      device_token: deviceToken,
-      guest_session_id: guestSessionId,
-      expires_at: expiresAt.toISOString(),
-    });
+    const response = jsonSuccess({ expires_at: expiresAt.toISOString() });
     response.cookies.set(GUEST_COOKIE_NAME, deviceToken, guestCookieOptions(expiresAt));
     response.headers.set('x-request-id', requestId);
     return response;

@@ -12,8 +12,8 @@ describe('isReadable', () => {
     expect(isReadable(0, false)).toBe(false);
   });
 
-  it('rejects anything the verifier flagged as tampered', () => {
-    expect(isReadable(0.99, true)).toBe(false);
+  it('keeps a readable document available when automated review flags a possible inconsistency', () => {
+    expect(isReadable(0.99, true)).toBe(true);
   });
 
   it('trusts a sealed document with no auto-read (null = PDF/pending), so PDFs still work', () => {
@@ -31,8 +31,8 @@ describe('classifyDoc', () => {
     expect(classifyDoc({ confidence: 0.1, forgery: false, hasMismatch: false })).toBe('unreadable');
   });
 
-  it('is unreadable when the verifier flags tampering', () => {
-    expect(classifyDoc({ confidence: 0.9, forgery: true, hasMismatch: false })).toBe('unreadable');
+  it('is flagged, not rejected, when automated review finds a possible inconsistency', () => {
+    expect(classifyDoc({ confidence: 0.9, forgery: true, hasMismatch: false })).toBe('flagged');
   });
 
   it('is flagged when a field mismatches but the read was fine', () => {

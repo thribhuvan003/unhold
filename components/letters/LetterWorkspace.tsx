@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
@@ -27,7 +27,6 @@ type LetterWorkspaceProps = {
   verifiedDate?: string;
   verifiedSourceUrl?: string;
   portal?: string;
-  guestToken?: string;
   /** Same proof gate the approve/mark-sent APIs enforce, checked up front. */
   bundleGateBlocked?: boolean;
   bundleGateReason?: string;
@@ -61,7 +60,6 @@ export function LetterWorkspace({
   verifiedDate,
   verifiedSourceUrl,
   portal,
-  guestToken,
   bundleGateBlocked = false,
   bundleGateReason,
   bundleGateHref,
@@ -75,10 +73,6 @@ export function LetterWorkspace({
   const [bundleSealedLocal, setBundleSealedLocal] = useState(!needsSealedBundle);
   const isSent = sent || justSent;
   const n = LEVEL_NUM[level];
-
-  useEffect(() => {
-    setBundleSealedLocal(!needsSealedBundle);
-  }, [needsSealedBundle]);
 
   const detailsReady = isApproved && placeholdersMissing.length === 0 && evidenceReady;
   // Align export with the bundle half of the proof gate — user still attaches PDF themselves.
@@ -114,7 +108,6 @@ export function LetterWorkspace({
       {!isSent ? (
         <BundleButton
           caseId={caseId}
-          guestToken={guestToken}
           compact
           onSealed={() => {
             setBundleSealedLocal(true);
@@ -156,7 +149,6 @@ export function LetterWorkspace({
           caseId={caseId}
           escalationId={escalationId}
           level={level}
-          guestToken={guestToken}
           proofGateBlocked={markSentBlocked}
           blockedReason={markSentBlockedReason}
           onSuccess={() => setJustSent(true)}

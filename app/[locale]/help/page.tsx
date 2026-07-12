@@ -11,8 +11,7 @@ export const metadata: Metadata = {
 };
 
 const OFFICIAL_LINKS = [
-  { key: 'ncrp', href: 'https://cybercrime.gov.in/' },
-  { key: 'grm', href: 'https://ncrp-grievanceredressal.mha.gov.in/' },
+  { key: 'ncrp', href: 'https://www.cybercrime.gov.in/' },
   { key: 'mrm', href: 'https://mrm-ncrp.mha.gov.in/' },
   { key: 'ombudsman', href: 'https://cms.rbi.org.in' },
 ] as const;

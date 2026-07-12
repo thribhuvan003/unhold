@@ -132,11 +132,12 @@ export async function checkProofGates(
     .maybeSingle();
   const hasSealedBundle = Boolean(bundleLog);
 
-  // slice-14: best verified-document confidence (excluding forgery-flagged / deleted).
+  // Best automated-read confidence. A possible-inconsistency flag is not a
+  // forensic finding and must not by itself block a user's escalation.
   // Evaluated ONLY when the vision verifier has actually scored something: a user
   // who declined AI consent (or whose verify job hasn't run yet) must not be
   // permanently blocked by a check that cannot happen. When vision DID run,
-  // low confidence still blocks — including the all-flagged case (max stays 0).
+  // low confidence still blocks.
   const { data: evidenceRows } = await supabase
     .from('evidence')
     .select('vision_confidence, forgery_flag')
@@ -145,7 +146,7 @@ export async function checkProofGates(
   const rows = evidenceRows ?? [];
   const visionRan = rows.some((e) => e.vision_confidence != null);
   const verifierConfidence = visionRan
-    ? rows.reduce((max, e) => (e.forgery_flag ? max : Math.max(max, e.vision_confidence ?? 0)), 0)
+    ? rows.reduce((max, e) => Math.max(max, e.vision_confidence ?? 0), 0)
     : undefined;
 
   return evaluateProofGate({

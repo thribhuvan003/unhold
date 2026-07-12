@@ -18,7 +18,9 @@ export const MIN_READABLE_CONFIDENCE = 0.5;
  * (e.g. a blank photo) is rejected.
  */
 export function isReadable(confidence: number | null | undefined, forgery: boolean): boolean {
-  if (forgery) return false;
+  // An LLM flag is an automated-review signal, not forensic authentication.
+  // It must not by itself lock a user out of their own case.
+  void forgery;
   if (confidence === null || confidence === undefined) return true;
   return confidence >= MIN_READABLE_CONFIDENCE;
 }
@@ -31,7 +33,7 @@ export function classifyDoc(input: {
   forgery: boolean;
   hasMismatch: boolean;
 }): DocClass {
-  if (input.forgery) return 'unreadable';
+  if (input.forgery) return 'flagged';
   if (input.hasMismatch) return 'flagged';
   if (input.confidence === null || input.confidence === undefined) return 'saved';
   if (input.confidence >= MIN_READABLE_CONFIDENCE) return 'clean';

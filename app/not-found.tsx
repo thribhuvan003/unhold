@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 // Global 404 for paths that never reach a locale segment (so there is no root
 // layout / i18n provider around it). Localized 404s live in app/[locale]/not-found.tsx.
 // Kept minimal and self-contained, mirroring global-error.tsx.
@@ -23,7 +25,7 @@ export default function GlobalNotFound() {
           <p style={{ fontSize: 14, lineHeight: 1.6, color: '#5c6169', margin: 0 }}>
             The link may be old. Your case is safe.
           </p>
-          <a
+          <Link
             href="/"
             style={{
               display: 'inline-block',
@@ -40,7 +42,7 @@ export default function GlobalNotFound() {
             }}
           >
             Go to home
-          </a>
+          </Link>
         </div>
       </body>
     </html>

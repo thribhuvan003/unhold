@@ -123,12 +123,6 @@ export default async function LetterPage({ params }: PageProps) {
       e.sha256_verified_at &&
       isReadable(e.vision_confidence, e.forgery_flag),
   );
-  const hasBankStatement = evidence?.some(
-    (e) =>
-      e.evidence_type === 'bank_statement' &&
-      e.sha256_verified_at &&
-      isReadable(e.vision_confidence, e.forgery_flag),
-  );
   // Unlock the letter on the papers THIS freeze reason actually requires, not a
   // hardcoded freeze-notice + bank-statement — a KYC or nomination freeze never
   // lists a bank statement, which permanently locked those users out of their
@@ -175,7 +169,7 @@ export default async function LetterPage({ params }: PageProps) {
   const portal =
     bank?.contacts.find((c) => c.level === level && c.portal)?.portal ??
     bank?.contacts.find((c) => c.portal)?.portal ??
-    'https://ncrp-grievanceredressal.mha.gov.in/';
+    'https://www.cybercrime.gov.in/';
 
   // No escalation yet (opened straight from "Open my letter"): ask the
   // drafter for it, then auto-refresh. Never a 404 dead end — but only once
@@ -183,7 +177,7 @@ export default async function LetterPage({ params }: PageProps) {
   if (!escalation && evidenceReady) {
     return (
       <div className="mx-auto max-w-[430px] px-1 py-2">
-        <RequestDraft caseId={id} level={level as 'L1' | 'L2' | 'L3'} guestToken={guestToken} />
+        <RequestDraft caseId={id} level={level as 'L1' | 'L2' | 'L3'} />
       </div>
     );
   }
@@ -295,7 +289,6 @@ export default async function LetterPage({ params }: PageProps) {
             verifiedDate={verifiedDate}
             verifiedSourceUrl={verifiedSourceUrl}
             portal={portal}
-            guestToken={guestToken}
           />
 
           {/* Tea-vendor / branch-visit path — strongest for L1 (print + stamp). */}

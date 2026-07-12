@@ -11,7 +11,7 @@
  * as settled law.
  */
 
-export type LegalCurrency = 'current' | 'contested';
+export type LegalCurrency = 'current' | 'contested' | 'caution';
 
 export type LegalPosition = {
   id: string;
@@ -36,20 +36,20 @@ export type LegalPosition = {
   noteHi?: string;
 };
 
-/** Only the disputed amount may be held — not the whole account. Settled by the SOP. */
+/** A bounded, official-source-backed user action; never a legal conclusion. */
 export const DISPUTED_AMOUNT_RULE: LegalPosition = {
   id: 'disputed_amount_only',
   claim:
-    'Only the disputed amount should be held as a lien — not your entire account. A full-account freeze is the exception, not the default.',
-  source: 'MHA/I4C Account-Freeze SOP, 02-Jan-2026 (NCRP–CFCFRMS)',
-  sourceUrl: 'https://www.livelaw.in/articles/cfcfrms-reading-mha-new-account-freeze-sop-537503',
-  currency: 'current',
-  asOf: '2026-07-05',
-  note: 'The SOP has administrative force; banks do not always comply in practice, so demand it in writing.',
+    'Ask your bank to confirm in writing the amount under hold, the authority that ordered it, and the reference number. Unhold cannot determine whether a restriction is lawful in your individual case.',
+  source: 'MHA parliamentary reply confirming the NCRP-CFCFRMS SOP, 24-Mar-2026',
+  sourceUrl: 'https://www.mha.gov.in/MHA1/Par2017/pdfs/par2026-pdfs/LS24032026/5184.pdf',
+  currency: 'caution',
+  asOf: '2026-07-12',
+  note: 'The government confirms that an SOP exists, but the public citizen route and the facts of a particular hold must be confirmed with the bank and competent authority. Seek independent legal advice for a court challenge.',
   claimHi:
-    'सिर्फ़ विवादित रकम ही लियन (रोक) के तौर पर रोकी जानी चाहिए — आपका पूरा खाता नहीं। पूरे खाते का फ्रीज़ अपवाद है, सामान्य नियम नहीं।',
+    'अपने बैंक से लिखित में रोक की रकम, रोक लगाने वाले प्राधिकरण और संदर्भ नंबर की पुष्टि माँगें। Unhold आपके व्यक्तिगत मामले में यह तय नहीं कर सकता कि रोक कानूनी है या नहीं।',
   noteHi:
-    'यह SOP (मानक कार्य-प्रक्रिया) प्रशासनिक रूप से लागू है; बैंक व्यवहार में हमेशा इसका पालन नहीं करते, इसलिए इसे अपने बैंक से लिखित में माँगें।',
+    'सरकार ने SOP होने की पुष्टि की है, लेकिन नागरिक के लिए रास्ता और आपके मामले के तथ्य बैंक व सक्षम प्राधिकरण से जाँचने होंगे। अदालत के मामले के लिए स्वतंत्र कानूनी सलाह लें।',
 };
 
 /** BNSS 106 (seizure) vs 107 (Magistrate attachment) — the statutory structure. */
