@@ -152,21 +152,16 @@ describe('IntakeWizard', () => {
     });
   });
 
-  it('shows a per-step validation error instead of advancing', () => {
+  it('lets a user skip the story and validates the first structured choice', () => {
     act(() => {
       root.render(withIntl(<IntakeWizard onComplete={() => {}} submitting={false} onExit={() => {}} />));
     });
 
     clickNext();
-    expect(container.textContent).toContain('Please tell us what happened first.');
-    expect(container.textContent).toContain('Question 1 of 6');
+    expect(container.textContent).toContain('Question 2 of 6');
 
-    const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
-    act(() => {
-      setInputValue(textarea, 'too short');
-    });
     clickNext();
-    expect(container.textContent).toContain('Add a little more detail — a few more words.');
+    expect(container.textContent).toContain('Please pick your bank, or "Other / not sure".');
   });
 });
 

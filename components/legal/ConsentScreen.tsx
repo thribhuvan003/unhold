@@ -37,7 +37,16 @@ export function ConsentScreen({ onContinue, onBack }: ConsentScreenProps) {
           <h1 className="type-display text-[1.375rem]">{t('title')}</h1>
         </div>
 
-        <p className="mt-4 text-[0.84375rem] leading-relaxed text-[var(--ink-muted)]">{t('intakeDisclaimer')}</p>
+        <p className="mt-4 text-[0.84375rem] leading-relaxed text-[var(--ink-muted)]">{t('whatToExpect')}</p>
+        <details className="mt-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2">
+          <summary className="cursor-pointer text-xs font-semibold text-[var(--color-sky-deep)]">
+            {t('readDataDetails')}
+          </summary>
+          <div className="mt-2 space-y-3 text-[0.8125rem] leading-relaxed text-[var(--ink-muted)]">
+            <p>{t('intakeDisclaimer')}</p>
+            <p>{t('aiProcessingDisclaimer')}</p>
+          </div>
+        </details>
         <ConsentRow
           id="consent-required"
           checked={accepted}
@@ -47,7 +56,6 @@ export function ConsentScreen({ onContinue, onBack }: ConsentScreenProps) {
           {t('agreeRequired')}
         </ConsentRow>
 
-        <p className="mt-5 text-[0.84375rem] leading-relaxed text-[var(--ink-muted)]">{t('aiProcessingDisclaimer')}</p>
         <ConsentRow
           id="consent-ai"
           checked={aiConsent}

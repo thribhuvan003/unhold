@@ -57,7 +57,6 @@ const FREEZE_OPTIONS: {
 ];
 
 const TOTAL_STEPS = 6;
-const MIN_STORY_LENGTH = 10;
 const MAX_STORY_LENGTH = 4000;
 const MAX_AMOUNT_INR = 1_000_000_000; // ₹100 crore — blocks absurd/exponent values.
 
@@ -100,7 +99,7 @@ export function IntakeWizard({ onComplete, submitting, onExit }: IntakeWizardPro
   const ncrpInvalid = ncrpId.trim().length > 0 && !isValidNcrp(ncrpId);
 
   const canAdvance =
-    (step === 0 && storyLen >= MIN_STORY_LENGTH) ||
+    step === 0 ||
     (step === 1 && bankChoice !== null) ||
     (step === 2 && role !== null) ||
     (step === 3 && freezeChoice !== null) ||
@@ -151,9 +150,7 @@ export function IntakeWizard({ onComplete, submitting, onExit }: IntakeWizardPro
 
   function goNext() {
     if (!canAdvance) {
-      const message =
-        step === 0 ? (storyLen === 0 ? stepErrors[0] : t('errorStoryMore')) : stepErrors[step];
-      setStepError(message || null);
+      setStepError(stepErrors[step] || null);
       return;
     }
     setStepError(null);

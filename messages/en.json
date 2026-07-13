@@ -63,7 +63,7 @@
     "progress": "Question {current} of {total}",
     "progressLabel": "Intake progress: question {current} of {total}",
     "steps": [
-      { "title": "What happened?", "hint": "Tell us in your own words. Say when it happened and how you found out." },
+      { "title": "What happened?", "hint": "Optional — add a few words now, or continue and add your notice first." },
       { "title": "Which bank froze your account?", "hint": "Pick \"Other\" if your bank is not here — everything still works." },
       { "title": "Did you send the money, or did it come to you?", "hint": "There is no wrong answer. This helps us write the right letter." },
       { "title": "How is your money blocked?", "hint": "Check the SMS from your bank. \"Not sure\" is fine." },
@@ -90,7 +90,7 @@
       "kyc": { "label": "The bank itself — KYC / documents pending", "help": "" },
       "unsure": { "label": "I am not sure", "help": "That is fine — your letter asks the bank to confirm who ordered it." }
     },
-    "storyPlaceholder": "e.g. My SBI account got frozen after someone sent me a UPI payment I did not know about…",
+    "storyPlaceholder": "Optional — e.g. my SBI account was frozen after an unknown UPI payment…",
     "storyCounter": "{count} letters typed",
     "amountPlaceholder": "e.g. 25000",
     "microUpiChip": "Tiny unknown UPI (e.g. ₹2)",
@@ -101,14 +101,13 @@
     "ncrpInvalid": "NCRP numbers are 14 digits — we’ll skip this for now if it doesn’t match.",
     "ncrpSkip": "Skip this if you don’t have it. You can add it later.",
     "errors": [
-      "Please tell us what happened first.",
+      "You can add this later. Pick your bank to continue.",
       "Please pick your bank, or \"Other / not sure\".",
       "Please pick the one that fits you best.",
       "Please pick one — \"Not sure\" is fine.",
       "",
       "Please pick one — \"Not sure\" is fine."
     ],
-    "errorStoryMore": "Add a little more detail — a few more words.",
     "next": "Next →",
     "startCase": "Start my case",
     "starting": "Starting…",
@@ -155,6 +154,8 @@
   "ConsentScreen": {
     "back": "← Back",
     "title": "Before you continue",
+    "whatToExpect": "We ask a few questions, help organise your documents, and prepare drafts for you to review. Nothing is sent to your bank automatically.",
+    "readDataDetails": "Read data and AI details",
     "intakeDisclaimer": "I understand Unhold does not guarantee unfreezing of my account or release of funds. I am solely responsible for reviewing all drafts before sending them. I will not upload banking passwords, UPI PINs, or full Aadhaar numbers.",
     "aiProcessingDisclaimer": "Unhold can use AI to classify cases, check document readability, extract details for your review, and draft letters. With your optional consent, case data — including document images — may be processed by AI providers outside India. If you do not consent, you can still use the non-AI workflow.",
     "agreeRequired": "I have read and agree to the above. I understand Unhold is not a law firm and does not guarantee outcomes.",
