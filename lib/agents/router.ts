@@ -147,7 +147,7 @@ export async function routeCaseJobs(caseRow: CaseRow, trigger: TickTrigger): Pro
           escalation_response_due_at: await getResponseDueAt(caseRow.id),
           trigger,
         },
-        reason: 'deadline watch; escalator on timeout only',
+        reason: 'follow-up reminder; escalator may prepare a user-reviewed option',
       });
       plan.parallel_safe.push('monitor');
 
@@ -158,7 +158,7 @@ export async function routeCaseJobs(caseRow: CaseRow, trigger: TickTrigger): Pro
           enqueue: true,
           idempotency_key: `escalator:${caseRow.id}:timeout:${new Date().toISOString().slice(0, 10)}`,
           payload: { case_id: caseRow.id, reason: 'response_timeout' },
-          reason: 'statutory wait elapsed — suggest next level',
+          reason: 'recorded follow-up date passed — prepare a user-reviewed option',
         });
         plan.sequential_chain = ['escalator', 'drafter'];
       }

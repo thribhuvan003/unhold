@@ -24,6 +24,7 @@ export default async function HelpPage({ params }: Props) {
   const t = await getTranslations('HelpPage');
   const scams = t.raw('scams') as string[];
   const glossary = t.raw('glossary') as { term: string; plain: string }[];
+  const whatsappEnabled = process.env.NEXT_PUBLIC_ENABLE_WHATSAPP_REMINDERS === 'true';
 
   return (
     <section className="mx-auto flex max-w-[430px] flex-col gap-3.5">
@@ -70,12 +71,14 @@ export default async function HelpPage({ params }: Props) {
         </span>
       </Link>
 
-      <section className="u-card p-4">
-        <p className="text-sm font-bold text-[var(--ink)]">{t('whatsappTitle')}</p>
-        <p className="mt-1 text-[0.78125rem] leading-relaxed text-[var(--ink-muted)]">
-          {t('whatsappDesc')}
-        </p>
-      </section>
+      {whatsappEnabled ? (
+        <section className="u-card p-4">
+          <p className="text-sm font-bold text-[var(--ink)]">{t('whatsappTitle')}</p>
+          <p className="mt-1 text-[0.78125rem] leading-relaxed text-[var(--ink-muted)]">
+            {t('whatsappDesc')}
+          </p>
+        </section>
+      ) : null}
 
       <section className="u-card p-4">
         <p className="type-eyebrow">{t('officialTitle')}</p>

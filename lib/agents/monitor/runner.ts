@@ -39,19 +39,19 @@ function buildRuleBasedTick(
     const due = new Date(responseDueAt);
     if (due > new Date()) {
       return {
-        message: `Waiting for bank response until ${due.toLocaleDateString('en-IN')}. Check SMS/email for updates.`,
+        message: `Your recorded follow-up date is ${due.toLocaleDateString('en-IN')}. Keep the acknowledgement and check the official status channel.`,
         user_action_required: false,
         action_code: 'await_response',
-        action_title: 'Wait for bank response',
+        action_title: 'Keep your acknowledgement',
         suggest_status_transition: null,
         quiet_hours_suppressed: quiet,
       };
     }
     return {
-      message: 'Response deadline passed. Review next escalation steps in your case dashboard.',
+      message: 'Your recorded follow-up date has passed. Check the official status and review the available next step; this is not a statutory deadline.',
       user_action_required: true,
       action_code: 'review_timeout',
-      action_title: 'Review overdue escalation',
+      action_title: 'Check status and review options',
       suggest_status_transition: null,
       quiet_hours_suppressed: quiet,
     };

@@ -97,7 +97,7 @@ const BANK_CONTACTS: BankContact[] = [
       },
       {
         role: 'SBI Network Grievance Redressal Nodal Officers',
-        role_plain: 'Escalation if branch does not respond in 7 days — find your circle',
+        role_plain: 'Published escalation contacts if the branch response is inadequate — find your circle',
         portal: 'https://sbi.bank.in/web/customer-care/addresses-and-helpline-nos-of-grievances-redressal-cell',
         notes:
           'SBI lists nodal officers per circle (region). Open this official page, find your circle, and use that officer. Verify with your branch.',

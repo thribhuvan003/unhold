@@ -27,6 +27,7 @@ export function SaveCaseCard({
   className,
 }: SaveCaseCardProps) {
   const t = useTranslations('SaveCasePage');
+  const smsRecoveryEnabled = process.env.NEXT_PUBLIC_ENABLE_SMS_RECOVERY === 'true';
   const [copied, setCopied] = useState<'code' | 'recovery' | 'link' | null>(null);
   const [smsPhone, setSmsPhone] = useState('');
   const [smsState, setSmsState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -116,7 +117,8 @@ export function SaveCaseCard({
             {copied === 'recovery' ? t('copied') : t('copyRecovery')}
           </button>
 
-          <div className="mt-3 border-t border-[var(--saffron)]/25 pt-3">
+          {smsRecoveryEnabled ? (
+            <div className="mt-3 border-t border-[var(--saffron)]/25 pt-3">
             <p className="text-xs font-semibold text-[var(--ink)]">{t('smsTitle')}</p>
             <p className="mt-1 text-[0.6875rem] leading-relaxed text-[var(--ink-muted)]">{t('smsHint')}</p>
             <div className="relative mt-2">
@@ -150,7 +152,8 @@ export function SaveCaseCard({
                 {smsError}
               </p>
             ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       ) : (
         <p className="text-xs leading-relaxed text-[var(--ink-faint)]">{t('recoveryMissing')}</p>

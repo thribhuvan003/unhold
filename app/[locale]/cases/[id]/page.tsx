@@ -347,7 +347,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
 
       {data.l1Sent ? <WhatHappensNextCard /> : null}
 
-      {/* Deadline nudges — SOP clocks 7d / 15d / 30d / 90d; email + WhatsApp, user only. */}
+      {/* Optional reminders for the user's own follow-up dates. */}
       <DeadlineRemindersCard
         caseId={id}
         initialEmail={data.reminderEmail}

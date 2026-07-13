@@ -102,7 +102,7 @@ export default function CasesPage() {
             <FolderOpen className="mx-auto h-10 w-10 text-[var(--ink-faint)]" strokeWidth={1.25} aria-hidden="true" />
             <p className="type-display mt-4 text-lg">No cases yet</p>
             <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--ink-muted)]">
-              Start by reporting your freeze. No account needed — takes 2 minutes.
+              Start by recording the restriction details you know. No account needed.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/start" className="u-btn u-btn-primary">

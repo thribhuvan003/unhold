@@ -18,6 +18,7 @@ describe('computeCaseStages', () => {
     expect(model.letterUnlocked).toBe(false);
     expect(model.doNow.title).toBe('Add your papers');
     expect(model.doNow.desc).toContain('2 more to go');
+    expect(model.doNow.desc).not.toMatch(/minutes/i);
     expect(model.doNow.target).toBe('papers');
     expect(model.stages[0]!.state).toBe('done');
     expect(model.stages[1]!.state).toBe('current');
@@ -37,7 +38,7 @@ describe('computeCaseStages', () => {
     expect(model.stageNum).toBe(2);
     expect(model.doNow.title).toBe('Read your letter');
     expect(model.doNow.target).toBe('letter');
-    expect(model.doNow.desc).toMatch(/cyber cell/i);
+    expect(model.doNow.desc).toMatch(/authority and reference/i);
     expect(model.stages[1]!.note).toBe('2 of 3 added — last one is optional but helps');
     expect(model.stages[2]!.state).toBe('ready');
     expect(model.stages[2]!.note).toBe('Ready to read');
@@ -67,13 +68,13 @@ describe('computeCaseStages', () => {
     expect(model.stageNum).toBe(4);
     expect(model.stageTitle).toBe('Send it yourself');
     expect(model.doNow.title).toBe('Send the letter yourself + proof pack');
-    expect(model.doNow.upNext).toBe('we track the reply clock for you.');
+    expect(model.doNow.upNext).toBe('Keep the acknowledgement and follow the recipient’s stated response date.');
     expect(model.stages[1]!.state).toBe('done');
     expect(model.stages[1]!.note).toBe('All 3 added');
     expect(model.stages[2]!.state).toBe('done');
   });
 
-  it('cyber after send: points at IO letter + GRM authority actions, not bank-only wait', () => {
+  it('cyber after send: requires the exact authority and reference via a verified channel', () => {
     const model = computeCaseStages({
       ...base,
       hasFreezeNotice: true,
@@ -83,17 +84,23 @@ describe('computeCaseStages', () => {
     });
     expect(model.stageNum).toBe(5);
     expect(model.stageTitle).toBe('Follow the real path');
-    expect(model.doNow.title).toMatch(/IO|NOC|GRM/i);
+    expect(model.doNow.title).toBe('Next: confirm the exact authority and reference');
+    expect(model.doNow.desc).toMatch(/authority or agency ordered the hold/i);
+    expect(model.doNow.desc).toMatch(/verified official channel/i);
+    expect(model.doNow.upNext).toBe(
+      'Follow the recipient’s stated response date. RBI CMS is only for an eligible bank-service complaint.',
+    );
+    expect(model.doNow.upNext).not.toMatch(/\b7\b|\b15\b|NOC|GRM/i);
     expect(model.doNow.target).toBe('authority');
     expect(model.doNow.cta).toBeTruthy();
     expect(model.doNow.title).not.toMatch(/Wait for the bank/i);
     expect(model.stages[3]!.state).toBe('done');
     expect(model.stages[4]!.state).toBe('current');
-    expect(model.stages[4]!.note).toMatch(/Cyber cell/i);
+    expect(model.stages[4]!.note).toBe('Confirm the exact authority and reference');
     expect(model.stages[4]!.target).toBe('authority');
   });
 
-  it('branch after send: bank wait with no path CTA', () => {
+  it('branch after send: follows the bank’s stated response date with no path CTA', () => {
     const model = computeCaseStages({
       ...base,
       track: 'branch',
@@ -102,7 +109,9 @@ describe('computeCaseStages', () => {
       l1Drafted: true,
       l1Sent: true,
     });
-    expect(model.doNow.title).toBe('Wait for the bank — check in 7 days');
+    expect(model.doNow.title).toBe('Follow the bank’s stated response date');
+    expect(model.doNow.desc).toMatch(/verified grievance channel/i);
+    expect(model.stages[4]!.note).toBe('Follow the bank’s stated response date');
     expect(model.doNow.cta).toBeNull();
     expect(model.doNow.target).toBeNull();
   });
@@ -133,4 +142,3 @@ describe('computeCaseStages', () => {
     expect(model.doNow.target).toBe('authority');
   });
 });
-

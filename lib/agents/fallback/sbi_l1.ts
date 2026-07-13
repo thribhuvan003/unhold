@@ -4,7 +4,7 @@ export const SBI_L1_TEMPLATE_SLUG = 'branch_lien_release';
 export const L1_TEMPLATE_SLUG = SBI_L1_TEMPLATE_SLUG;
 
 export const SBI_L1_SUBJECT =
-  'Request for review of lien / debit freeze and release of undisputed funds — A/c No. XXXXXX{{ACCOUNT_LAST4}}';
+  'Request for written restriction details and review — A/c No. XXXXXX{{ACCOUNT_LAST4}}';
 
 export const SBI_L1_BODY = `Date: {{TODAY_DATE}}
 
@@ -18,7 +18,7 @@ The Branch Manager
 {{BANK_NAME}}
 {{BRANCH_CITY}} Branch
 
-Subject: Request for review of lien / debit freeze and release of undisputed funds — A/c No. XXXXXX{{ACCOUNT_LAST4}} — NCRP Ref: {{NCRP_ID}}
+Subject: Request for written restriction details and review — A/c No. XXXXXX{{ACCOUNT_LAST4}} — NCRP Ref: {{NCRP_ID}}
 
 Respected Sir / Madam,
 
@@ -26,8 +26,8 @@ I, {{USER_NAME}}, hold savings account XXXXXX{{ACCOUNT_LAST4}} at your branch. M
 
 {{SITUATION_LINE}}
 
-I request you to, within 7 days:
-1. Confirm in writing which authority ordered the freeze, the FIR/NCRP reference (if any), the legal provision used, the Investigating Officer's name and contact, and the exact amount held (a lien on the disputed sum only, or a full freeze).
+I request you to:
+1. Confirm in writing which authority ordered the restriction, the FIR/NCRP reference (if any), the legal basis communicated to the bank, the official contact for the authority, the exact amount held, and the type and scope of the restriction.
 {{L1_KEY_REQUESTS}}
 
 {{LEGAL_GROUNDING}}

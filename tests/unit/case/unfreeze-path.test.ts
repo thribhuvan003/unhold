@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { getUnfreezePath } from '@/lib/case/unfreeze-path';
 
 describe('getUnfreezePath', () => {
-  it('cyber freeze: branch cannot fix it — the NOC from the cyber cell does', () => {
+  it('cyber restriction: starts with written amount, authority and reference details', () => {
     const path = getUnfreezePath('cyber_upi_chain');
     expect(path.track).toBe('cyber');
     expect(path.branchCanFix).toBe(false);
-    expect(path.headline).toMatch(/branch cannot lift this/i);
-    expect(path.keyStep).toMatch(/NOC/);
-    // The real ordered path: get details → cyber cell/NOC → submit to bank → rights.
+    expect(path.headline).toMatch(/confirm who ordered/i);
+    expect(path.keyStep).toMatch(/authority reference in writing/i);
     expect(path.steps).toHaveLength(4);
-    expect(path.steps[1].detail).toMatch(/NOC/);
+    expect(path.steps[1].detail).toMatch(/authority/i);
+    expect(path.steps[1].detail).not.toMatch(/guarantee|automatic|15 days|NOC/i);
   });
 
   it('KYC freeze: honest — the branch CAN fix it directly', () => {
@@ -28,7 +28,7 @@ describe('getUnfreezePath', () => {
     expect(getUnfreezePath('tax_gst_attachment').branchCanFix).toBe(false);
   });
 
-  it('unknown reason defaults to the cyber/NOC path (the most common + highest-stakes)', () => {
+  it('unknown reason defaults to the cautious written-authority path', () => {
     const path = getUnfreezePath(null);
     expect(path.track).toBe('cyber');
     expect(path.branchCanFix).toBe(false);

@@ -55,7 +55,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
   try {
     const { id: caseId } = await context.params;
     const auth = await requireRequestAuth(request);
-    await assertCaseAccess(caseId, auth, 'owner');
+    const access = await assertCaseAccess(caseId, auth, 'editor');
+    if (access !== 'owner') {
+      throw new ApiError(403, 'forbidden', 'Only the case owner can change reminder settings');
+    }
 
     const body = await parseJsonBody(request, requestId);
     const parsed = reminderOptInSchema.safeParse(body);

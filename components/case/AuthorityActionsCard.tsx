@@ -31,7 +31,7 @@ type AuthorityActionsCardProps = {
 /**
  * Cyber-track authority actions the bank ladder cannot replace:
  * 1) Official citizen NCRP/cybercrime entry point
- * 2) Ready-to-copy IO / cyber-cell NOC representation
+ * 2) Ready-to-copy representation to the authority identified by the bank
  *
  * You still send everything yourself — Unhold never contacts police or government systems.
  */
@@ -107,7 +107,7 @@ export function AuthorityActionsCard({ l1Sent, fields }: AuthorityActionsCardPro
         </a>
       </div>
 
-      {/* IO NOC letter */}
+      {/* Authority representation */}
       <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] px-3.5 py-3">
         <p className="text-[0.84375rem] font-semibold text-[var(--ink)]">{t('ioTitle')}</p>
         <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">

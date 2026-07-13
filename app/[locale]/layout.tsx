@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     'cyber freeze',
     'UPI freeze',
     'lien amount only',
-    'MHA freeze SOP 2026',
+    'bank restriction guidance India',
     'I4C',
     'NCRP GRM',
     'bank freeze letter',

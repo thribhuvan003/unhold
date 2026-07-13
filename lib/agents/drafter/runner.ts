@@ -75,11 +75,9 @@ type TrackLetterCopy = {
   amountRule: (disputed: boolean, amountInr: string, amount: number) => string;
 };
 
-// A branch CANNOT lift a cyber/LEA lien (that needs the investigating agency's
-// NOC). But a lien marked on MORE than the disputed sum is the branch's own
-// excess and the branch can correct it — so we ask to restrict/limit the lien,
-// never to "release the freeze". (Bank-officer review: demanding release is the
-// one thing that makes the branch file the letter as "customer doesn't get it".)
+// For a cyber/LEA restriction, ask for the written amount, scope and authority.
+// The product must not infer which actor can change it before those facts are
+// known or state a universal lien-only rule.
 const CYBER_AMOUNT_RULE = (disputed: boolean, amountInr: string, amount: number): string => {
   void amount;
   return disputed
@@ -92,10 +90,10 @@ const TRACK_LETTER_COPY: Record<UnfreezeTrack, TrackLetterCopy> = {
     legalGrounding:
       'Please register this as a formal grievance, provide the written freeze details, and tell me the next official step. I understand that the bank and investigating authority decide any release or modification.',
     declaration:
-      'I declare that I had no knowledge of any fraud. The funds are legitimate. I am cooperating fully.',
+      'I confirm that the factual details in this letter are accurate to the best of my knowledge and I am willing to provide relevant documents through verified official channels.',
     attachments:
       'the freeze SMS/notice, bank statement, photo ID (masked), and proof of legitimate funds (a salary slip or invoice)',
-    situationFallback: 'I am an innocent account holder with no connection to any fraud.',
+    situationFallback: 'I am the account holder and need the written restriction details so I can respond through the correct official channel.',
     l1KeyRequests: (disputed, amountInr) =>
       `2. Please confirm whether the amount currently held is ${
         disputed ? `approximately Rs. ${amountInr}` : 'the amount shown in the freeze record'
@@ -104,7 +102,7 @@ const TRACK_LETTER_COPY: Record<UnfreezeTrack, TrackLetterCopy> = {
   },
   branch: {
     legalGrounding:
-      'This is a bank-side administrative hold, not a police or court freeze — your branch can lift it directly once the required paperwork above is complete.',
+      'This appears to be a bank-side administrative hold rather than a police or court restriction. Please confirm the required paperwork and restore access when the bank’s requirements are met.',
     declaration:
       'I confirm the details above are true and correct, and I am providing the requested documents in good faith.',
     attachments:
@@ -130,7 +128,7 @@ const TRACK_LETTER_COPY: Record<UnfreezeTrack, TrackLetterCopy> = {
     l1KeyRequests: () =>
       '2. Share the court order details (court, case number, and the amount/scope of the attachment) so I can apply to that court for relief.',
     amountRule: () =>
-      'Only the amount specified in the court order should remain under attachment; any excess should not be restricted.',
+      'Please confirm that the bank has implemented the amount and scope stated in the court order, without asking the bank to change that order.',
   },
   tax: {
     legalGrounding:
@@ -142,7 +140,7 @@ const TRACK_LETTER_COPY: Record<UnfreezeTrack, TrackLetterCopy> = {
     l1KeyRequests: () =>
       '2. Share the tax/GST notice details (issuing office, reference, and the amount attached) so I can take this up with that office.',
     amountRule: () =>
-      'Only the amount specified in the tax/GST notice should remain attached; any excess should not be restricted.',
+      'Please confirm that the bank has implemented the amount and scope stated in the tax/GST notice, without asking the bank to change that notice.',
   },
 };
 
@@ -173,9 +171,9 @@ export function buildCaseAwareLines(
 
   const SITUATION_LINE =
     role === 'receiver'
-      ? 'Money I did not expect was credited to my account, after which the account was blocked. I did not knowingly receive any disputed funds and have no connection to any fraud.'
+      ? 'Money I did not expect was credited to my account, after which I found the account restricted. I am asking for the transaction and authority details so I can respond accurately.'
       : role === 'sender'
-        ? 'I made a genuine payment from my account, after which it was frozen. I am not involved in any fraud.'
+        ? 'I made a payment that I believed was genuine, after which I found the account restricted. I am asking for the transaction and authority details so I can respond accurately.'
         : copy.situationFallback;
 
   return {
@@ -236,8 +234,8 @@ export async function loadDrafterContext(
       : String(intake.amount_inr ?? '');
 
   // Case-aware sentences so different situations produce genuinely different
-  // letters — freeze type, victim role, freeze-reason track, and the sub-₹50k
-  // rule — without an LLM (deterministic, no hallucinated law).
+  // letters — freeze type, user role and freeze-reason track — without an LLM
+  // or an inferred legal rule.
   const caseLines = buildCaseAwareLines(intake, amountInr, caseRow.freeze_reason);
 
   const { data: l1 } = await supabase
@@ -299,8 +297,8 @@ async function draftWithLlm(
   });
   if (model === 'RULE_ENGINE' || model === 'HUMAN_OPS') return null;
 
-  // Ground the letter in the curated 2026 corpus (BNSS 106/107 case law, MHA SOP,
-  // RBI Ombudsman) so the draft can cite current law accurately. Best-effort.
+  // Ground the letter in the curated corpus so it can distinguish official
+  // routes and avoid inventing legal rules. Best-effort.
   let grounding = '';
   try {
     const query =
@@ -309,7 +307,7 @@ async function draftWithLlm(
     const chunks = await retrieveRelevantContext(query, 5);
     if (chunks.length > 0) {
       grounding =
-        '\n\nGROUNDING — current (2026) India freeze/unfreeze law you may cite accurately where relevant. ' +
+        '\n\nGROUNDING — reviewed India bank-restriction context. ' +
         'Use ONLY items tagged [current]/[high]; never cite [verify]/[low] items as settled law, and never invent a citation.\n' +
         chunks
           .map(

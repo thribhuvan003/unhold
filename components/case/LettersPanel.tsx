@@ -40,8 +40,8 @@ const STATUS_TONE: Record<EscalationStatus, 'neutral' | 'forest' | 'success' | '
 
 const LEVEL_DESC: Record<'L1' | 'L2' | 'L3', string> = {
   L1: 'First letter to your bank branch manager.',
-  L2: 'Escalation to the nodal officer — use if the branch does not respond in 7 days.',
-  L3: 'Complaint to the RBI Banking Ombudsman — final step if L1 and L2 do not work.',
+  L2: 'Escalation to the bank’s nodal officer if the branch does not give an adequate written response.',
+  L3: 'RBI CMS draft for an eligible bank-service complaint after using the bank’s complaint process.',
 };
 
 interface LettersPanelProps {

@@ -20,9 +20,9 @@ Respected Sir / Madam,
 I, {{USER_NAME}} (A/c XXXXXX{{ACCOUNT_LAST4}}, {{BANK_NAME}}, {{BRANCH_CITY}}), am escalating a grievance that remains unresolved since my written complaint to the branch on {{L1_SENT_DATE}}. My account was frozen on {{FREEZE_DATE}} (NCRP ref {{NCRP_ID}}, disputed amount approx. Rs. {{AMOUNT_INR}}), and I have not received a satisfactory written response within a reasonable period, as required under the RBI grievance-redressal framework. This continues to cause me financial hardship.
 
 I request you to:
-1. Direct the {{BRANCH_CITY}} branch to provide the freeze details (authority, legal basis, IO contact) in writing within 5 working days.
-2. Direct the branch to restrict any lien to the disputed amount and lift the hold on the balance above it. {{AMOUNT_RULE_LINE}}
-3. Confirm my L1 representation has been forwarded to the CFCFRMS/GRM module, with the tracking reference.
+1. Direct the {{BRANCH_CITY}} branch to provide the restriction details (amount, type, scope, ordering authority, reference, legal basis communicated to the bank, and official authority contact) in writing.
+2. Review whether the bank has correctly implemented the written direction it received. {{AMOUNT_RULE_LINE}}
+3. Give me the bank grievance reference, current status, stated response date, and any next published escalation channel.
 
 {{LEGAL_GROUNDING}}
 

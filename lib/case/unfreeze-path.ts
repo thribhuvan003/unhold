@@ -36,86 +36,78 @@ type PathContent = {
 
 const isHi = (locale: string | undefined) => locale === 'hi';
 
-// ── The real path for a cyber / police freeze ──────────────────────────────
-// Verified 2026: the branch only executes the freeze; the cyber cell (via an
-// NOC) or the 90-day rule / a court is what lifts it.
+// ── Cyber / police freeze path ──────────────────────────────────────────────
+// Exact powers, remedies and timelines depend on the order and jurisdiction.
+// The safe first move is to obtain the written restriction details.
 function cyberPath(locale: string): UnfreezePath {
   const en: PathContent = {
     headline:
-      "Your branch cannot lift this — a cyber cell ordered it. The branch only froze it on instruction. What actually unfreezes it is an NOC (No Objection Certificate) from that cyber cell.",
-    keyStep: 'Get an NOC from the cyber cell that ordered the freeze.',
+      'First confirm who ordered the restriction and exactly what your bank has blocked. Unhold cannot determine who may release it until those written details are known.',
+    keyStep: 'Get the restriction details and ordering-authority reference in writing.',
     steps: [
       {
         n: 1,
-        title: 'Get the freeze details from your bank — in writing',
+        title: 'Ask your bank for the restriction details',
         detail:
-          "Ask your bank's nodal officer — a senior grievance officer above the branch (in writing — your Letter 1 does this) — which cyber cell / police station ordered the freeze, the FIR / NCRP number (your cybercrime.gov.in complaint number), the amount held, and whether it's a lien (a hold on a specific amount, not your whole account) or a full freeze. You can't get a release without knowing who froze it. If a public-sector bank stonewalls, you can file an RTI (a formal Right-to-Information request) with the bank; for a private bank, RTI the police instead.",
-        who: 'You → your bank nodal officer',
-        deadline: 'Bank is meant to forward your grievance in ~7 days',
+          'Request the amount held, type of restriction, ordering authority, police station or cyber cell, and complaint/FIR/NCRP reference. Keep the written reply and acknowledgement.',
+        who: 'You → your bank branch or published grievance channel',
       },
       {
         n: 2,
-        title: 'Get the release order (NOC) from the cyber cell that froze it',
+        title: 'Use the identified official route',
         detail:
-          'Send a written representation to the Investigating Officer / SHO — the officer in charge of that cyber police station (copy the senior Cyber SP) — with your ID, bank statement showing the disputed credit, and proof the money is legitimate. Ask for a written no-objection (NOC) / release order — under the 2026 SOP the police send the bank a Section 106(3) BNSS release notice (the legal notice that tells the bank to release the money). The station may be in another state. A few states (Gujarat) run an online unfreeze portal — check your state cyber cell.',
-        who: 'You → the Investigating Officer / cyber cell',
-        deadline: 'IO is meant to decide in ~15 days (weaker above ₹50,000)',
+          'If the bank names a police or cyber authority, send that authority a factual representation with only the documents it requests. Ask for a written decision or the next official step. Unhold does not submit this for you.',
+        who: 'You → the authority named by the bank',
       },
       {
         n: 3,
-        title: 'Submit the release order to your bank',
+        title: 'Give any written direction to your bank',
         detail:
-          "Hand the NOC / release order to your bank's nodal officer. This is the document that actually lifts the freeze — the bank removes the hold within a few working days (the SOP says within 15 days of a 106(3) notice, sometimes against an indemnity bond — a written promise to repay if the money is later found to be disputed).",
-        who: 'You → your bank nodal officer',
-        deadline: 'Hold removed within ~15 days',
+          'If the authority issues a release, modification, or no-objection direction, give a copy to the bank through its published grievance channel and keep proof of delivery.',
+        who: 'You → your bank',
       },
       {
         n: 4,
-        title: 'If nothing moves — use your time-bound rights',
+        title: 'Escalate service failures carefully',
         detail:
-          'Under ₹50,000 disputed: release is meant to be easier without a court order, and if no court order continues the freeze within 90 days the bank should lift it. If the BANK is the blocker (froze your whole account, ignored the 90-day lapse), complain against the bank on CPGRAMS (the central government’s public-grievance website, pgportal.gov.in) and, after 30 days, to the RBI Ombudsman — a free government service for complaints against banks (cms.rbi.org.in / 14448). Note: the Ombudsman can act on the bank’s conduct but cannot override a police freeze — for that, a lawyer’s notice to the IO or a High Court writ is the route.',
-        who: 'You → CPGRAMS / RBI Ombudsman / (if stuck) a lawyer or High Court',
-        deadline: '30-day RBI route · 90-day auto-lift (under ₹50k)',
+          'For a bank-service problem, follow the bank’s published grievance process. RBI CMS may review eligible service complaints after the bank’s process; it does not replace a police or court decision. For urgent or disputed legal action, seek independent legal aid.',
+        who: 'You → bank grievance channel / RBI CMS if eligible / independent legal aid',
       },
     ],
   };
 
   const hi: PathContent = {
     headline:
-      'आपकी शाखा यह रोक नहीं हटा सकती — यह आदेश एक साइबर सेल ने दिया है। शाखा ने तो सिर्फ़ आदेश पर रोक लगाई है। इसे असल में जो हटाता है वह है उस साइबर सेल से मिला NOC (No Objection Certificate / अनापत्ति प्रमाण-पत्र)।',
-    keyStep: 'उस साइबर सेल से NOC (अनापत्ति) लें जिसने रोक लगवाई।',
+      'पहले लिखित में पता करें कि रोक किसने लगवाई और बैंक ने ठीक-ठीक क्या रोका है। इन विवरणों के बिना Unhold यह तय नहीं कर सकता कि रोक कौन बदल सकता है।',
+    keyStep: 'रोक का विवरण और आदेश देने वाली अथॉरिटी का रेफरेंस लिखित में लें।',
     steps: [
       {
         n: 1,
-        title: 'अपने बैंक से फ्रीज़ का विवरण लें — लिखित में',
+        title: 'बैंक से रोक का पूरा विवरण माँगें',
         detail:
-          'अपने बैंक के नोडल अधिकारी (शाखा से ऊपर के एक वरिष्ठ शिकायत अधिकारी) से लिखित में पूछें (आपका पत्र 1 यही करता है) कि किस साइबर सेल / पुलिस थाने ने रोक लगवाई, FIR / NCRP नंबर (cybercrime.gov.in वाली आपकी शिकायत संख्या), रोकी गई रकम, और यह लियन है (किसी तय रकम पर रोक, पूरा खाता नहीं) या पूरा फ्रीज़। जब तक आपको पता न हो कि रोक किसने लगाई, रिहाई नहीं मिल सकती। अगर कोई सरकारी बैंक टालमटोल करे, तो आप बैंक में RTI (सूचना का अधिकार आवेदन) दे सकते हैं; निजी बैंक हो तो पुलिस में RTI दें।',
-        who: 'आप → आपके बैंक के नोडल अधिकारी',
-        deadline: 'बैंक को आपकी शिकायत लगभग 7 दिन में आगे भेजनी होती है',
+          'रोकी गई रकम, रोक का प्रकार, आदेश देने वाली अथॉरिटी, पुलिस थाना/साइबर सेल और शिकायत/FIR/NCRP रेफरेंस माँगें। लिखित जवाब और पावती संभालकर रखें।',
+        who: 'आप → बैंक शाखा या बैंक का प्रकाशित शिकायत चैनल',
       },
       {
         n: 2,
-        title: 'जिस साइबर सेल ने रोक लगाई, उससे रिहाई आदेश (NOC) लें',
+        title: 'बताए गए आधिकारिक रास्ते का उपयोग करें',
         detail:
-          'जाँच अधिकारी (Investigating Officer / IO) / SHO — उस साइबर पुलिस थाने के प्रभारी अधिकारी — को लिखित अभ्यावेदन भेजें (वरिष्ठ Cyber SP को कॉपी करें), साथ में अपनी ID, विवादित रकम आने को दिखाता बैंक स्टेटमेंट, और यह प्रमाण कि पैसा वैध है। लिखित अनापत्ति (NOC) / रिहाई आदेश माँगें — 2026 SOP के तहत पुलिस बैंक को धारा 106(3) BNSS का रिहाई नोटिस भेजती है (यह वह कानूनी नोटिस है जो बैंक को पैसा छोड़ने को कहता है)। थाना किसी दूसरे राज्य में भी हो सकता है। कुछ राज्यों (जैसे गुजरात) में ऑनलाइन अनफ्रीज़ पोर्टल है — अपने राज्य की साइबर सेल जाँचें।',
-        who: 'आप → जाँच अधिकारी (IO) / साइबर सेल',
-        deadline: 'IO को लगभग 15 दिन में फैसला लेना होता है (₹50,000 से ऊपर कमज़ोर)',
+          'अगर बैंक किसी पुलिस या साइबर अथॉरिटी का नाम देता है, तो उसे केवल माँगे गए दस्तावेज़ों के साथ तथ्यात्मक अभ्यावेदन दें। लिखित निर्णय या अगला आधिकारिक कदम माँगें। Unhold आपकी ओर से कुछ जमा नहीं करता।',
+        who: 'आप → बैंक द्वारा बताई गई अथॉरिटी',
       },
       {
         n: 3,
-        title: 'रिहाई आदेश अपने बैंक को दें',
+        title: 'मिला हुआ लिखित निर्देश बैंक को दें',
         detail:
-          'NOC / रिहाई आदेश अपने बैंक के नोडल अधिकारी को सौंपें। यही वह दस्तावेज़ है जो असल में रोक हटाता है — बैंक कुछ कार्य-दिवसों में रोक हटा देता है (SOP कहती है 106(3) नोटिस के 15 दिन के भीतर, कभी-कभी एक क्षतिपूर्ति बॉन्ड (indemnity bond — यह लिखित वादा कि अगर पैसा बाद में विवादित निकला तो लौटा देंगे) के बदले)।',
-        who: 'आप → आपके बैंक के नोडल अधिकारी',
-        deadline: 'लगभग 15 दिन में रोक हट जाती है',
+          'अगर अथॉरिटी रिहाई, बदलाव या अनापत्ति का लिखित निर्देश देती है, तो उसे बैंक के प्रकाशित शिकायत चैनल पर दें और जमा करने का प्रमाण रखें।',
+        who: 'आप → आपका बैंक',
       },
       {
         n: 4,
-        title: 'अगर कुछ न हिले — अपने समयबद्ध अधिकार इस्तेमाल करें',
+        title: 'सेवा में कमी हो तो सावधानी से शिकायत बढ़ाएँ',
         detail:
-          'विवादित रकम ₹50,000 से कम: बिना कोर्ट आदेश के रिहाई आसान होनी चाहिए, और अगर 90 दिन में कोई कोर्ट आदेश रोक जारी न रखे तो बैंक को रोक हटा देनी चाहिए। अगर अटकाने वाला बैंक ही है (पूरा खाता फ्रीज़ किया, 90 दिन बीतने को अनदेखा किया), तो बैंक के खिलाफ CPGRAMS (केंद्र सरकार की जन-शिकायत वेबसाइट, pgportal.gov.in) पर शिकायत करें और 30 दिन बाद RBI लोकपाल (Ombudsman) — बैंकों के खिलाफ शिकायत की मुफ़्त सरकारी सेवा (cms.rbi.org.in / 14448) — के पास जाएँ। ध्यान रहे: लोकपाल बैंक के बर्ताव पर कार्रवाई कर सकता है पर पुलिस की रोक नहीं पलट सकता — उसके लिए IO को वकील का नोटिस या हाई कोर्ट में रिट ही रास्ता है।',
-        who: 'आप → CPGRAMS / RBI लोकपाल / (अगर अटके) वकील या हाई कोर्ट',
-        deadline: '30-दिन RBI रास्ता · 90-दिन में अपने-आप रिहाई (₹50k से कम)',
+          'बैंक की सेवा से जुड़ी समस्या के लिए बैंक की प्रकाशित शिकायत प्रक्रिया अपनाएँ। पात्र मामलों में RBI CMS बैंक की सेवा-शिकायत देख सकता है; वह पुलिस या अदालत के निर्णय की जगह नहीं लेता। जरूरी या विवादित कानूनी कार्रवाई में स्वतंत्र कानूनी सहायता लें।',
+        who: 'आप → बैंक शिकायत चैनल / पात्र होने पर RBI CMS / स्वतंत्र कानूनी सहायता',
       },
     ],
   };
@@ -134,11 +126,10 @@ function branchPath(kind: 'kyc' | 'cheque' | 'nomination', locale: string): Unfr
       steps: [
         {
           n: 1,
-          title: 'Visit your branch with fresh KYC documents',
+          title: 'Ask your branch which current KYC documents it needs',
           detail:
-            'Carry your Aadhaar, PAN, and a recent address proof. Ask the branch to complete your re-KYC and remove the hold.',
+            'Use the bank’s verified channel or visit the branch. Provide only the documents the bank confirms are required and ask for a service-request reference.',
           who: 'You → your bank branch',
-          deadline: 'Usually lifted the same day or within a few days',
         },
       ],
     },
@@ -153,7 +144,6 @@ function branchPath(kind: 'kyc' | 'cheque' | 'nomination', locale: string): Unfr
           detail:
             'Ask exactly why the hold was placed and what clears it. A bank-internal hold is the branch’s to remove.',
           who: 'You → your bank branch',
-          deadline: 'Often resolved in a day or two',
         },
       ],
     },
@@ -168,7 +158,6 @@ function branchPath(kind: 'kyc' | 'cheque' | 'nomination', locale: string): Unfr
           detail:
             'Ask the branch which documents they need (nomination, death certificate, legal heir proof) to release the account.',
           who: 'You → your bank branch',
-          deadline: 'Varies with paperwork',
         },
       ],
     },
@@ -182,11 +171,10 @@ function branchPath(kind: 'kyc' | 'cheque' | 'nomination', locale: string): Unfr
       steps: [
         {
           n: 1,
-          title: 'ताज़ा KYC दस्तावेज़ों के साथ अपनी शाखा जाएँ',
+          title: 'शाखा से पूछें कि कौन-से मौजूदा KYC दस्तावेज़ चाहिए',
           detail:
-            'अपना Aadhaar, PAN और हाल का पता-प्रमाण साथ ले जाएँ। शाखा से कहें कि आपकी दोबारा-KYC पूरी करके रोक हटा दे।',
+            'बैंक के सत्यापित चैनल का उपयोग करें या शाखा जाएँ। केवल बैंक द्वारा बताए गए जरूरी दस्तावेज़ दें और सर्विस-रिक्वेस्ट रेफरेंस माँगें।',
           who: 'आप → आपकी बैंक शाखा',
-          deadline: 'आमतौर पर उसी दिन या कुछ दिनों में हट जाती है',
         },
       ],
     },
@@ -201,7 +189,6 @@ function branchPath(kind: 'kyc' | 'cheque' | 'nomination', locale: string): Unfr
           detail:
             'ठीक-ठीक पूछें कि रोक क्यों लगी और इसे क्या हटाएगा। बैंक की अंदरूनी रोक शाखा को ही हटानी होती है।',
           who: 'आप → आपकी बैंक शाखा',
-          deadline: 'अक्सर एक-दो दिन में सुलझ जाती है',
         },
       ],
     },
@@ -216,7 +203,6 @@ function branchPath(kind: 'kyc' | 'cheque' | 'nomination', locale: string): Unfr
           detail:
             'शाखा से पूछें कि खाता जारी करने के लिए कौन-से दस्तावेज़ चाहिए (नामांकन, मृत्यु प्रमाण-पत्र, कानूनी उत्तराधिकारी प्रमाण)।',
           who: 'आप → आपकी बैंक शाखा',
-          deadline: 'कागज़ी कार्रवाई पर निर्भर',
         },
       ],
     },
@@ -242,7 +228,7 @@ function courtPath(locale: string): UnfreezePath {
         n: 2,
         title: 'Apply to that court (with a lawyer)',
         detail:
-          'A lawyer can file to modify or vacate the attachment — for example arguing only the disputed amount should be held, not your whole account.',
+          'Ask a lawyer what relief is available on the facts and order, including whether the scope or amount of the attachment can be reviewed.',
         who: 'You → the court, via a lawyer',
       },
     ],
@@ -263,7 +249,7 @@ function courtPath(locale: string): UnfreezePath {
         n: 2,
         title: 'उस अदालत में (वकील के ज़रिए) आवेदन करें',
         detail:
-          'एक वकील कुर्की बदलवाने या रद्द कराने के लिए आवेदन कर सकता है — जैसे यह तर्क कि सिर्फ़ विवादित रकम रोकी जाए, पूरा खाता नहीं।',
+          'वकील से पूछें कि आदेश और तथ्यों के आधार पर क्या राहत मिल सकती है, और क्या कुर्की की सीमा या रकम की समीक्षा हो सकती है।',
         who: 'आप → अदालत, वकील के ज़रिए',
       },
     ],
@@ -343,7 +329,7 @@ export function getUnfreezePath(
     case 'tax_gst_attachment':
       return taxPath(locale);
     // cyber_upi_chain, suspected_mule, police_notice_bnss106, bank_str, and the
-    // unknown/default all follow the cyber-cell + NOC path.
+    // unknown/default all follow the cautious written-authority path.
     default:
       return cyberPath(locale);
   }

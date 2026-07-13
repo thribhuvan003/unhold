@@ -92,8 +92,8 @@ export default async function HomePage({ params }: Props) {
           acceptedAnswer: {
             '@type': 'Answer',
             text: isHi
-              ? 'Unhold (unhold.live) भारत में बैंक खाता फ्रीज के लिए मुफ़्त पैकेज टूल है — पत्र, प्रूफ पैक, डेडलाइन। आप खुद भेजते हैं।'
-              : 'Unhold (unhold.live) is a free package tool for Indian bank freezes — letters, proof pack, deadlines. You send everything yourself.',
+              ? 'Unhold (unhold.live) भारत में बैंक खाता फ्रीज के लिए मुफ़्त तैयारी टूल है — पत्र, प्रूफ पैक और फॉलो-अप। आप खुद भेजते हैं।'
+              : 'Unhold (unhold.live) is a free preparation tool for Indian bank freezes — letters, proof pack and follow-ups. You send everything yourself.',
           },
         },
         {
@@ -104,8 +104,8 @@ export default async function HomePage({ params }: Props) {
           acceptedAnswer: {
             '@type': 'Answer',
             text: isHi
-              ? '2026 MHA/I4C SOP के अनुसार लियन आमतौर पर विवादित रकम पर होना चाहिए। गाइड देखें: /guides/sop-2026'
-              : 'Under the 2026 MHA/I4C SOP framing, the lien should generally track the disputed amount. See our plain guide at /guides/sop-2026.',
+              ? 'Unhold यह तय नहीं कर सकता। बैंक से लिखित में रुकी रकम, आदेश देने वाली अथॉरिटी और रेफरेंस नंबर माँगें; ज़रूरत हो तो स्वतंत्र कानूनी सलाह लें।'
+              : 'Unhold cannot decide this. Ask the bank in writing for the amount held, the ordering authority, and the reference number; get independent legal advice if needed.',
           },
         },
       ],

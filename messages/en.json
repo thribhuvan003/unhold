@@ -26,37 +26,37 @@
     "eyebrow": "Free · no account · you stay in control",
     "title": "Bank account frozen? We’ll build the package and show who can actually release it.",
     "intro": "A cyber complaint can freeze your account even when you did nothing wrong. We prepare the right papers, a sealed proof pack, and letters — and show the real unfreeze path. <strong>You send everything yourself.</strong> Unfreeze is still the bank or police, not us.",
-    "startCta": "Start — takes 2 minutes",
+    "startCta": "Start my case",
     "openCaseCta": "I already started — open my case",
     "recoverCta": "Lost browser? Open with recovery code →",
     "otherLangCta": "हिंदी में पढ़ें — आपके अधिकार और अगला कदम →",
     "howItWorksLabel": "How it works",
     "steps": [
       { "title": "Tell us what happened", "desc": "5 easy questions. No account needed." },
-      { "title": "Add your papers", "desc": "Photos of your freeze SMS, statement and PAN. AI checks each one." },
+      { "title": "Add only the papers you need", "desc": "Clear photos or PDFs. Unhold checks readability and asks you to review the original." },
       { "title": "We write your letter + seal your papers", "desc": "A proper letter in your name, plus one sealed proof pack to attach." },
-      { "title": "You send it & follow up", "desc": "By email from your phone, or at the branch. We track the deadlines." }
+      { "title": "You send it & follow up", "desc": "By email from your phone, or at the branch. Keep the acknowledgement and use the stated response date." }
     ],
     "demoTitle": "Just curious? See a worked example",
     "demoDesc": "A full sample case — the letter, the unfreeze path, the sources. No account or documents needed.",
     "goodToKnow": "<strong>Good to know:</strong> we never send anything to your bank. No one can promise an unfreeze. The official cyber helpline is <helpline>1930</helpline>.",
-    "rightsLink": "Know your rights: the 2026 freeze rule →",
+    "rightsLink": "See the practical next steps and official routes →",
     "storiesLabel": "Who this is for",
     "stories": [
       {
         "who": "Student · Bangalore-style UPI chain",
-        "line": "Tiny unknown credit (even ₹2–₹1,800) freezes the whole account. You need disputed-amount-only demand + package — not a paid “unfreeze agent”."
+        "line": "An unknown UPI credit may appear near a restriction. First ask the bank for the amount held, ordering authority and reference in writing."
       },
       {
         "who": "Shop / tea stall · North India",
-        "line": "Branch visit with a printed letter + sealed pack + stamped acknowledgement often beats phone calls. Hindi path + recovery code if you change phones."
+        "line": "Take a factual letter and only the requested documents. Keep a stamped acknowledgement or other proof that the bank received them."
       },
       {
         "who": "Salary account · cyber freeze",
-        "line": "Branch often cannot lift a cyber freeze alone — you need freeze details, then IO / NOC and GRM. We prepare that path; you send."
+        "line": "Start with written restriction details. Then contact the authority the bank identifies and keep every acknowledgement."
       }
     ],
-    "storiesFoot": "Patterns from 2025–26 user reports and MHA SOP 2026 — not success-rate promises."
+    "storiesFoot": "These are preparation examples, not legal conclusions or outcome promises."
   },
   "IntakeWizard": {
     "back": "← Back",
@@ -94,7 +94,7 @@
     "storyCounter": "{count} letters typed",
     "amountPlaceholder": "e.g. 25000",
     "microUpiChip": "Tiny unknown UPI (e.g. ₹2)",
-    "amountHint": "Leave it blank if you are not sure yet. Under ₹50,000? The 2026 rule makes release easier — we use that in your letter. Tiny UPI credits that freeze the whole account are very common — pick that chip if it fits.",
+    "amountHint": "Leave it blank if you are not sure yet. Ask the bank to confirm the exact amount held, the type of restriction, the ordering authority and its reference in writing.",
     "ncrpLabel": "Cybercrime complaint number",
     "ncrpOptional": "(if you have one)",
     "ncrpPlaceholder": "14 digits — from cybercrime.gov.in",
@@ -129,7 +129,7 @@
       "L3": "officially: L3 / RBI CMS complaint"
     },
     "summary": {
-      "cyber": "In plain words: this letter asks your branch to hold only the disputed amount and to release the lien on the rest. To release the disputed amount you must contact the Investigating Officer (cyber cell) — the branch cannot lift that alone.",
+      "cyber": "In plain words: this letter asks your bank to state the exact restriction, amount, ordering authority and reference in writing. Any request for review is then sent to the authority the bank identifies.",
       "branch": "In plain words: this letter asks your branch to reactivate your account once it receives the required documents.",
       "court": "In plain words: this letter asks your branch for the court-order details, so you can apply for relief before the right court. The branch cannot lift this hold itself.",
       "tax": "In plain words: this letter asks your branch for the tax/GST notice details, so you can take it up with the relevant officer."
@@ -190,12 +190,12 @@
     "title": "Help & staying safe",
     "call1930Title": "Call 1930 — official cyber helpline",
     "call1930Desc": "Free, government-run. Call them first for any fraud.",
-    "rightsTitle": "Know your rights — the 2026 freeze rule",
-    "rightsDesc": "The time limits, the 90-day cap, and what to demand.",
+    "rightsTitle": "Understand the restriction and your next step",
+    "rightsDesc": "What to ask the bank, which authority to contact, and what proof to keep.",
     "recoverTitle": "Lost your case on a new phone?",
     "recoverDesc": "Open with case code + recovery code →",
-    "whatsappTitle": "WhatsApp deadline reminders",
-    "whatsappDesc": "On your case page, turn on WhatsApp reminders (opt-in). You must join the Twilio sandbox once in trial. We only message you — never your bank.",
+    "whatsappTitle": "Optional WhatsApp follow-up reminders",
+    "whatsappDesc": "If production WhatsApp delivery is enabled, you can opt in on your case page. We message only you and never include sensitive case details.",
     "officialTitle": "Official websites",
     "links": {
       "ncrp": "NCRP — cybercrime.gov.in",
@@ -214,8 +214,8 @@
     "glossary": [
       { "term": "debit freeze", "plain": "Money can come in, but nothing can go out." },
       { "term": "lien", "plain": "The bank blocked a fixed amount, not the whole account." },
-      { "term": "GRM", "plain": "The government complaint system for wrongly frozen accounts." },
-      { "term": "MRM", "plain": "The government route to get defrauded money back." },
+      { "term": "GRM", "plain": "A grievance-handling term used by banks and authorities. A staff login is not a public citizen filing portal." },
+      { "term": "MRM", "plain": "An official money-restoration workflow for eligible cyber-fraud victims, not a general account-unfreeze route." },
       { "term": "NCRP number", "plain": "Your cybercrime complaint number (14 digits)." },
       { "term": "L1 / L2 / L3", "plain": "Letter 1, 2, 3 — each one goes to a higher officer." },
       { "term": "IO", "plain": "The police officer handling the complaint behind your freeze." },
@@ -245,9 +245,9 @@
       "\"My account has a debit freeze / lien. I am here to submit a formal written representation.\"",
       "\"Please give me the freeze details in writing — the exact amount, the authority that ordered it, and the NCRP complaint number.\"",
       "\"I am an innocent account holder and I did not send or receive this money knowingly.\"",
-      "\"Please confirm the exact disputed amount and limit the freeze to that amount only — not my full balance.\"",
-      "\"The disputed amount is Rs. {amountInr}. I am requesting that the rest of my balance be released and only this amount remains on lien.\"",
-      "\"I am also requesting that this complaint be registered under the bank's GRM (Grievance Redressal Mechanism).\"",
+      "\"Please confirm the exact amount held, the type of restriction, the ordering authority and its reference in writing.\"",
+      "\"The amount I was told about is Rs. {amountInr}. Please confirm whether that is correct and explain the scope of the restriction.\"",
+      "\"Please register this as a bank grievance and give me the official reference and next escalation channel.\"",
       "\"Please give me a written acknowledgement with a grievance reference number.\""
     ],
     "dontTitle": "What NOT to say",
@@ -261,42 +261,42 @@
     "questionsTitle": "Questions to ask the branch manager",
     "questions": [
       "1. Which authority issued the freeze order (NCRP, cyber cell, IO name)?",
-      "2. What is the exact disputed amount? Is my full account frozen or only a lien?",
+      "2. What exact amount is held? Is this a full debit restriction or a lien on a stated amount?",
       "3. What is the NCRP / FIR complaint number?",
       "4. Under which legal section was the freeze applied (e.g., BNSS Section 106)?",
       "5. Who is the Investigating Officer (IO) and how do I contact them?",
-      "6. Has my grievance been forwarded to the CFCFRMS / GRM module?",
+      "6. Has my grievance been forwarded to any authority or internal official workflow, and how can I track it?",
       "7. When should I expect a response?"
     ],
-    "timelineTitle": "Timeline — what to expect",
+    "timelineTitle": "Follow-up checklist — use the dates you actually receive",
     "timeline": [
-      "Today: Submit the L1 letter. Get a written acknowledgement with date and reference.",
-      "Within 7 days: Bank should forward your grievance into the CFCFRMS system (per MHA SOP 2026).",
-      "Within 15 days: The Investigating Officer should take a decision (video verification possible).",
-      "If no response in 15 days: Escalate to the District Grievance Officer (Addl. SP / DySP) automatically.",
-      "After 30 days of no resolution: You can file with the RBI Ombudsman at cms.rbi.org.in (free).",
-      "90-day cap: If no court order is given, the bank may lift the hold after 90 days (per SOP)."
+      "Submit your branch letter and keep a dated acknowledgement or reference number.",
+      "Ask the bank when it will respond and record the date it gives you.",
+      "If the bank identifies a police, cyber, court or tax authority, contact that authority through a verified official channel.",
+      "If the bank does not address a bank-service grievance, use its published nodal or grievance escalation route.",
+      "RBI CMS may consider an eligible bank-service complaint after the bank process; it cannot replace a police or court decision.",
+      "For urgent hardship or a disputed authority action, seek independent legal aid."
     ],
     "warningsTitle": "Scam warnings",
     "warnings": [
       "NEVER pay any agent, lawyer, or caller who promises to unfreeze your account for a fee. Official routes are free.",
       "The police will NOT call you asking for payment to release your account.",
       "Do not share OTPs, PINs, card numbers, or net-banking passwords with anyone.",
-      "Only use official citizen portals: cybercrime.gov.in, 1930, mrm-ncrp.mha.gov.in, cms.rbi.org.in."
+      "Use cybercrime.gov.in / 1930 for citizen cybercrime reporting. MRM is for eligible fraud victims; RBI CMS is for eligible bank-service complaints."
     ]
   },
   "DemoPage": {
     "eyebrow": "A worked example",
-    "title": "Your bank can’t lift a cyber freeze — only the cyber cell that ordered it can.",
-    "intro": "Most people waste weeks begging their branch. Unhold shows you the real steps to get the release order from the right office, writes the letter to start it, and tracks the time-bound rights the 2026 rules give you. You send everything yourself — we never contact your bank, and no one can promise an unfreeze.",
+    "title": "Start by finding exactly who ordered the restriction and what was held.",
+    "intro": "Unhold helps you ask the bank for the restriction amount, type, ordering authority and reference, organise your proof, and prepare a factual representation. You send everything yourself — we never contact your bank or an authority, and no one can promise an unfreeze.",
     "sampleNote": "Below is a real worked example with made-up data — “Asha”, ₹1,800 wrongly frozen after a UPI credit. No account or documents needed; nothing here is sent anywhere.",
-    "sourcesTitle": "Backed by verified, dated sources",
-    "sourcesDesc": "Unlike a general chatbot, every contact and legal point carries where it came from and when it was checked:",
+    "sourcesTitle": "Official links and dated contact checks",
+    "sourcesDesc": "Contacts are linked to their published source. Legal outcomes still depend on the actual order, facts and jurisdiction:",
     "sourceLabel": "SBI official page",
     "letterTitle": "Your ready-to-send letter",
     "letterDesc": "Written in your name, adapted to your situation. You review and send it yourself.",
     "ctaTitle": "Your case won’t look like Asha’s.",
-    "ctaBody": "The letter, the papers, and the unfreeze path all adapt to what actually happened to you. It takes about 2 minutes to start.",
+    "ctaBody": "The letter, papers, and next-step checklist adapt to the facts you enter. You can stop and reopen the case with your recovery code.",
     "startCta": "Start my own case",
     "backHome": "Back to home"
   },
@@ -355,17 +355,17 @@
     "aiActivitySub": "Technical checks for support — not required for your next step.",
     "show": "Show",
     "hide": "Hide",
-    "microUpiNote": "Tiny UPI credit freezes are common in 2025–26 trails. Under the MHA/I4C SOP (Jan 2026), only the disputed amount should be held — not your whole balance. Use that demand in your branch letter and IO representation."
+    "microUpiNote": "For a small or unknown UPI credit, ask the bank to confirm the exact amount held, the ordering authority, and the complaint/FIR/NCRP reference in writing."
   },
   "LettersLadderCard": {
     "eyebrow": "Bank letters (if you need them)",
     "l1Name": "Branch letter",
-    "l1Note": "First formal letter to your branch. The bank gets about 7 days.",
+    "l1Note": "First factual letter to your branch. Keep its acknowledgement and stated response date.",
     "l2Name": "Senior bank officer letter",
-    "l2NoteOpen": "Opens if the bank stays silent for 7 days. They get about 10 days.",
+    "l2NoteOpen": "Use if the branch does not give an adequate written response through its stated grievance process.",
     "l2NoteLocked": "Locked — send the branch letter with proof first.",
     "l3Name": "RBI free complaint",
-    "l3Note": "Free government route — after the senior letter and 30 days with no fix. We ask you before this one.",
+    "l3Note": "For eligible bank-service complaints after using the bank's complaint process. It cannot override police or court action.",
     "sent": "Sent",
     "locked": "Locked",
     "open": "Open"
@@ -409,10 +409,10 @@
   "WhatHappensNextCard": {
     "title": "What happens next",
     "timeline": [
-      { "when": "7 days", "title": "Ask your bank for an update", "desc": "Call or visit your branch. Ask for your grievance reference number and status." },
-      { "when": "15 days", "title": "The police officer must decide", "desc": "By rule, the officer handling the complaint should decide in about 15 days." },
-      { "when": "30 days", "title": "RBI Ombudsman — free", "desc": "If nothing is fixed in 30 days, complain free at cms.rbi.org.in or call 14448." },
-      { "when": "90 days", "title": "The hold should be removed", "desc": "By the 2026 rule, if no order continues the freeze within 90 days, the bank must remove it. Remind them in writing." }
+      { "when": "Now", "title": "Get the restriction details in writing", "desc": "Ask for the amount, restriction type, ordering authority, reference and bank grievance number." },
+      { "when": "After acknowledgement", "title": "Follow the bank's stated response date", "desc": "Keep proof of every submission and ask for status through the bank's published channel." },
+      { "when": "If a separate authority is named", "title": "Use a verified official channel", "desc": "Send a factual representation to the police, cyber, court or tax authority identified by the bank." },
+      { "when": "If bank service remains unresolved", "title": "Use the eligible grievance route", "desc": "Escalate through the bank's published process. RBI CMS may consider eligible bank-service complaints; it does not override authority orders." }
     ]
   },
   "EditCaseDetails": {
@@ -457,9 +457,9 @@
   },
   "LetterWorkspace": {
     "sentTitle": "✓ Letter {n} sent — proof saved.",
-    "sentBody": "We track the reply deadline and remind you.",
-    "sentBodyL1": " Letter 2 unlocks if the bank stays silent for 7 days.",
-    "sentBodyL2": " Letter 3 opens if the nodal officer stays silent for 10 days.",
+    "sentBody": "Keep the acknowledgement and follow the response date the recipient gives you.",
+    "sentBodyL1": " Letter 2 is available if the branch does not give an adequate written response.",
+    "sentBodyL2": " RBI CMS is only for eligible bank-service complaints after the bank process.",
     "backToCase": "Back to my case",
     "reviewFirst": "Review the letter above and click \"I reviewed this draft\" first."
   },
@@ -494,8 +494,8 @@
   },
   "UnfreezePathCard": {
     "eyebrow": "Your real path to unfreeze",
-    "keyStepLabel": "The one thing that actually unfreezes it",
-    "disclaimer": "This is guidance based on the 2026 MHA freeze SOP — not legal advice, and not a guarantee. You send and submit everything yourself."
+    "keyStepLabel": "Your most important next step",
+    "disclaimer": "This is practical information, not legal advice or an outcome guarantee. Verify the authority and current official route before sending anything."
   },
   "DoThisNowCard": {
     "label": "Do this now",
@@ -513,9 +513,9 @@
     "branchLetter": "Branch letter",
     "branchNote": "You send it — we never do",
     "branchNoteDraft": "Draft ready — send + save proof",
-    "authority": "IO NOC + GRM",
-    "authorityNoteReady": "Real unlock path — open Authority actions",
-    "authorityNoteWait": "After branch details, approach cyber cell / GRM",
+    "authority": "Ordering authority",
+    "authorityNoteReady": "Use the written restriction details to contact the named authority",
+    "authorityNoteWait": "First get the authority name and reference from the bank",
     "court": "Court path",
     "tax": "Tax officer path",
     "courtTaxNote": "Branch cannot release this hold alone"
@@ -528,7 +528,7 @@
     "taxBody": "Your branch only holds the account under a tax/GST attachment. The tax officer who attached it must release it. Unhold helps you get the notice details — it does not contact the tax department for you.",
     "step1": "Send the branch letter asking for the exact order / notice details in writing.",
     "step1Done": "You have a branch letter on record — use the written order/notice details you received.",
-    "courtStep2": "Take those details to a lawyer and apply to the same court to modify or vacate the attachment (for example, hold only the disputed amount).",
+    "courtStep2": "Take those details to a lawyer and ask what relief is available from the same court on the facts and order.",
     "taxStep2": "Approach the tax / GST officer named in the notice with your identity and account proof; ask for written release or correction.",
     "step3": "When you have a release order, hand it to your bank’s nodal / branch officer and keep a stamped acknowledgement.",
     "disclaimer": "Not legal advice. No guaranteed outcome. You send and file everything yourself."
@@ -540,11 +540,11 @@
     "grmTitle": "Official cybercrime portal (citizen access)",
     "grmBody": "Use this public government portal to report cybercrime or access your NCRP account. It is not a promise that filing there will release a hold. For a frozen account, also get written freeze details and acknowledgement from your bank.",
     "grmCta": "Open official citizen portal ↗",
-    "ioTitle": "Letter to the Investigating Officer (for NOC)",
+    "ioTitle": "Representation to the authority identified by your bank",
     "ioBodyReady": "Use the freeze details from your bank letter. Fill any blanks (police station name). Attach your proof pack. Send by post/email/hand delivery to that cyber cell.",
     "ioBodyEarly": "You can draft this early — but you need the cyber cell / station name from the bank (Letter 1 asks for it). Blanks stay until you fill them.",
     "ioHintEarly": "Tip: send the branch letter first so you know which station ordered the freeze.",
-    "showLetter": "Show IO / NOC letter",
+    "showLetter": "Show authority representation",
     "hideLetter": "Hide letter",
     "subjectLabel": "Subject",
     "copy": "Copy letter text",
@@ -639,7 +639,7 @@
       "confirmError": "Could not save the proof upload",
       "markSentError": "We could not mark this letter as sent just yet. Your case is safe — please try again.",
       "networkError": "Network error — please try again.",
-      "successNote": "✓ Letter marked sent. We track the reply deadline and remind you before the wait ends."
+      "successNote": "✓ Letter marked sent. Keep the acknowledgement; we can remind you on the recorded follow-up date."
     },
     "SendByEmailCard": {
       "eyebrow": "Send it by email — from your phone",
@@ -661,6 +661,6 @@
       "print": "Print the letter (clean A4)",
       "unlock": "To unlock sending: <strong>fill your details</strong>, tick <strong>“I reviewed this draft”</strong>, and make your <strong>proof pack</strong> above.",
       "attachReminder": "Before you press send: download the proof pack PDF and attach it to the email (or print it for the branch).",
-      "strongest": "<strong>Strongest option:</strong> print the letter, take it with your proof pack to your branch, and get a stamped acknowledgement. That stamp starts the bank's 7-day clock."
+      "strongest": "<strong>Keep proof:</strong> print the letter, take it with your proof pack to your branch, and get a stamped acknowledgement or official reference number."
     }
 }

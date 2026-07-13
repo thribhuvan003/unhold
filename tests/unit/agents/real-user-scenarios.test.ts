@@ -87,7 +87,8 @@ describe('real-user acceptance scenarios', () => {
     expect(draft.body).toContain('Subject:');
     expect(draft.body).toContain('NCRP');
     // Proper formal letter: greeting, a real declaration sentence, sign-off.
-    expect(draft.body).toMatch(/I declare that I had no knowledge of any fraud/);
+    expect(draft.body).toMatch(/accurate to the best of my knowledge/i);
+    expect(draft.body).not.toMatch(/I declare that I had no knowledge of any fraud/);
     expect(draft.body).toContain('Yours faithfully');
     // No raw unfilled placeholder tokens leak into the letter body.
     expect(draft.body).not.toMatch(/\{\{[A-Z0-9_]+\}\}/);

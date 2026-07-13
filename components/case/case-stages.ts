@@ -66,15 +66,15 @@ function postSendDoNow(track: UnfreezeTrack, hi: boolean): DoThisNowModel {
   if (track === 'branch') {
     return hi
       ? {
-          title: 'बैंक का इंतज़ार करें — 7 दिन में देखें',
-          desc: 'आपने शाखा-पत्र भेज दिया। नियमानुसार बैंक को लगभग 7 दिन में देखना चाहिए। अगर कुछ न हो, तो अगला पत्र (वरिष्ठ अधिकारी) खुल जाता है।',
+          title: 'बैंक की बताई हुई जवाब की तारीख का पालन करें',
+          desc: 'आपने शाखा-पत्र भेज दिया। उसकी रसीद संभालकर रखें और बैंक की बताई हुई जवाब की तारीख पर फ़ॉलो-अप करें। जवाब न मिले तो बैंक के सत्यापित शिकायत चैनल का उपयोग करें।',
           cta: null,
           target: null,
           upNext: null,
         }
       : {
-          title: 'Wait for the bank — check in 7 days',
-          desc: 'You sent your branch letter. By rule, the bank should look at it within about 7 days. If nothing happens, the next letter (senior officer) unlocks.',
+          title: 'Follow the bank’s stated response date',
+          desc: 'You sent your branch letter. Keep its acknowledgement and follow up on the response date the bank gives you. If it does not respond, use the bank’s verified grievance channel.',
           cta: null,
           target: null,
           upNext: null,
@@ -84,15 +84,15 @@ function postSendDoNow(track: UnfreezeTrack, hi: boolean): DoThisNowModel {
   if (track === 'court') {
     return hi
       ? {
-          title: 'अदालत का रास्ता — शाखा नहीं हटा सकती',
-          desc: 'शाखा-पत्र से आपको आदेश का विवरण मिलना चाहिए। असली रिहाई उसी अदालत से होती है जिसने कुर्की लगाई — अक्सर वकील के ज़रिए।',
+          title: 'अदालत का विवरण और संदर्भ लें',
+          desc: 'बैंक से ठीक अदालत और आदेश / केस संदर्भ लिखित में लें। उसी अदालत के सत्यापित आधिकारिक चैनल से आगे बढ़ें; ज़रूरत हो तो किसी योग्य वकील की मदद लें।',
           cta: 'अदालत के कदम देखें',
           target: 'authority',
           upNext: null,
         }
       : {
-          title: 'Court path — your branch cannot release this',
-          desc: 'Your branch letter should get you the order details. Only the court that attached the account can release it — usually with a lawyer.',
+          title: 'Get the court details and reference',
+          desc: 'Ask the bank in writing for the exact court and order or case reference. Continue through that court’s verified official channel; use a qualified lawyer if needed.',
           cta: 'See court next steps',
           target: 'authority',
           upNext: null,
@@ -102,36 +102,36 @@ function postSendDoNow(track: UnfreezeTrack, hi: boolean): DoThisNowModel {
   if (track === 'tax') {
     return hi
       ? {
-          title: 'टैक्स अधिकारी से संपर्क — शाखा नहीं हटा सकती',
-          desc: 'शाखा-पत्र से अटैचमेंट का विवरण माँगें। रोक हटाने का अधिकार टैक्स / GST अधिकारी के पास है।',
+          title: 'टैक्स अधिकारी और संदर्भ की पुष्टि करें',
+          desc: 'बैंक से संबंधित टैक्स / GST अधिकारी और अटैचमेंट संदर्भ लिखित में लें। उसी अधिकारी के सत्यापित आधिकारिक चैनल से आगे बढ़ें।',
           cta: 'टैक्स के कदम देखें',
           target: 'authority',
           upNext: null,
         }
       : {
-          title: 'Contact the tax officer — branch cannot release',
-          desc: 'Your branch letter asks for attachment details. The tax / GST officer who attached the account is who can release it.',
+          title: 'Confirm the tax authority and reference',
+          desc: 'Ask the bank in writing for the tax or GST authority and attachment reference. Continue through that authority’s verified official channel.',
           cta: 'See tax next steps',
           target: 'authority',
           upNext: null,
         };
   }
 
-  // cyber (default) — real unlock is IO NOC + GRM, not another bank letter alone
+  // Cyber holds need the exact ordering authority and reference, not a branch-only assumption.
   return hi
     ? {
-        title: 'अगला कदम: IO को NOC पत्र + GRM',
-        desc: 'शाखा ने सिर्फ़ आदेश पर रोक लगाई है। नीचे “अधिकार-पत्र” में जाँच अधिकारी (IO) के लिए NOC पत्र और सरकारी GRM पोर्टल तैयार हैं — वही असली अनफ्रीज़ की तरफ़ ले जाते हैं।',
-        cta: 'IO पत्र और GRM खोलें',
+        title: 'अगला कदम: सही अधिकारी और संदर्भ की पुष्टि करें',
+        desc: 'बैंक से लिखित में पूछें कि रोक किस अधिकारी / एजेंसी के निर्देश पर लगी और उसका संदर्भ क्या है। प्रतिनिधित्व उसी अधिकारी के सत्यापित आधिकारिक चैनल से भेजें।',
+        cta: 'अधिकारी का विवरण देखें',
         target: 'authority',
-        upNext: '7 दिन में बैंक से अपडेट; 15 दिन में IO निर्णय की उम्मीद।',
+        upNext: 'प्राप्तकर्ता की बताई हुई जवाब की तारीख का पालन करें। RBI CMS केवल योग्य बैंक-सेवा शिकायत के लिए है।',
       }
     : {
-        title: 'Next: IO NOC letter + GRM',
-        desc: 'Your branch only froze on instruction. Open Authority actions below for the Investigating Officer NOC letter and the official GRM portal — that is what actually moves a cyber freeze.',
-        cta: 'Open IO letter & GRM',
+        title: 'Next: confirm the exact authority and reference',
+        desc: 'Ask the bank in writing which authority or agency ordered the hold and for its reference. Send your representation through that authority’s verified official channel.',
+        cta: 'See authority details',
         target: 'authority',
-        upNext: 'ask the bank for an update in 7 days; the IO is meant to decide in about 15.',
+        upNext: 'Follow the recipient’s stated response date. RBI CMS is only for an eligible bank-service complaint.',
       };
 }
 
@@ -157,14 +157,14 @@ export function computeCaseStages(input: CaseStageInput, locale = 'en'): CaseSta
     doNow = hi
       ? {
           title: 'अपने दस्तावेज़ जोड़ें',
-          desc: `अपने फ्रीज़ SMS और बैंक स्टेटमेंट से शुरू करें। ${left} और बाकी — लगभग 5 मिनट।`,
+          desc: `अपने फ्रीज़ SMS और बैंक स्टेटमेंट से शुरू करें। ${left} और बाकी।`,
           cta: 'दस्तावेज़ जोड़ें',
           target: 'papers',
           upNext: 'अपना पत्र पढ़ें, फिर उसे खुद भेजें।',
         }
       : {
           title: 'Add your papers',
-          desc: `Start with your freeze SMS and bank statement. ${left} more to go — about 5 minutes.`,
+          desc: `Start with your freeze SMS and bank statement. ${left} more to go.`,
           cta: 'Add papers',
           target: 'papers',
           upNext: 'read your letter, then send it yourself.',
@@ -175,7 +175,7 @@ export function computeCaseStages(input: CaseStageInput, locale = 'en'): CaseSta
           title: 'अपना पत्र पढ़ें',
           desc:
             track === 'cyber'
-              ? 'यह पत्र शाखा से पूछता है कि रोक किसने लगवाई — असली अनफ्रीज़ बाद में साइबर सेल से होगा। पढ़ें और विवरण जाँचें।'
+              ? 'यह पत्र शाखा से रोक लगाने वाले अधिकारी और संदर्भ की जानकारी माँगता है। पढ़ें और विवरण जाँचें।'
               : 'हमने आपके जवाबों से शाखा के लिए पत्र लिखा है। इसे पढ़ें और विवरण जाँचें।',
           cta: 'मेरा पत्र खोलें',
           target: 'letter',
@@ -185,7 +185,7 @@ export function computeCaseStages(input: CaseStageInput, locale = 'en'): CaseSta
           title: 'Read your letter',
           desc:
             track === 'cyber'
-              ? 'This letter asks your branch who ordered the freeze — the real unfreeze later needs the cyber cell. Read it and check the details.'
+              ? 'This letter asks your branch for the authority and reference behind the hold. Read it and check the details.'
               : 'We wrote your branch letter from your answers. Read it and check the details.',
           cta: 'Open my letter',
           target: 'letter',
@@ -198,14 +198,14 @@ export function computeCaseStages(input: CaseStageInput, locale = 'en'): CaseSta
           desc: 'ईमेल करें या प्रिंट करके शाखा ले जाएँ। सीलबंद प्रूफ पैक साथ अटैच / साथ रखें। फिर अपना भेजने का प्रूफ सहेजें।',
           cta: 'मेरा पत्र खोलें',
           target: 'letter',
-          upNext: 'हम जवाब की घड़ी ट्रैक करते हैं।',
+          upNext: 'रसीद संभालकर रखें और प्राप्तकर्ता की बताई हुई जवाब की तारीख का पालन करें।',
         }
       : {
           title: 'Send the letter yourself + proof pack',
           desc: 'Email it or print and take it to your branch. Attach / carry your sealed proof pack. Then save proof that you sent it.',
           cta: 'Open my letter',
           target: 'letter',
-          upNext: 'we track the reply clock for you.',
+          upNext: 'Keep the acknowledgement and follow the recipient’s stated response date.',
         };
   } else {
     doNow = postSendDoNow(track, hi);
@@ -217,7 +217,7 @@ export function computeCaseStages(input: CaseStageInput, locale = 'en'): CaseSta
       return hi ? 'पत्र भेजने के बाद खुलता है' : 'Opens after you send the letter';
     }
     if (track === 'cyber') {
-      return hi ? 'साइबर सेल / IO / GRM — शाखा अकेले नहीं' : 'Cyber cell / IO / GRM — not branch alone';
+      return hi ? 'सही अधिकारी और संदर्भ की पुष्टि करें' : 'Confirm the exact authority and reference';
     }
     if (track === 'court') {
       return hi ? 'अदालत का रास्ता' : 'Court is the authority';
@@ -225,7 +225,7 @@ export function computeCaseStages(input: CaseStageInput, locale = 'en'): CaseSta
     if (track === 'tax') {
       return hi ? 'टैक्स अधिकारी का रास्ता' : 'Tax officer is the authority';
     }
-    return hi ? '7 शांत दिनों बाद अगला पत्र' : 'Next bank letter after 7 quiet days';
+    return hi ? 'बैंक की बताई हुई जवाब की तारीख का पालन करें' : 'Follow the bank’s stated response date';
   })();
 
   const notes = hi

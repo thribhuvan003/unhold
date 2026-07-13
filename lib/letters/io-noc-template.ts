@@ -1,7 +1,6 @@
 /**
- * Investigating Officer / cyber-cell representation — the letter that asks for
- * the NOC / release that actually lifts a cyber freeze. Bank L1 only obtains
- * freeze details; this is the authority step the product was missing.
+ * Investigating Officer / cyber-cell representation. It asks the authority
+ * identified by the bank for written details, review and the next official step.
  *
  * Pure template fill — no LLM, no auto-send. User copies/prints and sends.
  */
@@ -9,7 +8,7 @@
 export const IO_NOC_TEMPLATE_SLUG = 'io_cyber_noc_request';
 
 export const IO_NOC_SUBJECT =
-  'Representation for NOC / release order — bank account freeze — NCRP / complaint ref {{NCRP_ID}} — A/c XXXXXX{{ACCOUNT_LAST4}}';
+  'Representation for review of bank-account restriction — NCRP / complaint ref {{NCRP_ID}} — A/c XXXXXX{{ACCOUNT_LAST4}}';
 
 export const IO_NOC_BODY = `Date: {{TODAY_DATE}}
 
@@ -37,7 +36,7 @@ Respected Sir / Madam,
 
 I therefore request you to:
 (a) Confirm in writing the complaint number, the exact amount ordered to be held, and my status in the investigation;
-(b) If the review supports it, issue a written no-objection or release direction to {{BANK_NAME}};
+(b) If the review supports a change, issue the appropriate written direction to {{BANK_NAME}};
 (c) If video verification or further documents are required, inform me of the date, mode, and list of papers.
 
 Enclosed (as available): bank freeze SMS/notice, account statement showing the disputed credit and my normal activity, masked ID, and proof of legitimate funds (salary / invoice / family transfer as applicable).

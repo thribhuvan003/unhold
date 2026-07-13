@@ -7,19 +7,19 @@ import { cn } from '@/lib/ui/cn';
 
 const STRINGS = {
   en: {
-    eyebrow: 'Stay on the clock',
-    title: 'Deadline reminders',
+    eyebrow: 'Keep track of follow-ups',
+    title: 'Follow-up reminders',
     subtitle:
-      'We nudge only you when a case step is overdue — email and/or WhatsApp. Never your bank, police, or GRM.',
+      'We nudge only you on a recorded follow-up date — email and/or WhatsApp. Never your bank, police, or any authority.',
     emailTitle: 'Email',
     emailLabel: 'Email address',
     emailPlaceholder: 'you@example.com',
-    emailConsent: 'Email me personal case deadline reminders. I can turn this off anytime.',
+    emailConsent: 'Email me personal case follow-up reminders. I can turn this off anytime.',
     waTitle: 'WhatsApp',
     waLabel: 'Mobile (India)',
     waPlaceholder: '10-digit mobile',
     waConsent:
-      'Message me personal case deadline reminders on WhatsApp. I can turn this off anytime.',
+      'Message me personal case follow-up reminders on WhatsApp. I can turn this off anytime.',
     waSandbox:
       'Sandbox: first message Twilio’s WhatsApp number and send the join code from your Twilio console. International trial delivery can be flaky — register a WhatsApp sender for production.',
     save: 'Save reminder settings',
@@ -33,18 +33,18 @@ const STRINGS = {
     needChannel: 'Turn on email and/or WhatsApp and fill the matching field.',
   },
   hi: {
-    eyebrow: 'समयसीमा पर रहें',
-    title: 'डेडलाइन रिमाइंडर',
+    eyebrow: 'फॉलो-अप याद रखें',
+    title: 'फॉलो-अप रिमाइंडर',
     subtitle:
-      'केस का कदम बाकी हो तो सिर्फ़ आपको ईमेल/WhatsApp — कभी बैंक, पुलिस या GRM को नहीं।',
+      'दर्ज फॉलो-अप तारीख पर सिर्फ़ आपको ईमेल/WhatsApp — कभी बैंक, पुलिस या किसी अथॉरिटी को नहीं।',
     emailTitle: 'ईमेल',
     emailLabel: 'ईमेल पता',
     emailPlaceholder: 'you@example.com',
-    emailConsent: 'मुझे व्यक्तिगत केस डेडलाइन रिमाइंडर ईमेल करें। कभी भी बंद कर सकता/सकती हूँ।',
+    emailConsent: 'मुझे व्यक्तिगत केस फॉलो-अप रिमाइंडर ईमेल करें। कभी भी बंद कर सकता/सकती हूँ।',
     waTitle: 'WhatsApp',
     waLabel: 'मोबाइल (भारत)',
     waPlaceholder: '10 अंकों का मोबाइल',
-    waConsent: 'WhatsApp पर व्यक्तिगत केस डेडलाइन रिमाइंडर भेजें। कभी भी बंद कर सकता/सकती हूँ।',
+    waConsent: 'WhatsApp पर व्यक्तिगत केस फॉलो-अप रिमाइंडर भेजें। कभी भी बंद कर सकता/सकती हूँ।',
     waSandbox:
       'सैंडबॉक्स: पहले Twilio WhatsApp नंबर पर join कोड भेजें (Twilio कंसोल से)। ट्रायल में अंतरराष्ट्रीय डिलीवरी कमज़ोर हो सकती है।',
     save: 'रिमाइंडर सेटिंग सहेजें',
@@ -74,6 +74,7 @@ export function DeadlineRemindersCard({
 }) {
   const locale = useLocale();
   const t = locale === 'hi' ? STRINGS.hi : STRINGS.en;
+  const whatsappEnabled = process.env.NEXT_PUBLIC_ENABLE_WHATSAPP_REMINDERS === 'true';
 
   const [email, setEmail] = useState(initialEmail);
   const [emailOptIn, setEmailOptIn] = useState(initialEmailOptIn);
@@ -198,8 +199,9 @@ export function DeadlineRemindersCard({
           ) : null}
         </div>
 
-        {/* WhatsApp channel */}
-        <div className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-3.5">
+        {/* Keep WhatsApp hidden until a verified production sender is configured. */}
+        {whatsappEnabled ? (
+          <div className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-3.5">
           <label className="flex cursor-pointer items-start gap-2.5">
             <input
               type="checkbox"
@@ -246,7 +248,8 @@ export function DeadlineRemindersCard({
               </p>
             </>
           ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {error ? (
           <p role="alert" className="u-alert u-alert-error">
@@ -278,7 +281,7 @@ export function DeadlineRemindersCard({
           )}
         </button>
 
-        {waOptIn ? (
+        {whatsappEnabled && waOptIn ? (
           <button
             type="button"
             onClick={handleTestWhatsApp}

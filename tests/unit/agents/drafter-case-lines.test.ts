@@ -22,7 +22,8 @@ describe('buildCaseAwareLines — freeze-reason-aware, factual grounding', () =>
     const lines = buildCaseAwareLines({}, '25000', 'cyber_upi_chain');
     expect(lines.LEGAL_GROUNDING).toMatch(/written freeze details/i);
     expect(lines.LEGAL_GROUNDING).not.toMatch(/BNSS|Section 107/i);
-    expect(lines.DECLARATION_LINE).toMatch(/no knowledge of any fraud/);
+    expect(lines.DECLARATION_LINE).toMatch(/accurate to the best of my knowledge/i);
+    expect(lines.DECLARATION_LINE).not.toMatch(/no knowledge of any fraud|innocent/i);
   });
 
   it('does not assert police/BNSS framing for a KYC hold the branch can fix', () => {
