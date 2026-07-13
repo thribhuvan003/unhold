@@ -43,17 +43,26 @@ export async function processAgentJobs(options?: {
 async function processOneJob(job: AgentJobRow): Promise<boolean> {
   const supabase = createAdminClient();
 
-  const { error: lockError } = await supabase
-    .from('agent_jobs')
-    .update({
-      status: 'running',
-      started_at: new Date().toISOString(),
-      attempts: job.attempts + 1,
-    })
-    .eq('id', job.id)
-    .eq('status', 'pending');
+  const { data: claimed, error: lockError } = await supabase.rpc(
+    'claim_agent_job_for_processing',
+    { p_job_id: job.id, p_started_at: new Date().toISOString() },
+  );
 
-  if (lockError) return false;
+  if (lockError || !claimed) return false;
+
+  const { data: caseRow } = await supabase
+    .from('cases')
+    .select('erasure_requested_at')
+    .eq('id', job.case_id)
+    .maybeSingle();
+
+  if (!caseRow || caseRow.erasure_requested_at) {
+    await supabase
+      .from('agent_jobs')
+      .update({ status: 'cancelled', completed_at: new Date().toISOString() })
+      .eq('id', job.id);
+    return true;
+  }
 
   try {
     const result = await runAgentJob(job);

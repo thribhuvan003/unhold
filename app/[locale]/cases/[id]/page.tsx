@@ -11,6 +11,7 @@ import { DisproportionateFreezeCard } from '@/components/case/DisproportionateFr
 import { EditCaseDetails, type EditCaseInitial } from '@/components/case/EditCaseDetails';
 import { DeadlineRemindersCard } from '@/components/case/DeadlineRemindersCard';
 import { SaveCaseCard } from '@/components/case/SaveCaseCard';
+import { DataRightsCard } from '@/components/case/DataRightsCard';
 import { AuthorityActionsCard } from '@/components/case/AuthorityActionsCard';
 import { PackageStatusCard } from '@/components/case/PackageStatusCard';
 import {
@@ -54,6 +55,7 @@ type CaseDetailData =
       freezeDate: string;
       hasSealedBundle: boolean;
       microUpiPattern: boolean;
+      directOwner: boolean;
     };
 
 async function loadCaseDetailData(caseId: string, guestToken: string | undefined): Promise<CaseDetailData> {
@@ -74,8 +76,10 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
     return { authorized: false };
   }
 
+  let directOwner = false;
   try {
-    await assertCaseAccess(caseId, auth, 'viewer');
+    const access = await assertCaseAccess(caseId, auth, 'viewer');
+    directOwner = access === 'owner';
   } catch {
     return { authorized: false };
   }
@@ -186,6 +190,7 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
       (caseRow?.frozen_amount_paise != null &&
         caseRow.frozen_amount_paise > 0 &&
         caseRow.frozen_amount_paise <= 5000_00),
+    directOwner,
   };
 }
 
@@ -296,7 +301,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
 
       <StageChecklist caseId={id} stages={model.stages} />
 
-      {/* Track-specific authority: cyber → IO/GRM; court/tax → officer/court (not bank ladder). */}
+      {/* Track-specific authority actions after the written restriction details are known. */}
       {path.track === 'cyber' ? (
         <AuthorityActionsCard
           l1Sent={data.l1Sent}
@@ -320,7 +325,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
         <CourtTaxActionsCard track={path.track} l1Sent={data.l1Sent} />
       ) : null}
 
-      {/* Micro-UPI / disproportionate freeze — SOP 2026 disputed-amount-only lever. */}
+      {/* Small or unknown credit: ask for the exact written amount and authority. */}
       <DisproportionateFreezeCard
         freezeType={data.freezeType}
         frozenAmountInr={
@@ -357,6 +362,10 @@ export default async function CaseDetailPage({ params }: PageProps) {
       />
 
       <EditCaseDetails caseId={id} initial={data.edit} hasCommittedLetter={data.hasCommittedLetter} />
+
+      {data.directOwner && data.publicId ? (
+        <DataRightsCard caseId={id} publicId={data.publicId} />
+      ) : null}
 
     </section>
   );

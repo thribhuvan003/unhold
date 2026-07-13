@@ -851,6 +851,19 @@ export type Database = {
         };
         Returns: undefined;
       };
+      purge_case_for_erasure: {
+        Args: {
+          p_case_id: string;
+        };
+        Returns: boolean;
+      };
+      claim_agent_job_for_processing: {
+        Args: {
+          p_job_id: string;
+          p_started_at: string;
+        };
+        Returns: boolean;
+      };
     };
     Enums: {
       actor_type: 'user' | 'guest' | 'agent' | 'operator' | 'system' | 'cron';

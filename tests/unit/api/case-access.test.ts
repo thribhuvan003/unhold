@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { serializeCase } from '@/lib/api/case-access';
+import { isDirectCaseOwner, serializeCase } from '@/lib/api/case-access';
 
 const row = {
   id: 'case-1',
@@ -35,5 +35,37 @@ describe('serializeCase', () => {
 
     expect(serialized.intake_json).toMatchObject({ user_name: 'Asha' });
     expect(serialized.intake_json).not.toHaveProperty('reminder_email');
+  });
+});
+
+describe('isDirectCaseOwner', () => {
+  it('allows the signed-in owner and the guest session directly bound to a guest case', () => {
+    expect(
+      isDirectCaseOwner(
+        { userId: 'user-1', guestSessionId: null },
+        { user_id: 'user-1', guest_session_id: null },
+      ),
+    ).toBe(true);
+    expect(
+      isDirectCaseOwner(
+        { userId: null, guestSessionId: 'guest-1' },
+        { user_id: null, guest_session_id: 'guest-1' },
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects a collaborator or a guest session not bound to the case', () => {
+    expect(
+      isDirectCaseOwner(
+        { userId: 'collaborator', guestSessionId: null },
+        { user_id: 'owner', guest_session_id: null },
+      ),
+    ).toBe(false);
+    expect(
+      isDirectCaseOwner(
+        { userId: null, guestSessionId: 'guest-2' },
+        { user_id: null, guest_session_id: 'guest-1' },
+      ),
+    ).toBe(false);
   });
 });

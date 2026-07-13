@@ -13,6 +13,31 @@ export interface RequestAuth {
   actorId: string;
 }
 
+export interface DirectCaseOwner extends RequestAuth {
+  auth: RequestAuth;
+  caseRow: {
+    id: string;
+    public_id: string;
+    user_id: string | null;
+    guest_session_id: string | null;
+    intake_json: unknown;
+    erasure_requested_at: string | null;
+    erasure_completed_at: string | null;
+  };
+}
+
+export function isDirectCaseOwner(
+  auth: Pick<RequestAuth, 'userId' | 'guestSessionId'>,
+  caseRow: { user_id: string | null; guest_session_id: string | null },
+): boolean {
+  if (auth.userId && caseRow.user_id === auth.userId) return true;
+  return Boolean(
+    auth.guestSessionId &&
+      caseRow.user_id === null &&
+      caseRow.guest_session_id === auth.guestSessionId,
+  );
+}
+
 export async function resolveRequestAuth(request: NextRequest): Promise<RequestAuth | null> {
   const guest = await resolveGuestAuth(request);
   const supabase = await createClient();
@@ -57,12 +82,16 @@ export async function assertCaseAccess(
   const admin = createAdminClient();
   const { data: caseRow, error } = await admin
     .from('cases')
-    .select('id, user_id, guest_session_id')
+    .select('id, user_id, guest_session_id, erasure_requested_at, erasure_completed_at')
     .eq('id', caseId)
     .maybeSingle();
 
   if (error || !caseRow) {
     throw new ApiError(404, 'not_found', 'Case not found');
+  }
+
+  if (caseRow.erasure_requested_at || caseRow.erasure_completed_at) {
+    throw new ApiError(410, 'conflict', 'Case deletion is in progress or complete');
   }
 
   if (auth.userId && caseRow.user_id === auth.userId) return 'owner';
@@ -97,6 +126,36 @@ export async function assertCaseAccess(
   throw new ApiError(403, 'forbidden', 'You do not have access to this case');
 }
 
+/** Direct case owner only. Permission grants never authorize export or erasure. */
+export async function requireDirectCaseOwner(
+  request: NextRequest,
+  caseId: string,
+): Promise<DirectCaseOwner> {
+  const auth = await requireRequestAuth(request);
+  const admin = createAdminClient();
+  const { data: caseRow, error } = await admin
+    .from('cases')
+    .select(
+      'id, public_id, user_id, guest_session_id, intake_json, erasure_requested_at, erasure_completed_at',
+    )
+    .eq('id', caseId)
+    .maybeSingle();
+
+  if (error || !caseRow) {
+    throw new ApiError(404, 'not_found', 'Case not found');
+  }
+
+  if (caseRow.erasure_requested_at || caseRow.erasure_completed_at) {
+    throw new ApiError(410, 'conflict', 'Case deletion is in progress or complete');
+  }
+
+  if (!isDirectCaseOwner(auth, caseRow)) {
+    throw new ApiError(403, 'forbidden', 'Only the direct case owner can do this');
+  }
+
+  return { ...auth, auth, caseRow };
+}
+
 function permissionLevelRank(
   level: 'owner' | 'editor' | 'viewer' | 'parent_readonly',
 ): number {
@@ -120,11 +179,9 @@ export function serializeCase(row: Record<string, unknown>, redactIntake = false
     typeof row.intake_json === 'object' && row.intake_json !== null
       ? (row.intake_json as Record<string, unknown>)
       : {};
-  const {
-    reminder_email: _reminderEmail,
-    reminder_sent_due_at: _reminderSentDueAt,
-    ...intake_json
-  } = rawIntake;
+  const intake_json = { ...rawIntake };
+  delete intake_json.reminder_email;
+  delete intake_json.reminder_sent_due_at;
 
   return {
     id: row.id,

@@ -33,12 +33,16 @@ export async function requireCaseAccess(
   const admin = createAdminClient();
   const { data: caseRow, error } = await admin
     .from('cases')
-    .select('id, user_id, guest_session_id')
+    .select('id, user_id, guest_session_id, erasure_requested_at, erasure_completed_at')
     .eq('id', caseId)
     .maybeSingle();
 
   if (error || !caseRow) {
     throw new ApiError(404, 'not_found', 'Case not found');
+  }
+
+  if (caseRow.erasure_requested_at || caseRow.erasure_completed_at) {
+    throw new ApiError(410, 'conflict', 'Case deletion is in progress or complete');
   }
 
   if (user && caseRow.user_id === user.id) {

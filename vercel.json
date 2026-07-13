@@ -9,6 +9,7 @@
     "app/api/v1/internal/cron/reminders/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/internal/cron/rankings/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/internal/jobs/process/route.ts": { "maxDuration": 300, "memory": 1024 },
+    "app/api/v1/cases/*/data-export/route.ts": { "maxDuration": 300, "memory": 1024 },
     "app/api/v1/cases/*/evidence/bundle/route.ts": { "maxDuration": 120, "memory": 1024 },
     "app/api/v1/**/route.ts": { "maxDuration": 60, "memory": 512 }
   },

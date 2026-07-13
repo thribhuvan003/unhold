@@ -7,6 +7,8 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     globals: false,
+    minWorkers: 1,
+    maxWorkers: 4,
     env: {
       GUEST_JWT_SECRET: 'test-guest-jwt-secret-minimum-32-characters-long',
       NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
