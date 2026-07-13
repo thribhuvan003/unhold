@@ -1,12 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/v1/cases/[id]/evidence/bundle/route';
-import { signGuestToken } from '@/lib/auth/guest';
+import { hashDeviceToken, signGuestToken } from '@/lib/auth/guest';
 import { errorEnvelopeSchema } from '@/lib/validation/api-schemas';
 
 const caseId = '22222222-2222-4222-8222-222222222222';
 const userId = '55555555-5555-4555-8555-555555555555';
 const guestSessionId = '11111111-1111-4111-8111-111111111111';
+const guestToken = signGuestToken(guestSessionId);
 
 const userIdRef: { current: string | null } = { current: null };
 const caseRowRef: {
@@ -32,6 +33,25 @@ vi.mock('@/lib/supabase/server', () => ({
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: (table: string) => {
+      if (table === 'guest_sessions') {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () => Promise.resolve({
+                data: {
+                  id: guestSessionId,
+                  device_token_hash: hashDeviceToken(guestToken),
+                  expires_at: '2099-01-01T00:00:00.000Z',
+                  claimed_by: null,
+                  revoked_at: null,
+                },
+                error: null,
+              }),
+            }),
+          }),
+          update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+        };
+      }
       if (table === 'cases') {
         return {
           select: () => ({
@@ -104,7 +124,7 @@ function postRequest(headers?: Record<string, string>) {
 }
 
 function guestHeaders() {
-  return { 'X-Guest-Token': signGuestToken(guestSessionId) };
+  return { Cookie: `ll_guest=${guestToken}` };
 }
 
 describe('POST /cases/:id/evidence/bundle', () => {

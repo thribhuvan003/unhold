@@ -88,11 +88,11 @@ export async function POST(request: NextRequest) {
 
     const { data: guestSession, error: guestError } = await admin
       .from('guest_sessions')
-      .select('id, expires_at, claimed_by')
+      .select('id, expires_at, claimed_by, revoked_at')
       .eq('id', caseRow.guest_session_id)
       .maybeSingle();
 
-    if (guestError || !guestSession || guestSession.claimed_by) {
+    if (guestError || !guestSession || guestSession.claimed_by || guestSession.revoked_at) {
       throw new ApiError(401, 'unauthorized', 'Could not open that case. Check the codes and try again.');
     }
 
@@ -103,16 +103,21 @@ export async function POST(request: NextRequest) {
 
     // Rotate device token for the existing guest session (same sub = same ownership).
     const deviceToken = signGuestToken(guestSession.id);
-    const { error: tokenUpdateError } = await admin
+    const { data: updatedSession, error: tokenUpdateError } = await admin
       .from('guest_sessions')
       .update({
         device_token_hash: hashDeviceToken(deviceToken),
+        rotated_at: new Date().toISOString(),
         last_seen_at: new Date().toISOString(),
       })
-      .eq('id', guestSession.id);
+      .eq('id', guestSession.id)
+      .is('claimed_by', null)
+      .is('revoked_at', null)
+      .select('id')
+      .maybeSingle();
 
-    if (tokenUpdateError) {
-      throw tokenUpdateError;
+    if (tokenUpdateError || !updatedSession) {
+      throw tokenUpdateError ?? new ApiError(401, 'unauthorized', 'Could not open that case. Check the codes and try again.');
     }
 
     await appendActionLog({

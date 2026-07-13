@@ -122,9 +122,7 @@ export const patchIntakeSchema = z.object({
     .optional(),
 });
 
-export const claimCaseSchema = z.object({
-  guest_token: z.string().min(1).optional(),
-});
+export const claimCaseSchema = z.object({});
 
 export const recoverCaseSchema = z.object({
   public_id: z.string().min(3).max(32),

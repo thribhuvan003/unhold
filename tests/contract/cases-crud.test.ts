@@ -1,13 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST, GET } from '@/app/api/v1/cases/route';
-import { signGuestToken } from '@/lib/auth/guest';
+import { hashDeviceToken, signGuestToken } from '@/lib/auth/guest';
 import { resetRateLimitMemory } from '@/lib/ratelimit';
 import { errorEnvelopeSchema, caseResponseSchema } from '@/lib/validation/api-schemas';
 
 const guestSessionId = '11111111-1111-4111-8111-111111111111';
 const caseId = '22222222-2222-4222-8222-222222222222';
 const bankId = '33333333-3333-4333-8333-333333333333';
+const guestToken = signGuestToken(guestSessionId);
 
 const insertCaseMock = vi.fn();
 const selectCasesMock = vi.fn();
@@ -22,6 +23,25 @@ function thenable<T>(value: T): Promise<T> {
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: (table: string) => {
+      if (table === 'guest_sessions') {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () => Promise.resolve({
+                data: {
+                  id: guestSessionId,
+                  device_token_hash: hashDeviceToken(guestToken),
+                  expires_at: '2099-01-01T00:00:00.000Z',
+                  claimed_by: null,
+                  revoked_at: null,
+                },
+                error: null,
+              }),
+            }),
+          }),
+          update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+        };
+      }
       if (table === 'banks') {
         return {
           select: () => ({
@@ -44,6 +64,13 @@ vi.mock('@/lib/supabase/admin', () => ({
             order: () => ({
               eq: () => ({
                 is: () => thenable(selectCasesMock()),
+              }),
+            }),
+          }),
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                single: () => thenable({ data: null, error: null }),
               }),
             }),
           }),
@@ -81,9 +108,8 @@ vi.mock('@/lib/supabase/server', () => ({
 }));
 
 function guestRequest(url: string, init?: RequestInit) {
-  const token = signGuestToken(guestSessionId);
   const headers = new Headers(init?.headers);
-  headers.set('X-Guest-Token', token);
+  headers.set('Cookie', `ll_guest=${guestToken}`);
   const { signal, ...rest } = init ?? {};
   return new NextRequest(url, { ...rest, headers, signal: signal ?? undefined });
 }
@@ -133,7 +159,7 @@ describe('cases CRUD contract', () => {
   it('POST /cases requires Idempotency-Key', async () => {
     const request = guestRequest('http://localhost/api/v1/cases', {
       method: 'POST',
-      body: JSON.stringify({ bank_slug: 'state-bank-of-india' }),
+      body: JSON.stringify({ bank_slug: 'state-bank-of-india', consent_accepted: true }),
       headers: { 'Content-Type': 'application/json' },
     });
     const response = await POST(request);
@@ -228,7 +254,7 @@ describe('cases CRUD contract', () => {
         'Content-Type': 'application/json',
         'Idempotency-Key': key,
       },
-      body: JSON.stringify({ bank_slug: 'state-bank-of-india' }),
+      body: JSON.stringify({ bank_slug: 'state-bank-of-india', consent_accepted: true }),
     });
     const response = await POST(req2);
     expect(response.status).toBe(201);

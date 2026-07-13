@@ -14,7 +14,7 @@ export interface RequestAuth {
 }
 
 export async function resolveRequestAuth(request: NextRequest): Promise<RequestAuth | null> {
-  const guest = resolveGuestAuth(request);
+  const guest = await resolveGuestAuth(request);
   const supabase = await createClient();
   const {
     data: { user },
@@ -53,7 +53,7 @@ export async function assertCaseAccess(
   caseId: string,
   auth: RequestAuth,
   minLevel: 'viewer' | 'editor' | 'owner' = 'viewer',
-): Promise<void> {
+): Promise<'owner' | 'editor' | 'viewer'> {
   const admin = createAdminClient();
   const { data: caseRow, error } = await admin
     .from('cases')
@@ -65,7 +65,7 @@ export async function assertCaseAccess(
     throw new ApiError(404, 'not_found', 'Case not found');
   }
 
-  if (auth.userId && caseRow.user_id === auth.userId) return;
+  if (auth.userId && caseRow.user_id === auth.userId) return 'owner';
 
   if (
     auth.guestSessionId &&
@@ -75,22 +75,22 @@ export async function assertCaseAccess(
     if (minLevel === 'owner') {
       throw new ApiError(403, 'forbidden', 'Guest cannot perform owner-only action');
     }
-    return;
+    return 'owner';
   }
 
   if (auth.userId) {
     const { data: permission } = await admin
       .from('permissions')
-      .select('permission_level')
+      .select('permission_level, expires_at')
       .eq('case_id', caseId)
       .eq('grantee_user_id', auth.userId)
       .is('revoked_at', null)
       .maybeSingle();
 
-    if (permission) {
+    if (permission && (!permission.expires_at || new Date(permission.expires_at).getTime() > Date.now())) {
       const rank = permissionLevelRank(permission.permission_level);
       const required = permissionLevelRank(minLevel);
-      if (rank >= required) return;
+      if (rank >= required) return rank >= 2 ? 'editor' : 'viewer';
     }
   }
 
@@ -113,7 +113,7 @@ function permissionLevelRank(
   }
 }
 
-export function serializeCase(row: Record<string, unknown>) {
+export function serializeCase(row: Record<string, unknown>, redactIntake = false) {
   // Strip reminder PII: the reminder email + the internal send marker must never
   // leak to case viewers/collaborators via the serialized case.
   const rawIntake =
@@ -135,7 +135,7 @@ export function serializeCase(row: Record<string, unknown>) {
     freeze_type: row.freeze_type,
     victim_role: row.victim_role,
     frozen_amount_paise: row.frozen_amount_paise,
-    intake_json,
+    intake_json: redactIntake ? {} : intake_json,
     user_action_required: row.user_action_required ?? false,
     classification_confidence: row.classification_confidence ?? null,
     created_at: row.created_at,

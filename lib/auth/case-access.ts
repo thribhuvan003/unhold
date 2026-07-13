@@ -25,7 +25,7 @@ export async function requireCaseAccess(
     data: { user },
   } = await supabase.auth.getUser();
 
-  const guest = resolveGuestAuth(request);
+  const guest = await resolveGuestAuth(request);
   if (!user && !guest) {
     throw new ApiError(401, 'unauthorized', 'Authentication required');
   }

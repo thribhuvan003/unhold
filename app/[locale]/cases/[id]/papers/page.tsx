@@ -5,7 +5,7 @@ import { PapersChecklist, type PaperVerification } from '@/components/evidence/P
 import { NoticeAnalysisCard } from '@/components/intake/NoticeAnalysisCard';
 import type { NoticeAnalysisResult } from '@/components/intake/notice-analysis-types';
 import { BundleButton } from '@/components/case/BundleButton';
-import { GUEST_COOKIE_NAME, verifyGuestToken } from '@/lib/auth/guest';
+import { GUEST_COOKIE_NAME, resolveGuestToken } from '@/lib/auth/guest';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { assertCaseAccess, type RequestAuth } from '@/lib/api/case-access';
@@ -30,7 +30,7 @@ type PapersData =
     };
 
 async function loadPapersData(caseId: string, guestToken: string | undefined, locale: string): Promise<PapersData> {
-  const guestPayload = guestToken ? verifyGuestToken(guestToken) : null;
+  const guest = await resolveGuestToken(guestToken);
   const supabase = await createClient();
   const {
     data: { user },
@@ -38,9 +38,9 @@ async function loadPapersData(caseId: string, guestToken: string | undefined, lo
 
   const auth: RequestAuth = {
     userId: user?.id ?? null,
-    guestSessionId: guestPayload?.sub ?? null,
+    guestSessionId: guest?.guestSessionId ?? null,
     actorType: user ? 'user' : 'guest',
-    actorId: user?.id ?? guestPayload?.sub ?? '',
+    actorId: user?.id ?? guest?.guestSessionId ?? '',
   };
 
   if (!auth.userId && !auth.guestSessionId) return { authorized: false };

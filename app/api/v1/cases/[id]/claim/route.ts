@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { requireRequestAuth, serializeCase } from '@/lib/api/case-access';
-import { verifyGuestToken, extractGuestToken } from '@/lib/auth/guest';
 import { claimCaseSchema } from '@/lib/validation/api-schemas';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { appendActionLog } from '@/lib/action-logs/append';
@@ -30,14 +29,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
       throw new ApiError(400, 'validation_failed', parsed.error.issues[0]?.message ?? 'Invalid body');
     }
 
-    const guestToken = parsed.data.guest_token ?? extractGuestToken(request);
-    if (!guestToken) {
-      throw new ApiError(400, 'validation_failed', 'Guest token required to claim case');
-    }
-
-    const guestPayload = verifyGuestToken(guestToken);
-    if (!guestPayload) {
-      throw new ApiError(401, 'unauthorized', 'Invalid guest token');
+    if (!auth.guestSessionId) {
+      throw new ApiError(401, 'unauthorized', 'Open the guest case on this device before claiming it');
     }
 
     const admin = createAdminClient();
@@ -55,7 +48,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       throw new ApiError(409, 'conflict', 'Case already claimed');
     }
 
-    if (caseRow.guest_session_id !== guestPayload.sub) {
+    if (caseRow.guest_session_id !== auth.guestSessionId) {
       throw new ApiError(403, 'forbidden', 'Guest session does not own this case');
     }
 
@@ -78,14 +71,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
     await admin
       .from('guest_sessions')
       .update({ claimed_by: auth.userId, claimed_at: now })
-      .eq('id', guestPayload.sub);
+      .eq('id', auth.guestSessionId);
 
     await appendActionLog({
       caseId,
       actorType: 'user',
       actorId: auth.userId,
       action: 'case.claimed',
-      payload: { guest_session_id: guestPayload.sub },
+      payload: { guest_session_id: auth.guestSessionId },
       requestId,
     });
 

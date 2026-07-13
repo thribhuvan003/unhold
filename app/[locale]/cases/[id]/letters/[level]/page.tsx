@@ -8,7 +8,7 @@ import { RequestDraft } from '@/components/letters/RequestDraft';
 import { BankVisitScript } from '@/components/case/BankVisitScript';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { GUEST_COOKIE_NAME, verifyGuestToken } from '@/lib/auth/guest';
+import { GUEST_COOKIE_NAME, resolveGuestToken } from '@/lib/auth/guest';
 import { assertCaseAccess, type RequestAuth } from '@/lib/api/case-access';
 import { getBankContacts } from '@/lib/banks/official-contacts';
 import { isReadable } from '@/lib/evidence/readability';
@@ -71,7 +71,7 @@ export default async function LetterPage({ params }: PageProps) {
   // so we authorize the requester and then read via the admin client.
   const cookieStore = await cookies();
   const guestToken = cookieStore.get(GUEST_COOKIE_NAME)?.value;
-  const guestPayload = guestToken ? verifyGuestToken(guestToken) : null;
+  const guest = await resolveGuestToken(guestToken);
   const supabase = await createClient();
   const {
     data: { user },
@@ -79,9 +79,9 @@ export default async function LetterPage({ params }: PageProps) {
 
   const auth: RequestAuth = {
     userId: user?.id ?? null,
-    guestSessionId: guestPayload?.sub ?? null,
+    guestSessionId: guest?.guestSessionId ?? null,
     actorType: user ? 'user' : 'guest',
-    actorId: user?.id ?? guestPayload?.sub ?? '',
+    actorId: user?.id ?? guest?.guestSessionId ?? '',
   };
 
   if (!auth.userId && !auth.guestSessionId) notFound();

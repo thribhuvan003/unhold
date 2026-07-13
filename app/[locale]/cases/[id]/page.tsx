@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { ChevronDown } from 'lucide-react';
 import { computeCaseStages } from '@/components/case/case-stages';
 import { DoThisNowCard } from '@/components/case/DoThisNowCard';
 import { UnfreezePathCard } from '@/components/case/UnfreezePathCard';
@@ -9,7 +8,6 @@ import { StageChecklist } from '@/components/case/StageChecklist';
 import { LettersLadderCard } from '@/components/case/LettersLadderCard';
 import { WhatHappensNextCard } from '@/components/case/WhatHappensNextCard';
 import { DisproportionateFreezeCard } from '@/components/case/DisproportionateFreezeCard';
-import { SwarmLogPanel } from '@/components/case/SwarmLogPanel';
 import { EditCaseDetails, type EditCaseInitial } from '@/components/case/EditCaseDetails';
 import { DeadlineRemindersCard } from '@/components/case/DeadlineRemindersCard';
 import { SaveCaseCard } from '@/components/case/SaveCaseCard';
@@ -22,7 +20,7 @@ import {
 import type { LetterSummary } from '@/components/case/LettersPanel';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { cn } from '@/lib/ui/cn';
-import { GUEST_COOKIE_NAME, verifyGuestToken } from '@/lib/auth/guest';
+import { GUEST_COOKIE_NAME, resolveGuestToken } from '@/lib/auth/guest';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { assertCaseAccess, type RequestAuth } from '@/lib/api/case-access';
@@ -38,7 +36,6 @@ type CaseDetailData =
       authorized: true;
       publicId: string | null;
       frozenAmountPaise: number | null;
-      events: Database['public']['Tables']['swarm_events']['Row'][];
       freezeType: string | null;
       freezeReason: Database['public']['Enums']['freeze_reason'] | null;
       hasFreezeNotice: boolean;
@@ -60,7 +57,7 @@ type CaseDetailData =
     };
 
 async function loadCaseDetailData(caseId: string, guestToken: string | undefined): Promise<CaseDetailData> {
-  const guestPayload = guestToken ? verifyGuestToken(guestToken) : null;
+  const guest = await resolveGuestToken(guestToken);
   const supabase = await createClient();
   const {
     data: { user },
@@ -68,9 +65,9 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
 
   const auth: RequestAuth = {
     userId: user?.id ?? null,
-    guestSessionId: guestPayload?.sub ?? null,
+    guestSessionId: guest?.guestSessionId ?? null,
     actorType: user ? 'user' : 'guest',
-    actorId: user?.id ?? guestPayload?.sub ?? '',
+    actorId: user?.id ?? guest?.guestSessionId ?? '',
   };
 
   if (!auth.userId && !auth.guestSessionId) {
@@ -86,7 +83,6 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
   const admin = createAdminClient();
   const [
     { data: caseRow },
-    { data: events },
     { data: evidenceRows },
     { data: escalationRows },
     { data: bundleLog },
@@ -98,12 +94,6 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
       )
       .eq('id', caseId)
       .maybeSingle(),
-    admin
-      .from('swarm_events')
-      .select('*')
-      .eq('case_id', caseId)
-      .order('created_at', { ascending: false })
-      .limit(20),
     admin
       .from('evidence')
       .select('evidence_type, sha256_verified_at, vision_confidence, forgery_flag')
@@ -137,7 +127,6 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
     authorized: true,
     publicId: caseRow?.public_id ?? null,
     frozenAmountPaise: caseRow?.frozen_amount_paise ?? null,
-    events: events ?? [],
     freezeType:
       caseRow?.freeze_type ??
       (typeof intake.freeze_type_hint === 'string' ? intake.freeze_type_hint : null),
@@ -369,27 +358,6 @@ export default async function CaseDetailPage({ params }: PageProps) {
 
       <EditCaseDetails caseId={id} initial={data.edit} hasCommittedLetter={data.hasCommittedLetter} />
 
-      {/* Ops/debug only — not part of the victim journey. */}
-      {data.events.length > 0 ? (
-        <details className="u-card group overflow-hidden opacity-90">
-          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-2 px-4 py-3.5 [&::-webkit-details-marker]:hidden">
-            <span>
-              <span className="block text-[0.8125rem] font-semibold text-[var(--ink-muted)]">
-                {t('aiActivityTitle')}
-              </span>
-              <span className="mt-px block text-xs text-[var(--ink-faint)]">{t('aiActivitySub')}</span>
-            </span>
-            <span className="inline-flex flex-none items-center gap-1 text-xs text-[var(--ink-faint)]">
-              <span className="group-open:hidden">{t('show')}</span>
-              <span className="hidden group-open:inline">{t('hide')}</span>
-              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
-            </span>
-          </summary>
-          <div className="border-t border-[var(--surface)] px-4 py-4">
-            <SwarmLogPanel events={data.events} />
-          </div>
-        </details>
-      ) : null}
     </section>
   );
 }

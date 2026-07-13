@@ -2,13 +2,14 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST as uploadUrl } from '@/app/api/v1/cases/[id]/evidence/upload-url/route';
 import { POST as confirm } from '@/app/api/v1/cases/[id]/evidence/[eid]/confirm/route';
-import { signGuestToken } from '@/lib/auth/guest';
+import { hashDeviceToken, signGuestToken } from '@/lib/auth/guest';
 import { errorEnvelopeSchema } from '@/lib/validation/api-schemas';
 import { buildEvidenceStoragePath } from '@/lib/evidence/storage-path';
 
 const caseId = '22222222-2222-4222-8222-222222222222';
 const evidenceId = '44444444-4444-4444-8444-444444444444';
 const guestSessionId = '11111111-1111-4111-8111-111111111111';
+const guestToken = signGuestToken(guestSessionId);
 
 const caseSelectMock = vi.fn();
 const evidenceInsertMock = vi.fn();
@@ -22,6 +23,25 @@ const tryTransitionMock = vi.fn();
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: (table: string) => {
+      if (table === 'guest_sessions') {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () => Promise.resolve({
+                data: {
+                  id: guestSessionId,
+                  device_token_hash: hashDeviceToken(guestToken),
+                  expires_at: '2099-01-01T00:00:00.000Z',
+                  claimed_by: null,
+                  revoked_at: null,
+                },
+                error: null,
+              }),
+            }),
+          }),
+          update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+        };
+      }
       if (table === 'cases') {
         return {
           select: () => ({
@@ -84,7 +104,7 @@ function guestRequest(
   options?: { method?: string; headers?: Record<string, string>; body?: string },
 ) {
   const headers = new Headers(options?.headers);
-  headers.set('X-Guest-Token', signGuestToken(guestSessionId));
+  headers.set('Cookie', `ll_guest=${guestToken}`);
   return new NextRequest(url, {
     method: options?.method,
     headers,

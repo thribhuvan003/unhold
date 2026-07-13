@@ -547,6 +547,9 @@ export type Database = {
           user_agent_hash: string | null;
           claimed_by: string | null;
           claimed_at: string | null;
+          revoked_at: string | null;
+          revocation_reason: string | null;
+          rotated_at: string | null;
           expires_at: string;
           last_seen_at: string;
           metadata_json: Json;
@@ -562,7 +565,11 @@ export type Database = {
         Update: {
           claimed_by?: string | null;
           claimed_at?: string | null;
+          device_token_hash?: string;
           last_seen_at?: string;
+          revoked_at?: string | null;
+          revocation_reason?: string | null;
+          rotated_at?: string | null;
         };
         Relationships: [];
       };

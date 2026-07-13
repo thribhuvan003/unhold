@@ -2,9 +2,9 @@ import 'server-only';
 
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'crypto';
 import type { NextRequest } from 'next/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const GUEST_COOKIE_NAME = 'll_guest';
-export const GUEST_TOKEN_HEADER = 'X-Guest-Token';
 export const GUEST_TOKEN_TYP = 'guest';
 export const GUEST_TOKEN_TTL_SECONDS = 90 * 24 * 60 * 60;
 
@@ -13,6 +13,7 @@ export interface GuestJwtPayload {
   typ: typeof GUEST_TOKEN_TYP;
   exp: number;
   iat: number;
+  jti: string;
 }
 
 export interface GuestAuthContext {
@@ -56,6 +57,7 @@ export function signGuestToken(guestSessionId: string): string {
     typ: GUEST_TOKEN_TYP,
     iat: now,
     exp: now + GUEST_TOKEN_TTL_SECONDS,
+    jti: randomUUID(),
   };
   const body = base64UrlEncode(JSON.stringify(payload));
   const signature = createHmac('sha256', secret)
@@ -87,7 +89,7 @@ export function verifyGuestToken(token: string): GuestJwtPayload | null {
     }
 
     const payload = JSON.parse(base64UrlDecode(body).toString('utf8')) as GuestJwtPayload;
-    if (payload.typ !== GUEST_TOKEN_TYP || !payload.sub) return null;
+    if (payload.typ !== GUEST_TOKEN_TYP || !payload.sub || !payload.jti) return null;
     if (typeof payload.exp !== 'number' || payload.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }
@@ -102,22 +104,58 @@ export function generateGuestSessionId(): string {
 }
 
 export function extractGuestToken(request: NextRequest): string | null {
-  const header = request.headers.get(GUEST_TOKEN_HEADER);
-  if (header) return header.trim();
-  const cookie = request.cookies.get(GUEST_COOKIE_NAME)?.value;
-  return cookie ?? null;
+  return request.cookies.get(GUEST_COOKIE_NAME)?.value ?? null;
 }
 
-export function resolveGuestAuth(request: NextRequest): GuestAuthContext | null {
-  const deviceToken = extractGuestToken(request);
+function hashesMatch(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left, 'hex');
+  const rightBuffer = Buffer.from(right, 'hex');
+  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+/**
+ * The signed cookie identifies a guest session, but the database determines
+ * whether that device remains active. This makes recovery-token rotation and
+ * session revocation effective immediately.
+ */
+export async function resolveGuestToken(deviceToken: string | null | undefined): Promise<GuestAuthContext | null> {
   if (!deviceToken) return null;
   const payload = verifyGuestToken(deviceToken);
   if (!payload) return null;
+
+  const admin = createAdminClient();
+  const { data: session, error } = await admin
+    .from('guest_sessions')
+    .select('id, device_token_hash, expires_at, claimed_by, revoked_at')
+    .eq('id', payload.sub)
+    .maybeSingle();
+
+  if (
+    error ||
+    !session ||
+    session.claimed_by ||
+    session.revoked_at ||
+    new Date(session.expires_at).getTime() <= Date.now() ||
+    !hashesMatch(hashDeviceToken(deviceToken), session.device_token_hash)
+  ) {
+    return null;
+  }
+
+  void admin
+    .from('guest_sessions')
+    .update({ last_seen_at: new Date().toISOString() })
+    .eq('id', session.id)
+    .then(() => undefined);
+
   return {
     type: 'guest',
-    guestSessionId: payload.sub,
+    guestSessionId: session.id,
     deviceToken,
   };
+}
+
+export async function resolveGuestAuth(request: NextRequest): Promise<GuestAuthContext | null> {
+  return resolveGuestToken(extractGuestToken(request));
 }
 
 export function guestCookieOptions(expiresAt: Date) {
