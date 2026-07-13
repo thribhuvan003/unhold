@@ -23,3 +23,5 @@ export async function POST(request: NextRequest) {
     return handleRouteError(error, requestId);
   }
 }
+
+export const GET = POST;
