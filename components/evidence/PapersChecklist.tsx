@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Loader2 } from 'lucide-react';
 import { computeSha256HexInBrowser } from '@/lib/evidence/sha256';
+import { resolveEvidenceMime } from '@/lib/evidence/accepted-mime';
 import { validateUploadFile } from '@/lib/evidence/validate-file';
 import { classifyDoc, type DocClass } from '@/lib/evidence/readability';
 import type { PaperDocDef } from '@/lib/intake/paper-display';
@@ -196,6 +197,7 @@ export function PapersChecklist({
       patchRow(type, { status: 'error', error: fileProblem });
       return;
     }
+    const mimeType = resolveEvidenceMime(file);
 
     // Compute the hash up front so the same file can't be added to two slots.
     let sha256: string;
@@ -225,7 +227,7 @@ export function PapersChecklist({
         body: JSON.stringify({
           evidence_type: type,
           filename: file.name,
-          mime_type: file.type,
+          mime_type: mimeType,
           file_size_bytes: file.size,
         }),
       });
@@ -234,7 +236,7 @@ export function PapersChecklist({
 
       const putRes = await fetch(urlJson.upload_url, {
         method: 'PUT',
-        headers: { 'Content-Type': file.type },
+        headers: { 'Content-Type': mimeType },
         body: file,
       });
       if (!putRes.ok) throw new Error(t('storageError'));

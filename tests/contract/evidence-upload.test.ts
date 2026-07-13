@@ -17,6 +17,7 @@ const evidenceSelectMock = vi.fn();
 const evidenceUpdateMock = vi.fn();
 const storageCreateMock = vi.fn();
 const storageDownloadMock = vi.fn();
+const storageRemoveMock = vi.fn();
 const appendActionMock = vi.fn();
 const tryTransitionMock = vi.fn();
 
@@ -84,6 +85,7 @@ vi.mock('@/lib/supabase/admin', () => ({
       from: () => ({
         createSignedUploadUrl: storageCreateMock,
         download: storageDownloadMock,
+        remove: storageRemoveMock,
       }),
     },
   }),
@@ -128,6 +130,7 @@ describe('evidence upload contract', () => {
     });
     appendActionMock.mockResolvedValue({ error: null });
     tryTransitionMock.mockResolvedValue(null);
+    storageRemoveMock.mockResolvedValue({ error: null });
   });
 
   it('POST upload-url returns signed URL and storage path', async () => {
@@ -167,12 +170,15 @@ describe('evidence upload contract', () => {
   });
 
   it('POST confirm verifies sha256 and triggers transition attempt', async () => {
-    const sha = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+    const sha = '86edbaa24831badfa0a8b04bb410141e2ee4182b6d0014493fe262a7a331c20b';
     evidenceSelectMock.mockResolvedValue({
       data: {
         id: evidenceId,
         case_id: caseId,
         storage_path: `${caseId}/${evidenceId}/empty.pdf`,
+        storage_bucket: 'evidence',
+        mime_type: 'application/pdf',
+        file_size_bytes: 8,
         sha256: '0'.repeat(64),
         sha256_verified_at: null,
         deleted_at: null,
@@ -180,7 +186,7 @@ describe('evidence upload contract', () => {
       error: null,
     });
     storageDownloadMock.mockResolvedValue({
-      data: new Blob([Buffer.from('')]),
+      data: new Blob([Buffer.from('%PDF-1.7')], { type: 'application/pdf' }),
       error: null,
     });
     evidenceUpdateMock.mockResolvedValue({

@@ -185,30 +185,31 @@ async function extractWithLlm(
   }
 }
 
-/** `ocrRan` distinguishes "the vision/OCR read happened" (confidence is real)
- * from "OCR was skipped" (unsupported type, no consent, or LLM off) — where the
- * confidence 0 is a placeholder, not a judgement about the document. */
-type VerifierRun = { output: VerifierResultOutput; ocrRan: boolean };
+/** Distinguish a real OCR result from a file that needs human review and a
+ * file format the verifier cannot process at all. Unsupported formats must
+ * not receive the same readable-by-default treatment as a pending PDF. */
+type VerifierRunStatus = 'ocr_ran' | 'pending_human' | 'unsupported';
+type VerifierRun = { output: VerifierResultOutput; status: VerifierRunStatus };
 
 async function runVerifierWithMeta(input: VerifierInput): Promise<VerifierRun> {
   const mime = input.mime_type ?? '';
   const isSupported = SUPPORTED_IMAGE_MIMES.has(mime) || mime === 'application/pdf';
   if (!mime || !isSupported) {
-    return { output: noOcrResult(), ocrRan: false };
+    return { output: noOcrResult(), status: 'unsupported' };
   }
 
   const llmResult = await extractWithLlm(input);
   if (llmResult === PDF_NO_TEXT) {
-    // OCR was attempted (ocrRan:true) but the PDF had no readable text — reject
+    // OCR was attempted but the PDF had no readable text — reject
     // rather than trust, and tell the user to send a photo.
-    return { output: pdfNeedsPhotoResult(), ocrRan: true };
+    return { output: pdfNeedsPhotoResult(), status: 'ocr_ran' };
   }
-  if (!llmResult) return { output: noOcrResult(), ocrRan: false };
+  if (!llmResult) return { output: noOcrResult(), status: 'pending_human' };
 
   const validation = validateVerifierOutput(llmResult);
   if (!validation.valid) {
     // OCR ran but the read failed our checks — a real "couldn't trust this" read.
-    return { output: { ...noOcrResult(), forgery_risk: llmResult.forgery_risk }, ocrRan: true };
+    return { output: { ...noOcrResult(), forgery_risk: llmResult.forgery_risk }, status: 'ocr_ran' };
   }
 
   return {
@@ -218,7 +219,7 @@ async function runVerifierWithMeta(input: VerifierInput): Promise<VerifierRun> {
       forgery_flags: redactForgeryFlags(llmResult.forgery_flags),
       mismatches: redactMismatches(llmResult.mismatches),
     },
-    ocrRan: true,
+    status: 'ocr_ran',
   };
 }
 
@@ -228,20 +229,21 @@ export async function runVerifier(input: VerifierInput): Promise<VerifierResultO
 
 /**
  * What the verifier persists onto the evidence row so the case, papers and
- * letter gates can read it. `vision_confidence` is the real score ONLY when OCR
- * ran; when it didn't, we store null (= "not auto-read", trusted pending human
- * review) rather than 0, so PDFs and no-consent uploads are never wrongly
- * treated as unreadable. Mirrors lib/evidence/readability.ts.
+ * letter gates can read it. `vision_confidence` is the real score when OCR ran,
+ * null for a supported file pending human review, and zero for an unsupported
+ * format that must not unlock an evidence gate.
  */
 export function verifierEvidencePatch(
   output: VerifierResultOutput,
-  ocrRan: boolean,
+  status: VerifierRunStatus | boolean,
 ): { vision_confidence: number | null; forgery_flag: boolean } {
   // An irrelevant document (wrong/blank/unrelated file) is forced to a low
   // score even if the model contradicts itself, so the readability gate rejects
   // it. When OCR did not run we keep null (= not auto-read, trusted pending
   // human review) so PDFs and no-consent uploads are never wrongly blocked.
-  const confidence = ocrRan
+  const confidence = status === 'unsupported'
+    ? 0
+    : status === true || status === 'ocr_ran'
     ? output.relevant === false
       ? Math.min(output.confidence, 0.1)
       : output.confidence
@@ -256,7 +258,7 @@ async function applyVerifierSideEffects(
   input: VerifierInput,
   output: VerifierResultOutput,
   jobId: string,
-  ocrRan: boolean,
+  status: VerifierRunStatus,
 ): Promise<void> {
   const supabase = createAdminClient();
 
@@ -266,7 +268,7 @@ async function applyVerifierSideEffects(
     .from('evidence')
     .update({
       vision_extracted_json: output.extracted as Json,
-      ...verifierEvidencePatch(output, ocrRan),
+      ...verifierEvidencePatch(output, status),
     })
     .eq('id', input.evidence_id);
 
@@ -307,8 +309,8 @@ export async function runVerifierJob(job: AgentJobRow): Promise<AgentRunResult> 
   const evidenceId = String(payload.evidence_id ?? '');
 
   const input = await loadVerifierInput(evidenceId);
-  const { output, ocrRan } = await runVerifierWithMeta(input);
-  await applyVerifierSideEffects(input, output, job.id, ocrRan);
+  const { output, status } = await runVerifierWithMeta(input);
+  await applyVerifierSideEffects(input, output, job.id, status);
 
   return {
     output: output as unknown as Record<string, unknown>,

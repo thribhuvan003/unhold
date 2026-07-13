@@ -3,7 +3,8 @@ import { assertCaseAccess, requireRequestAuth } from '@/lib/api/case-access';
 import { enqueueAgentJob } from '@/lib/jobs/enqueue';
 import { processAgentJobs } from '@/lib/jobs/process';
 import { isValidSha256 } from '@/lib/evidence/sha256';
-import { EVIDENCE_BUCKET } from '@/lib/evidence/storage-path';
+import { EVIDENCE_BUCKET, MAX_EVIDENCE_BYTES } from '@/lib/evidence/storage-path';
+import { detectEvidenceMime, evidenceMimeMatches } from '@/lib/evidence/file-signature';
 import { evidenceConfirmSchema } from '@/lib/validation/api-schemas';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { appendActionLog } from '@/lib/action-logs/append';
@@ -19,6 +20,22 @@ import {
 
 type RouteContext = { params: Promise<{ id: string; eid: string }> };
 type AgentJobRow = Database['public']['Tables']['agent_jobs']['Row'];
+
+async function rejectUploadedObject(input: {
+  admin: ReturnType<typeof createAdminClient>;
+  caseId: string;
+  evidenceId: string;
+  storagePath: string;
+  message: string;
+}): Promise<never> {
+  await input.admin.storage.from(EVIDENCE_BUCKET).remove([input.storagePath]);
+  await input.admin
+    .from('evidence')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', input.evidenceId)
+    .eq('case_id', input.caseId);
+  throw new ApiError(422, 'guard_failed', input.message, { guard: 'evidence_file_valid' });
+}
 
 export async function POST(request: NextRequest, context: RouteContext) {
   const requestId = getRequestId(request);
@@ -40,7 +57,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const admin = createAdminClient();
     const { data: evidence, error: fetchError } = await admin
       .from('evidence')
-      .select('id, case_id, storage_path, sha256, sha256_verified_at, deleted_at')
+      .select(
+        'id, case_id, storage_path, storage_bucket, mime_type, file_size_bytes, sha256, sha256_verified_at, deleted_at',
+      )
       .eq('id', evidenceId)
       .eq('case_id', caseId)
       .maybeSingle();
@@ -57,7 +76,33 @@ export async function POST(request: NextRequest, context: RouteContext) {
       throw new ApiError(400, 'validation_failed', 'Uploaded file not found in storage');
     }
 
+    if (
+      evidence.storage_bucket !== EVIDENCE_BUCKET ||
+      fileData.size <= 0 ||
+      fileData.size > MAX_EVIDENCE_BYTES ||
+      fileData.size !== evidence.file_size_bytes
+    ) {
+      return rejectUploadedObject({
+        admin,
+        caseId,
+        evidenceId,
+        storagePath: evidence.storage_path,
+        message: 'Uploaded file size does not match the requested upload',
+      });
+    }
+
     const buffer = Buffer.from(await fileData.arrayBuffer());
+    const detectedMime = detectEvidenceMime(buffer);
+    if (!evidenceMimeMatches(evidence.mime_type, detectedMime)) {
+      return rejectUploadedObject({
+        admin,
+        caseId,
+        evidenceId,
+        storagePath: evidence.storage_path,
+        message: 'Uploaded file content does not match its file type',
+      });
+    }
+
     const { computeSha256Hex } = await import('@/lib/evidence/sha256');
     const serverHash = computeSha256Hex(buffer);
 

@@ -186,6 +186,11 @@ describe('verifierEvidencePatch', () => {
     expect(isReadable(patch.vision_confidence, patch.forgery_flag)).toBe(true);
   });
 
+  it('stores zero when the file format is unsupported, so it cannot unlock evidence gates', () => {
+    const patch = verifierEvidencePatch(fullOutput({ confidence: 0.9 }), 'unsupported');
+    expect(patch.vision_confidence).toBe(0);
+  });
+
   it('propagates a possible-inconsistency flag without treating it as forensic proof', () => {
     const patch = verifierEvidencePatch(fullOutput({ forgery_risk: true, confidence: 0.9 }), true);
     expect(patch.forgery_flag).toBe(true);

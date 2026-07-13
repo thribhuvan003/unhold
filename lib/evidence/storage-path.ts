@@ -1,7 +1,7 @@
 import { ACCEPTED_EVIDENCE_MIME } from '@/lib/evidence/accepted-mime';
 
 const ALLOWED_MIME = new Set<string>(ACCEPTED_EVIDENCE_MIME);
-const MAX_BYTES = 25 * 1024 * 1024;
+export const MAX_EVIDENCE_BYTES = 25 * 1024 * 1024;
 
 export function sanitizeFilename(filename: string): string {
   const base = filename.split(/[/\\]/).pop() ?? 'upload';
@@ -20,7 +20,7 @@ export function assertEvidenceUploadConstraints(mimeType: string, fileSizeBytes:
   if (!ALLOWED_MIME.has(mimeType)) {
     throw new Error('Unsupported mime type; allowed: jpeg, png, pdf');
   }
-  if (fileSizeBytes <= 0 || fileSizeBytes > MAX_BYTES) {
+  if (fileSizeBytes <= 0 || fileSizeBytes > MAX_EVIDENCE_BYTES) {
     throw new Error('File size must be between 1 byte and 25MB');
   }
 }
