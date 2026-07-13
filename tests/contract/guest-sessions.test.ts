@@ -1,12 +1,16 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { NextRequest } from 'next/server';
-import { POST } from '@/app/api/v1/guest/sessions/route';
-import { GUEST_COOKIE_NAME } from '@/lib/auth/guest';
-import { errorEnvelopeSchema, guestSessionResponseSchema } from '@/lib/validation/api-schemas';
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { POST } from "@/app/api/v1/guest/sessions/route";
+import { GUEST_COOKIE_NAME } from "@/lib/auth/guest";
+import { resetRateLimitMemory } from "@/lib/ratelimit";
+import {
+  errorEnvelopeSchema,
+  guestSessionResponseSchema,
+} from "@/lib/validation/api-schemas";
 
 const insertMock = vi.fn();
 
-vi.mock('@/lib/supabase/admin', () => ({
+vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({
     from: () => ({
       insert: insertMock,
@@ -14,34 +18,41 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
-describe('POST /api/v1/guest/sessions', () => {
+describe("POST /api/v1/guest/sessions", () => {
   beforeEach(() => {
+    resetRateLimitMemory();
     insertMock.mockReset();
     insertMock.mockResolvedValue({ error: null });
   });
 
-  it('keeps the guest token out of the response body', async () => {
-    const request = new NextRequest('http://localhost/api/v1/guest/sessions', { method: 'POST' });
+  it("keeps the guest token out of the response body", async () => {
+    const request = new NextRequest("http://localhost/api/v1/guest/sessions", {
+      method: "POST",
+    });
     const response = await POST(request);
     const json = await response.json();
 
     expect(response.status).toBe(200);
     expect(guestSessionResponseSchema.safeParse(json).success).toBe(true);
-    expect(json).not.toHaveProperty('device_token');
-    expect(json).not.toHaveProperty('guest_session_id');
-    expect(response.headers.get('x-request-id')).toBeTruthy();
+    expect(json).not.toHaveProperty("device_token");
+    expect(json).not.toHaveProperty("guest_session_id");
+    expect(response.headers.get("x-request-id")).toBeTruthy();
   });
 
-  it('sets ll_guest httpOnly SameSite=Lax cookie', async () => {
-    const request = new NextRequest('http://localhost/api/v1/guest/sessions', { method: 'POST' });
+  it("sets ll_guest httpOnly SameSite=Lax cookie", async () => {
+    const request = new NextRequest("http://localhost/api/v1/guest/sessions", {
+      method: "POST",
+    });
     const response = await POST(request);
     const cookie = response.cookies.get(GUEST_COOKIE_NAME);
     expect(cookie?.httpOnly).toBe(true);
-    expect(cookie?.sameSite).toBe('lax');
+    expect(cookie?.sameSite).toBe("lax");
   });
 
-  it('stores hashed token in guest_sessions', async () => {
-    const request = new NextRequest('http://localhost/api/v1/guest/sessions', { method: 'POST' });
+  it("stores hashed token in guest_sessions", async () => {
+    const request = new NextRequest("http://localhost/api/v1/guest/sessions", {
+      method: "POST",
+    });
     await POST(request);
     expect(insertMock).toHaveBeenCalledTimes(1);
     const payload = insertMock.mock.calls[0][0];
@@ -49,13 +60,30 @@ describe('POST /api/v1/guest/sessions', () => {
     expect(payload.id).toMatch(/^[0-9a-f-]{36}$/);
   });
 
-  it('returns error envelope shape on failure', async () => {
-    insertMock.mockResolvedValue({ error: { message: 'db down' } });
-    const request = new NextRequest('http://localhost/api/v1/guest/sessions', { method: 'POST' });
+  it("returns error envelope shape on failure", async () => {
+    insertMock.mockResolvedValue({ error: { message: "db down" } });
+    const request = new NextRequest("http://localhost/api/v1/guest/sessions", {
+      method: "POST",
+    });
     const response = await POST(request);
     const json = await response.json();
     expect(response.status).toBeGreaterThanOrEqual(400);
     expect(errorEnvelopeSchema.safeParse(json).success).toBe(true);
     expect(json.error.request_id).toBeTruthy();
+  });
+
+  it("limits guest-session rotation without storing a raw IP", async () => {
+    let response: Response | undefined;
+    for (let index = 0; index < 11; index += 1) {
+      response = await POST(
+        new NextRequest("http://localhost/api/v1/guest/sessions", {
+          method: "POST",
+          headers: { "x-real-ip": "203.0.113.9" },
+        }),
+      );
+    }
+
+    expect(response?.status).toBe(429);
+    expect(insertMock).toHaveBeenCalledTimes(10);
   });
 });

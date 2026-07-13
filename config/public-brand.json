@@ -1,7 +1,7 @@
 {
   "codename": "lienliberator",
   "public_name": "Unhold",
-  "tagline": "Unfreeze your bank account — step by step",
+  "tagline": "Organise your freeze case — step by step",
   "github_owner": "thribhuvan003",
   "github_repo": "unhold",
   "github_full": "thribhuvan003/unhold",
@@ -12,8 +12,8 @@
     "email": "thribhuvan003@gmail.com"
   },
   "llm": {
-    "provider": "nvidia",
-    "model": "minimaxai/minimax-m3",
-    "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions"
+    "text_primary": "groq/openai/gpt-oss-120b",
+    "vision_primary": "groq/qwen/qwen3.6-27b",
+    "fallback": "nvidia/meta/llama-3.3-70b-instruct"
   }
 }

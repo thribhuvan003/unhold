@@ -24,21 +24,33 @@
   },
   "HomePage": {
     "eyebrow": "Free · no account · you stay in control",
-    "title": "Bank account frozen? We’ll build the package and show who can actually release it.",
-    "intro": "A cyber complaint can freeze your account even when you did nothing wrong. We prepare the right papers, a sealed proof pack, and letters — and show the real unfreeze path. <strong>You send everything yourself.</strong> Unfreeze is still the bank or police, not us.",
+    "title": "Bank account restricted? Organise the facts, identify the stated authority, and prepare a draft you can verify.",
+    "intro": "Unhold helps you record what the bank told you, organise relevant papers, and prepare a factual draft for the official route identified in your records. <strong>You verify and send everything yourself.</strong> The bank, authority, or court decides what happens next; Unhold cannot promise a release.",
     "startCta": "Start my case",
     "openCaseCta": "I already started — open my case",
     "recoverCta": "Lost browser? Open with recovery code →",
     "otherLangCta": "हिंदी में पढ़ें — आपके अधिकार और अगला कदम →",
     "howItWorksLabel": "How it works",
     "steps": [
-      { "title": "Tell us what happened", "desc": "5 easy questions. No account needed." },
-      { "title": "Add only the papers you need", "desc": "Clear photos or PDFs. Unhold checks readability and asks you to review the original." },
-      { "title": "We write your letter + seal your papers", "desc": "A proper letter in your name, plus one sealed proof pack to attach." },
-      { "title": "You send it & follow up", "desc": "By email from your phone, or at the branch. Keep the acknowledgement and use the stated response date." }
+      {
+        "title": "Tell us what happened",
+        "desc": "5 easy questions. No account needed."
+      },
+      {
+        "title": "Add the papers relevant to your case",
+        "desc": "Clear photos or PDFs. Unhold checks readability and asks you to review the original."
+      },
+      {
+        "title": "Prepare a draft + organise your proof",
+        "desc": "A factual draft based on what you entered, plus one proof pack to review and attach."
+      },
+      {
+        "title": "You send it & follow up",
+        "desc": "By email from your phone, or at the branch. Keep the acknowledgement and use the stated response date."
+      }
     ],
-    "demoTitle": "Just curious? See a worked example",
-    "demoDesc": "A full sample case — the letter, the unfreeze path, the sources. No account or documents needed.",
+    "demoTitle": "Just curious? Inspect a worked example",
+    "demoDesc": "See sample facts become a suggested route, a tailored draft, and dated sources. No account or documents needed.",
     "goodToKnow": "<strong>Good to know:</strong> we never send anything to your bank. No one can promise an unfreeze. The official cyber helpline is <helpline>1930</helpline>.",
     "rightsLink": "See the practical next steps and official routes →",
     "storiesLabel": "Who this is for",
@@ -63,12 +75,30 @@
     "progress": "Question {current} of {total}",
     "progressLabel": "Intake progress: question {current} of {total}",
     "steps": [
-      { "title": "What happened?", "hint": "Optional — add a few words now, or continue and add your notice first." },
-      { "title": "Which bank froze your account?", "hint": "Pick \"Other\" if your bank is not here — everything still works." },
-      { "title": "Did you send the money, or did it come to you?", "hint": "There is no wrong answer. This helps us write the right letter." },
-      { "title": "How is your money blocked?", "hint": "Check the SMS from your bank. \"Not sure\" is fine." },
-      { "title": "How much money is stuck?", "hint": "A rough number is fine. It helps us set the right priority." },
-      { "title": "Do you know who ordered the freeze?", "hint": "This decides your real path to unfreeze. \"Not sure\" is completely fine." }
+      {
+        "title": "What happened?",
+        "hint": "Optional — add a few words now, or continue and add your notice first."
+      },
+      {
+        "title": "Which bank froze your account?",
+        "hint": "Pick \"Other\" if your bank is not here — everything still works."
+      },
+      {
+        "title": "Did you send the money, or did it come to you?",
+        "hint": "There is no wrong answer. This helps us write the right letter."
+      },
+      {
+        "title": "How is your money blocked?",
+        "hint": "Check the SMS from your bank. \"Not sure\" is fine."
+      },
+      {
+        "title": "How much money is stuck?",
+        "hint": "A rough number is fine. It helps us set the right priority."
+      },
+      {
+        "title": "Do you know who ordered the freeze?",
+        "hint": "This decides your real path to unfreeze. \"Not sure\" is completely fine."
+      }
     ],
     "bankOtherLabel": "Other / not sure — my bank is not listed",
     "roleOptions": {
@@ -77,18 +107,39 @@
       "unsure": "I am not sure"
     },
     "freezeOptions": {
-      "full": { "label": "Fully frozen — nothing works", "help": "No money can go in or out." },
-      "lien": { "label": "Only some money is blocked", "help": "The bank blocked a fixed amount, not the whole account." },
-      "debit": { "label": "Money comes in, but I cannot send or take out", "help": "Only outgoing money is blocked." },
-      "unsure": { "label": "I am not sure", "help": "That is fine — your bank must tell you in writing. Our letter asks for it." }
+      "full": {
+        "label": "Fully frozen — nothing works",
+        "help": "No money can go in or out."
+      },
+      "lien": {
+        "label": "Only some money is blocked",
+        "help": "The bank blocked a fixed amount, not the whole account."
+      },
+      "debit": {
+        "label": "Money comes in, but I cannot send or take out",
+        "help": "Only outgoing money is blocked."
+      },
+      "unsure": {
+        "label": "I am not sure",
+        "help": "That is fine — your bank must tell you in writing. Our letter asks for it."
+      }
     },
     "bankCallsThis": "bank calls this: {term}",
     "reasonOptions": {
-      "cyber": { "label": "A cyber / online-fraud complaint", "help": "A police cyber cell or the 1930 helpline — the most common reason." },
+      "cyber": {
+        "label": "A cyber / online-fraud complaint",
+        "help": "A police cyber cell or the 1930 helpline — the most common reason."
+      },
       "court": { "label": "A court order", "help": "" },
       "tax": { "label": "A tax or GST notice", "help": "" },
-      "kyc": { "label": "The bank itself — KYC / documents pending", "help": "" },
-      "unsure": { "label": "I am not sure", "help": "That is fine — your letter asks the bank to confirm who ordered it." }
+      "kyc": {
+        "label": "The bank itself — KYC / documents pending",
+        "help": ""
+      },
+      "unsure": {
+        "label": "I am not sure",
+        "help": "That is fine — your letter asks the bank to confirm who ordered it."
+      }
     },
     "storyPlaceholder": "Optional — e.g. my SBI account was frozen after an unknown UPI payment…",
     "storyCounter": "{count} letters typed",
@@ -238,14 +289,38 @@
     ],
     "glossaryTitle": "Bank words, in plain words",
     "glossary": [
-      { "term": "debit freeze", "plain": "Money can come in, but nothing can go out." },
-      { "term": "lien", "plain": "The bank blocked a fixed amount, not the whole account." },
-      { "term": "GRM", "plain": "A grievance-handling term used by banks and authorities. A staff login is not a public citizen filing portal." },
-      { "term": "MRM", "plain": "An official money-restoration workflow for eligible cyber-fraud victims, not a general account-unfreeze route." },
-      { "term": "NCRP number", "plain": "Your cybercrime complaint number (14 digits)." },
-      { "term": "L1 / L2 / L3", "plain": "Letter 1, 2, 3 — each one goes to a higher officer." },
-      { "term": "IO", "plain": "The police officer handling the complaint behind your freeze." },
-      { "term": "nodal officer", "plain": "A senior bank officer who handles complaints the branch ignored." }
+      {
+        "term": "debit freeze",
+        "plain": "Money can come in, but nothing can go out."
+      },
+      {
+        "term": "lien",
+        "plain": "The bank blocked a fixed amount, not the whole account."
+      },
+      {
+        "term": "GRM",
+        "plain": "A grievance-handling term used by banks and authorities. A staff login is not a public citizen filing portal."
+      },
+      {
+        "term": "MRM",
+        "plain": "An official money-restoration workflow for eligible cyber-fraud victims, not a general account-unfreeze route."
+      },
+      {
+        "term": "NCRP number",
+        "plain": "Your cybercrime complaint number (14 digits)."
+      },
+      {
+        "term": "L1 / L2 / L3",
+        "plain": "Letter 1, 2, 3 — each one goes to a higher officer."
+      },
+      {
+        "term": "IO",
+        "plain": "The police officer handling the complaint behind your freeze."
+      },
+      {
+        "term": "nodal officer",
+        "plain": "A senior bank officer who handles complaints the branch ignored."
+      }
     ]
   },
   "BankVisitScript": {
@@ -312,15 +387,31 @@
     ]
   },
   "DemoPage": {
-    "eyebrow": "A worked example",
-    "title": "Start by finding exactly who ordered the restriction and what was held.",
-    "intro": "Unhold helps you ask the bank for the restriction amount, type, ordering authority and reference, organise your proof, and prepare a factual representation. You send everything yourself — we never contact your bank or an authority, and no one can promise an unfreeze.",
-    "sampleNote": "Below is a real worked example with made-up data — “Asha”, ₹1,800 wrongly frozen after a UPI credit. No account or documents needed; nothing here is sent anywhere.",
+    "eyebrow": "Worked example · made-up facts",
+    "title": "See the input, the decision, and the proof — before starting a case.",
+    "intro": "This example shows exactly what Unhold records, what it suggests, and what the user must verify. It does not decide who can release funds or predict an outcome.",
+    "sampleNote": "Sample only: Asha Rao · ₹1,800 shown as affected · total restriction after an unexpected UPI credit · NCRP reference available. Nothing is sent.",
+    "proofTitle": "What changed from input to output",
+    "proofSteps": [
+      {
+        "label": "INPUT",
+        "text": "Asha’s stated facts, restriction type, amount, date and available NCRP reference."
+      },
+      {
+        "label": "DECISION",
+        "text": "Ask for the written scope, ordering authority and official next step; do not assume the branch can release it."
+      },
+      {
+        "label": "OUTPUT",
+        "text": "A concise L1 draft, a relevant paper checklist and dated official contact sources for Asha to verify."
+      }
+    ],
     "sourcesTitle": "Official links and dated contact checks",
     "sourcesDesc": "Contacts are linked to their published source. Legal outcomes still depend on the actual order, facts and jurisdiction:",
     "sourceLabel": "SBI official page",
-    "letterTitle": "Your ready-to-send letter",
-    "letterDesc": "Written in your name, adapted to your situation. You review and send it yourself.",
+    "letterTitle": "Draft generated from the sample facts",
+    "letterDesc": "The summary comes first. Open the full letter only when you want to inspect every line.",
+    "letterFactNote": "total restriction · ₹1,800 · unexpected UPI credit · NCRP reference provided",
     "ctaTitle": "Your case won’t look like Asha’s.",
     "ctaBody": "The letter, papers, and next-step checklist adapt to the facts you enter. You can stop and reopen the case with your recovery code.",
     "startCta": "Start my own case",
@@ -435,10 +526,26 @@
   "WhatHappensNextCard": {
     "title": "What happens next",
     "timeline": [
-      { "when": "Now", "title": "Get the restriction details in writing", "desc": "Ask for the amount, restriction type, ordering authority, reference and bank grievance number." },
-      { "when": "After acknowledgement", "title": "Follow the bank's stated response date", "desc": "Keep proof of every submission and ask for status through the bank's published channel." },
-      { "when": "If a separate authority is named", "title": "Use a verified official channel", "desc": "Send a factual representation to the police, cyber, court or tax authority identified by the bank." },
-      { "when": "If bank service remains unresolved", "title": "Use the eligible grievance route", "desc": "Escalate through the bank's published process. RBI CMS may consider eligible bank-service complaints; it does not override authority orders." }
+      {
+        "when": "Now",
+        "title": "Get the restriction details in writing",
+        "desc": "Ask for the amount, restriction type, ordering authority, reference and bank grievance number."
+      },
+      {
+        "when": "After acknowledgement",
+        "title": "Follow the bank's stated response date",
+        "desc": "Keep proof of every submission and ask for status through the bank's published channel."
+      },
+      {
+        "when": "If a separate authority is named",
+        "title": "Use a verified official channel",
+        "desc": "Send a factual representation to the police, cyber, court or tax authority identified by the bank."
+      },
+      {
+        "when": "If bank service remains unresolved",
+        "title": "Use the eligible grievance route",
+        "desc": "Escalate through the bank's published process. RBI CMS may consider eligible bank-service complaints; it does not override authority orders."
+      }
     ]
   },
   "EditCaseDetails": {
@@ -519,8 +626,8 @@
     "redraftError": "Your details were saved, but the letter could not be rewritten yet. Refresh this page in a moment."
   },
   "UnfreezePathCard": {
-    "eyebrow": "Your real path to unfreeze",
-    "keyStepLabel": "Your most important next step",
+    "eyebrow": "Suggested route from the recorded reason",
+    "keyStepLabel": "Safest next step",
     "disclaimer": "This is practical information, not legal advice or an outcome guarantee. Verify the authority and current official route before sending anything."
   },
   "DoThisNowCard": {
@@ -588,6 +695,15 @@
     "stillNeeded": "Still needed before sending:",
     "completeHint": "Use the “Complete your details” box above — the letter rewrites itself.",
     "subject": "Subject: {subject}",
+    "basedOn": "Based on:",
+    "summaryTitle": "What this draft asks for",
+    "summaryAsk1": "Confirm the amount, type and scope of the restriction in writing.",
+    "summaryAsk2": "Identify the ordering authority and FIR/NCRP reference, if any.",
+    "summaryAsk3": "Register the grievance and give an acknowledgement plus the official next step.",
+    "showFullDraft": "Read the full draft",
+    "hideFullDraft": "Hide full draft",
+    "openToReview": "Open the full draft to check every line before approval.",
+    "fullDraftTitle": "Full letter draft",
     "reviewedByYou": "Reviewed by you",
     "readAndCheck": "Read the letter and check your details. Unhold never sends it for you.",
     "gateBlockedFallback": "This letter cannot be approved yet.",
@@ -615,78 +731,78 @@
     "caution": "Needs legal confirmation",
     "current": "Current law"
   },
-    "PapersChecklist": {
-      "reasonBanner": "For your <strong>{reason}</strong>, these are the papers that help most.",
-      "added": "{done} of {total} added",
-      "extraSuffix": " · {extra} extra",
-      "bankCallsThis": "bank calls this: {term}",
-      "saving": "Saving…",
-      "checking": "Checking…",
-      "replacePhoto": "Replace photo",
-      "savedChip": "✓ Saved",
-      "checkedChip": "✓ Checked",
-      "addPhoto": "Add photo",
-      "addPhotoAria": "Add photo — {label}",
-      "aiChecking": "AI is checking this document for you…",
-      "aiCheckingSub": "✓ File saved with its digital seal (proves no one changed it) · running the document check — usually under a minute.",
-      "pdfNoText": "We can't auto-check a PDF that has no readable text (a scan or photo saved as PDF). Please upload a clear photo (JPEG or PNG) of this page instead.",
-      "wrongDoc": "This doesn't look like {article} {kindLabel}. Please upload the right paper here — a clear photo or PDF of your {kindLabel}.",
-      "unreadable": "We couldn't read this clearly — please add a sharper, well-lit photo of the full page. Make sure all four corners and the text are visible.",
-      "flaggedIntro": "Saved with its digital seal. One thing is worth a quick check before you use it:",
-      "flaggedMismatch": "the {field} here ({found}) looks different from your notice ({expected}). It may be fine — just make sure you uploaded the right document.",
-      "savedHuman": "Saved with its digital seal. The file was not auto-read; review the original carefully before you use it in a letter.",
-      "noIssues": "No issues found automatically ({pct}% confidence — a first check, not a guarantee). Review the original document yourself before you use it.",
-      "replaceDifferent": "Replace with a different photo",
-      "extrasTitle": "Have more? These also help",
-      "optional": "(optional)",
-      "addedChip": "✓ Added",
-      "add": "Add",
-      "addAria": "Add — {label}",
-      "fileReadError": "We could not read that file — please pick it again.",
-      "uploadUrlError": "Failed to get upload URL",
-      "storageError": "Storage upload failed",
-      "confirmError": "Confirm failed",
-      "uploadError": "Upload failed",
-      "sameFile": "This is the same file you added as \"{usedLabel}\". Each paper should be a different document — please choose the real {realLabel}."
-    },
-    "MarkSentForm": {
-      "title": "Sent it? Save your proof.",
-      "subtitle": "A photo of the bank's stamp, a screenshot of your sent email, or the post receipt. Proof unlocks Letter {next}.",
-      "blockedDefault": "Prior level send proof is required before marking this letter sent.",
-      "blockedSubmit": "Complete prior level proof before marking sent.",
-      "addProofFirst": "Add a proof photo first — the bank stamp, your sent email, or the post receipt. Proof is what unlocks Letter {next}.",
-      "proofAdded": "✓ Proof added — {name}",
-      "addProofLabel": "+ Add proof photo (any phone photo or PDF)",
-      "uploading": "Uploading proof…",
-      "saving": "Saving…",
-      "submit": "✓ I sent Letter {n} — save proof",
-      "uploadStartError": "Could not start the proof upload",
-      "uploadFailed": "Proof upload failed — please try again.",
-      "confirmError": "Could not save the proof upload",
-      "markSentError": "We could not mark this letter as sent just yet. Your case is safe — please try again.",
-      "networkError": "Network error — please try again.",
-      "successNote": "✓ Letter marked sent. Keep the acknowledgement; we can remind you on the recorded follow-up date."
-    },
-    "SendByEmailCard": {
-      "eyebrow": "Send it by email — from your phone",
-      "branchLabel": "Your branch's email address",
-      "branchAria": "Your branch email",
-      "branchHelp": "It's printed on your passbook / bank statement (or ask your branch). This is the best address — it's your own branch, and it stays the same even if the manager changes.",
-      "to": "To:",
-      "yourBranch": "your branch",
-      "officialPage": "{bankName} official page",
-      "fallbackNote": "No branch email yet? Falling back to {bankName}'s general complaint inbox above.",
-      "fallbackDefault": "Submitting at your home branch first works best.",
-      "noEmailHelp": "Enter your branch email above (from your passbook), or <strong>copy the letter</strong> and take a printout to your branch in person.",
-      "portalSentence": "You can also use <link>{bankName}'s official complaint page ↗</link>.",
-      "openMail": "Open my email app — letter filled in",
-      "openMailHelp": "Your mail app opens with the letter already typed in. Check it, attach your proof pack, press send.",
-      "gmail": "Open in Gmail instead",
-      "copied": "✓ Copied — paste it anywhere",
-      "copy": "Copy the letter text",
-      "print": "Print the letter (clean A4)",
-      "unlock": "To unlock sending: <strong>fill your details</strong>, tick <strong>“I reviewed this draft”</strong>, and make your <strong>proof pack</strong> above.",
-      "attachReminder": "Before you press send: download the proof pack PDF and attach it to the email (or print it for the branch).",
-      "strongest": "<strong>Keep proof:</strong> print the letter, take it with your proof pack to your branch, and get a stamped acknowledgement or official reference number."
-    }
+  "PapersChecklist": {
+    "reasonBanner": "For your <strong>{reason}</strong>, these are the papers that help most.",
+    "added": "{done} of {total} added",
+    "extraSuffix": " · {extra} extra",
+    "bankCallsThis": "bank calls this: {term}",
+    "saving": "Saving…",
+    "checking": "Checking…",
+    "replacePhoto": "Replace photo",
+    "savedChip": "✓ Saved",
+    "checkedChip": "✓ Checked",
+    "addPhoto": "Add photo",
+    "addPhotoAria": "Add photo — {label}",
+    "aiChecking": "AI is checking this document for you…",
+    "aiCheckingSub": "✓ File saved with its digital seal (proves no one changed it) · running the document check — usually under a minute.",
+    "pdfNoText": "We can't auto-check a PDF that has no readable text (a scan or photo saved as PDF). Please upload a clear photo (JPEG or PNG) of this page instead.",
+    "wrongDoc": "This doesn't look like {article} {kindLabel}. Please upload the right paper here — a clear photo or PDF of your {kindLabel}.",
+    "unreadable": "We couldn't read this clearly — please add a sharper, well-lit photo of the full page. Make sure all four corners and the text are visible.",
+    "flaggedIntro": "Saved with its digital seal. One thing is worth a quick check before you use it:",
+    "flaggedMismatch": "the {field} here ({found}) looks different from your notice ({expected}). It may be fine — just make sure you uploaded the right document.",
+    "savedHuman": "Saved with its digital seal. The file was not auto-read; review the original carefully before you use it in a letter.",
+    "noIssues": "No issues found automatically ({pct}% confidence — a first check, not a guarantee). Review the original document yourself before you use it.",
+    "replaceDifferent": "Replace with a different photo",
+    "extrasTitle": "Have more? These also help",
+    "optional": "(optional)",
+    "addedChip": "✓ Added",
+    "add": "Add",
+    "addAria": "Add — {label}",
+    "fileReadError": "We could not read that file — please pick it again.",
+    "uploadUrlError": "Failed to get upload URL",
+    "storageError": "Storage upload failed",
+    "confirmError": "Confirm failed",
+    "uploadError": "Upload failed",
+    "sameFile": "This is the same file you added as \"{usedLabel}\". Each paper should be a different document — please choose the real {realLabel}."
+  },
+  "MarkSentForm": {
+    "title": "Sent it? Save your proof.",
+    "subtitle": "A photo of the bank's stamp, a screenshot of your sent email, or the post receipt. Proof unlocks Letter {next}.",
+    "blockedDefault": "Prior level send proof is required before marking this letter sent.",
+    "blockedSubmit": "Complete prior level proof before marking sent.",
+    "addProofFirst": "Add a proof photo first — the bank stamp, your sent email, or the post receipt. Proof is what unlocks Letter {next}.",
+    "proofAdded": "✓ Proof added — {name}",
+    "addProofLabel": "+ Add proof photo (any phone photo or PDF)",
+    "uploading": "Uploading proof…",
+    "saving": "Saving…",
+    "submit": "✓ I sent Letter {n} — save proof",
+    "uploadStartError": "Could not start the proof upload",
+    "uploadFailed": "Proof upload failed — please try again.",
+    "confirmError": "Could not save the proof upload",
+    "markSentError": "We could not mark this letter as sent just yet. Your case is safe — please try again.",
+    "networkError": "Network error — please try again.",
+    "successNote": "✓ Letter marked sent. Keep the acknowledgement; we can remind you on the recorded follow-up date."
+  },
+  "SendByEmailCard": {
+    "eyebrow": "Send it by email — from your phone",
+    "branchLabel": "Your branch's email address",
+    "branchAria": "Your branch email",
+    "branchHelp": "It's printed on your passbook / bank statement (or ask your branch). This is the best address — it's your own branch, and it stays the same even if the manager changes.",
+    "to": "To:",
+    "yourBranch": "your branch",
+    "officialPage": "{bankName} official page",
+    "fallbackNote": "No branch email yet? Falling back to {bankName}'s general complaint inbox above.",
+    "fallbackDefault": "Submitting at your home branch first works best.",
+    "noEmailHelp": "Enter your branch email above (from your passbook), or <strong>copy the letter</strong> and take a printout to your branch in person.",
+    "portalSentence": "You can also use <link>{bankName}'s official complaint page ↗</link>.",
+    "openMail": "Open my email app — letter filled in",
+    "openMailHelp": "Your mail app opens with the letter already typed in. Check it, attach your proof pack, press send.",
+    "gmail": "Open in Gmail instead",
+    "copied": "✓ Copied — paste it anywhere",
+    "copy": "Copy the letter text",
+    "print": "Print the letter (clean A4)",
+    "unlock": "To unlock sending: <strong>fill your details</strong>, tick <strong>“I reviewed this draft”</strong>, and make your <strong>proof pack</strong> above.",
+    "attachReminder": "Before you press send: download the proof pack PDF and attach it to the email (or print it for the branch).",
+    "strongest": "<strong>Keep proof:</strong> print the letter, take it with your proof pack to your branch, and get a stamped acknowledgement or official reference number."
+  }
 }

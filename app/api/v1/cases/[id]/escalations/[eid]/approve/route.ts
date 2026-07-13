@@ -1,11 +1,18 @@
-import type { NextRequest } from 'next/server';
-import { z } from 'zod';
-import { ApiError } from '@/lib/api/errors';
-import { getRequestId, handleRouteError, jsonSuccess } from '@/lib/api/response';
-import { requireCaseAccess } from '@/lib/auth/case-access';
-import { assertProofGate, checkProofGates } from '@/lib/escalations/proof-gates';
-import { createAdminClient } from '@/lib/supabase/admin';
-import { ApproveEscalationBodySchema } from '@/lib/validation/escalation-schemas';
+import type { NextRequest } from "next/server";
+import { z } from "zod";
+import { ApiError } from "@/lib/api/errors";
+import {
+  getRequestId,
+  handleRouteError,
+  jsonSuccess,
+} from "@/lib/api/response";
+import { assertCaseAccess, requireRequestAuth } from "@/lib/api/case-access";
+import {
+  assertProofGate,
+  checkProofGates,
+} from "@/lib/escalations/proof-gates";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { ApproveEscalationBodySchema } from "@/lib/validation/escalation-schemas";
 
 const ParamsSchema = z.object({
   id: z.string().uuid(),
@@ -19,7 +26,8 @@ export async function POST(
   const requestId = getRequestId(request);
   try {
     const params = ParamsSchema.parse(await context.params);
-    const access = await requireCaseAccess(request, params.id);
+    const auth = await requireRequestAuth(request);
+    await assertCaseAccess(params.id, auth, "editor");
 
     let body: unknown = {};
     try {
@@ -31,18 +39,22 @@ export async function POST(
 
     const admin = createAdminClient();
     const { data: escalation, error } = await admin
-      .from('escalations')
-      .select('*')
-      .eq('id', params.eid)
-      .eq('case_id', params.id)
+      .from("escalations")
+      .select("*")
+      .eq("id", params.eid)
+      .eq("case_id", params.id)
       .maybeSingle();
 
     if (error || !escalation) {
-      throw new ApiError(404, 'not_found', 'Escalation not found');
+      throw new ApiError(404, "not_found", "Escalation not found");
     }
 
-    if (!['draft', 'pending_approval'].includes(escalation.status)) {
-      throw new ApiError(409, 'conflict', `Cannot approve escalation in status ${escalation.status}`);
+    if (!["draft", "pending_approval"].includes(escalation.status)) {
+      throw new ApiError(
+        409,
+        "conflict",
+        `Cannot approve escalation in status ${escalation.status}`,
+      );
     }
 
     const gate = await checkProofGates(params.id, escalation.level);
@@ -50,24 +62,29 @@ export async function POST(
 
     const now = new Date().toISOString();
     const { data: updated, error: updateError } = await admin
-      .from('escalations')
+      .from("escalations")
       .update({
-        status: 'approved',
+        status: "approved",
         approved_at: now,
       })
-      .eq('id', params.eid)
-      .select('*')
+      .eq("id", params.eid)
+      .eq("case_id", params.id)
+      .select("*")
       .single();
 
     if (updateError || !updated) {
-      throw new ApiError(500, 'internal_error', updateError?.message ?? 'approve_failed');
+      throw new ApiError(
+        500,
+        "internal_error",
+        updateError?.message ?? "approve_failed",
+      );
     }
 
-    await admin.from('action_logs').insert({
+    await admin.from("action_logs").insert({
       case_id: params.id,
-      actor_type: access.actorType,
-      actor_id: access.actorId,
-      action: 'escalation.approved',
+      actor_type: auth.actorType,
+      actor_id: auth.actorId,
+      action: "escalation.approved",
       payload_json: {
         escalation_id: params.eid,
         level: escalation.level,

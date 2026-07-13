@@ -1,19 +1,22 @@
-import 'server-only';
+import "server-only";
 
-import { createAdminClient } from '@/lib/supabase/admin';
-import { routeCaseJobs, type RoutePlan } from '@/lib/agents/router';
-import { enqueueAgentJob } from '@/lib/jobs/enqueue';
-import { acquireCaseTickLock, releaseCaseTickLock } from '@/lib/loops/locks';
-import { computeNextCheckAt } from '@/lib/loops/scheduling';
-import { shouldTerminateLoop, TERMINAL_STATUSES } from '@/lib/loops/termination';
-import { appendSwarmEvent } from '@/lib/swarm/append-event';
-import { sendDeadlineReminderForCase } from '@/lib/email/send';
-import type { CaseTickResult, TickTrigger } from '@/lib/loops/tick-types';
-import type { Database, Json } from '@/supabase/database.types';
+import { createAdminClient } from "@/lib/supabase/admin";
+import { routeCaseJobs } from "@/lib/agents/router";
+import { enqueueAgentJob } from "@/lib/jobs/enqueue";
+import { acquireCaseTickLock, releaseCaseTickLock } from "@/lib/loops/locks";
+import { computeNextCheckAt } from "@/lib/loops/scheduling";
+import {
+  shouldTerminateLoop,
+  TERMINAL_STATUSES,
+} from "@/lib/loops/termination";
+import { appendSwarmEvent } from "@/lib/swarm/append-event";
+import { sendDeadlineReminderForCase } from "@/lib/email/send";
+import type { CaseTickResult, TickTrigger } from "@/lib/loops/tick-types";
+import type { Database, Json } from "@/supabase/database.types";
 
-type CaseRow = Database['public']['Tables']['cases']['Row'];
+type CaseRow = Database["public"]["Tables"]["cases"]["Row"];
 
-export type { TickTrigger, CaseTickResult } from '@/lib/loops/tick-types';
+export type { TickTrigger, CaseTickResult } from "@/lib/loops/tick-types";
 
 function floorTo15MinBucket(d: Date): string {
   const t = new Date(d);
@@ -24,10 +27,10 @@ function floorTo15MinBucket(d: Date): string {
 async function hasPendingHumanGate(caseId: string): Promise<boolean> {
   const supabase = createAdminClient();
   const { count } = await supabase
-    .from('human_gate_queue')
-    .select('id', { count: 'exact', head: true })
-    .eq('case_id', caseId)
-    .eq('status', 'pending');
+    .from("human_gate_queue")
+    .select("id", { count: "exact", head: true })
+    .eq("case_id", caseId)
+    .eq("status", "pending");
   return (count ?? 0) > 0;
 }
 
@@ -37,21 +40,21 @@ async function hasPendingHumanGate(caseId: string): Promise<boolean> {
  */
 export async function runCaseTick(
   caseId: string,
-  trigger: TickTrigger = { type: 'cron' },
+  trigger: TickTrigger = { type: "cron" },
 ): Promise<CaseTickResult> {
   const supabase = createAdminClient();
   const tickId = crypto.randomUUID();
 
   const locked = await acquireCaseTickLock(caseId, 120);
   if (!locked) {
-    return { exit: 'skipped', reason: 'concurrent_tick' };
+    return { exit: "skipped", reason: "concurrent_tick" };
   }
 
   try {
     const { data: caseRow, error } = await supabase
-      .from('cases')
-      .select('*')
-      .eq('id', caseId)
+      .from("cases")
+      .select("*")
+      .eq("id", caseId)
       .single();
 
     if (error || !caseRow) {
@@ -61,27 +64,35 @@ export async function runCaseTick(
     const termination = shouldTerminateLoop(caseRow);
     if (
       termination ||
-      TERMINAL_STATUSES.includes(caseRow.status as (typeof TERMINAL_STATUSES)[number])
+      TERMINAL_STATUSES.includes(
+        caseRow.status as (typeof TERMINAL_STATUSES)[number],
+      )
     ) {
-      return { exit: 'skipped', reason: 'terminal' };
+      return { exit: "skipped", reason: "terminal" };
     }
 
     if (caseRow.swarm_paused) {
-      return { exit: 'skipped', reason: 'paused' };
+      return { exit: "skipped", reason: "paused" };
     }
 
     const now = new Date();
-    if (trigger.type === 'cron' && caseRow.next_check_at && new Date(caseRow.next_check_at) > now) {
-      return { exit: 'skipped', reason: 'not_due' };
+    if (
+      trigger.type === "cron" &&
+      caseRow.next_check_at &&
+      new Date(caseRow.next_check_at) > now
+    ) {
+      return { exit: "skipped", reason: "not_due" };
     }
 
     if (await hasPendingHumanGate(caseId)) {
       const pollAt = new Date(now.getTime() + 6 * 60 * 60 * 1000).toISOString();
       await supabase
-        .from('cases')
-        .update({ next_check_at: pollAt } as Database['public']['Tables']['cases']['Update'])
-        .eq('id', caseId);
-      return { exit: 'skipped', reason: 'human_gate' };
+        .from("cases")
+        .update({
+          next_check_at: pollAt,
+        } as Database["public"]["Tables"]["cases"]["Update"])
+        .eq("id", caseId);
+      return { exit: "skipped", reason: "human_gate" };
     }
 
     // Deadline-lapse hook: if the user opted in and a user-action deadline has
@@ -95,15 +106,19 @@ export async function runCaseTick(
     }
 
     const routePlan = await routeCaseJobs(caseRow as CaseRow, trigger);
-    const nextCheckAt = computeNextCheckAt(caseRow as CaseRow, routePlan).toISOString();
+    const nextCheckAt = computeNextCheckAt(
+      caseRow as CaseRow,
+      routePlan,
+    ).toISOString();
 
     const priorMeta =
-      typeof caseRow.metadata_json === 'object' && caseRow.metadata_json !== null
+      typeof caseRow.metadata_json === "object" &&
+      caseRow.metadata_json !== null
         ? (caseRow.metadata_json as Record<string, unknown>)
         : {};
 
     await supabase
-      .from('cases')
+      .from("cases")
       .update({
         next_check_at: nextCheckAt,
         last_activity_at: now.toISOString(),
@@ -112,8 +127,8 @@ export async function runCaseTick(
           last_tick_id: tickId,
           last_tick_trigger: trigger,
         } as Json,
-      } as Database['public']['Tables']['cases']['Update'])
-      .eq('id', caseId);
+      } as Database["public"]["Tables"]["cases"]["Update"])
+      .eq("id", caseId);
 
     const bucket = floorTo15MinBucket(now);
     const jobsEnqueued: string[] = [];
@@ -122,7 +137,8 @@ export async function runCaseTick(
       if (!job.enqueue) continue;
 
       const idempotencyKey =
-        job.idempotency_key ?? `${job.job_type}:${caseId}:${job.idempotency_bucket ?? bucket}`;
+        job.idempotency_key ??
+        `${job.job_type}:${caseId}:${job.idempotency_bucket ?? bucket}`;
 
       const result = await enqueueAgentJob({
         case_id: caseId,
@@ -140,16 +156,21 @@ export async function runCaseTick(
 
     await appendSwarmEvent({
       case_id: caseId,
-      agent_role: 'HUMAN_OPS',
-      event_type: 'tick_completed',
-      severity: 'info',
+      agent_role: "HUMAN_OPS",
+      event_type: "tick_completed",
+      severity: "info",
       message: `Monitor tick ${tickId}: ${jobsEnqueued.length} job(s) enqueued`,
       automated: true,
-      metadata: { tick_id: tickId, trigger, jobs_enqueued: jobsEnqueued, route_plan: routePlan },
+      metadata: {
+        tick_id: tickId,
+        trigger,
+        jobs_enqueued: jobsEnqueued,
+        route_plan: routePlan,
+      },
     });
 
     return {
-      exit: 'completed',
+      exit: "completed",
       tick_id: tickId,
       case_id: caseId,
       jobs_enqueued: jobsEnqueued,
@@ -173,17 +194,19 @@ export async function runBatchCaseTicks(options?: {
   const now = new Date().toISOString();
 
   const { data: dueCases } = await supabase
-    .from('cases')
-    .select('id')
-    .lte('next_check_at', now)
-    .not('status', 'in', `(${TERMINAL_STATUSES.join(',')})`)
-    .eq('swarm_paused', false)
-    .order('next_check_at', { ascending: true })
+    .from("cases")
+    .select("id")
+    .lte("next_check_at", now)
+    .not("status", "in", `(${TERMINAL_STATUSES.join(",")})`)
+    .eq("swarm_paused", false)
+    .order("next_check_at", { ascending: true })
     .limit(limit);
 
   const results: CaseTickResult[] = [];
   for (const row of dueCases ?? []) {
-    results.push(await runCaseTick(row.id, options?.trigger ?? { type: 'cron' }));
+    results.push(
+      await runCaseTick(row.id, options?.trigger ?? { type: "cron" }),
+    );
   }
 
   return { processed: results.length, results };

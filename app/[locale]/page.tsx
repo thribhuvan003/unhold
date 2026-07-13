@@ -1,39 +1,40 @@
-import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
-import { JsonLd } from '@/components/seo/JsonLd';
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 type Props = { params: Promise<{ locale: string }> };
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://www.unhold.live';
+  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+  "https://www.unhold.live";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const isHi = locale === 'hi';
+  const isHi = locale === "hi";
   const title = isHi
-    ? 'Unhold — बैंक खाता फ्रीज? पैकेज बनाएं और अनफ्रीज़ रास्ता देखें'
-    : 'Unhold — bank account frozen? Build your freeze package & unfreeze path';
+    ? "Unhold — बैंक खाता फ्रीज केस को चरण-दर-चरण व्यवस्थित करें"
+    : "Unhold — organise a bank-account freeze case, step by step";
   const description = isHi
-    ? 'साइबर शिकायत या UPI क्रेडिट के बाद खाता फ्रीज? Unhold कागजात, सील्ड प्रूफ पैक और पत्र तैयार करता है। मुफ़्त — आप खुद भेजते हैं। हेल्पलाइन 1930।'
-    : 'Bank account frozen after a cyber complaint or UPI credit? Unhold prepares papers, a sealed proof pack, and letters. Free — you send everything. Helpline 1930.';
-  const path = isHi ? '/hi' : '/';
+    ? "Unhold बैंक प्रतिबंध की जानकारी, सबूत और भेजने से पहले समीक्षा किए जाने वाले पत्र ड्राफ्ट व्यवस्थित करने में मदद करता है। कोई परिणाम गारंटी नहीं।"
+    : "Unhold helps organise bank-restriction facts, evidence and review-before-send letter drafts. You verify and send everything; no outcome guarantee.";
+  const path = isHi ? "/hi" : "/";
   return {
     title: { absolute: title },
     description,
     alternates: {
-      canonical: `${siteUrl}${path === '/' ? '' : path}`,
+      canonical: `${siteUrl}${path === "/" ? "" : path}`,
       languages: {
         en: siteUrl,
         hi: `${siteUrl}/hi`,
-        'x-default': siteUrl,
+        "x-default": siteUrl,
       },
     },
     openGraph: {
       title,
       description,
-      url: `${siteUrl}${path === '/' ? '' : path}`,
-      locale: isHi ? 'hi_IN' : 'en_IN',
+      url: `${siteUrl}${path === "/" ? "" : path}`,
+      locale: isHi ? "hi_IN" : "en_IN",
     },
   };
 }
@@ -41,71 +42,68 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('HomePage');
-  const steps = t.raw('steps') as { title: string; desc: string }[];
-  const stories = t.raw('stories') as { who: string; line: string }[];
-  const otherLocale = locale === 'hi' ? 'en' : 'hi';
-  const isHi = locale === 'hi';
+  const t = await getTranslations("HomePage");
+  const steps = t.raw("steps") as { title: string; desc: string }[];
+  const stories = t.raw("stories") as { who: string; line: string }[];
+  const otherLocale = locale === "hi" ? "en" : "hi";
+  const isHi = locale === "hi";
 
   const jsonLd = [
     {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: 'Unhold',
-      alternateName: ['unhold.live', 'Unhold bank freeze'],
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Unhold",
+      alternateName: ["unhold.live", "Unhold bank freeze"],
       url: siteUrl,
-      inLanguage: ['en-IN', 'hi-IN'],
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: `${siteUrl}/start`,
-        'query-input': 'required name=search_term_string',
-      },
+      inLanguage: ["en-IN", "hi-IN"],
     },
     {
-      '@context': 'https://schema.org',
-      '@type': 'SoftwareApplication',
-      name: 'Unhold',
-      applicationCategory: 'FinanceApplication',
-      operatingSystem: 'Web',
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Unhold",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
       url: siteUrl,
       description:
-        'Free tool to prepare an Indian bank-account freeze grievance package: papers, sealed proof pack, and letters you send yourself.',
+        "Tool to organise an Indian bank-account restriction case: facts, evidence and review-before-send letter drafts.",
     },
     {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
       mainEntity: [
         {
-          '@type': 'Question',
-          name: isHi ? 'बैंक अकाउंट फ्रीज होने पर क्या करें?' : 'What should I do if my bank account is frozen?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: isHi
-              ? '1930 पर कॉल करें, फ्रीज SMS/स्टेटमेंट/PAN इकट्ठा करें, और Unhold से शिकायत पत्र + प्रूफ पैक तैयार करें। अनफ्रीज़ बैंक/पुलिस तय करती है — हम कुछ नहीं भेजते।'
-              : 'Call 1930, gather freeze SMS/statement/PAN, and use Unhold to prepare your grievance letter and proof pack. Only the bank or police can unfreeze — we never send on your behalf.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: isHi ? 'Unhold क्या है?' : 'What is Unhold?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: isHi
-              ? 'Unhold (unhold.live) भारत में बैंक खाता फ्रीज के लिए मुफ़्त तैयारी टूल है — पत्र, प्रूफ पैक और फॉलो-अप। आप खुद भेजते हैं।'
-              : 'Unhold (unhold.live) is a free preparation tool for Indian bank freezes — letters, proof pack and follow-ups. You send everything yourself.',
-          },
-        },
-        {
-          '@type': 'Question',
+          "@type": "Question",
           name: isHi
-            ? 'क्या पूरा खाता फ्रीज कानूनी है?'
-            : 'Can the whole account stay frozen for a small disputed amount?',
+            ? "बैंक अकाउंट फ्रीज होने पर क्या करें?"
+            : "What should I do if my bank account is frozen?",
           acceptedAnswer: {
-            '@type': 'Answer',
+            "@type": "Answer",
             text: isHi
-              ? 'Unhold यह तय नहीं कर सकता। बैंक से लिखित में रुकी रकम, आदेश देने वाली अथॉरिटी और रेफरेंस नंबर माँगें; ज़रूरत हो तो स्वतंत्र कानूनी सलाह लें।'
-              : 'Unhold cannot decide this. Ask the bank in writing for the amount held, the ordering authority, and the reference number; get independent legal advice if needed.',
+              ? "बैंक से प्रतिबंध की लिखित जानकारी और आदेश देने वाली अथॉरिटी पूछें। यदि आप साइबर अपराध की रिपोर्ट कर रहे हैं तो आधिकारिक पोर्टल या 1930 का उपयोग करें। Unhold केवल जानकारी और ड्राफ्ट व्यवस्थित करता है।"
+              : "Ask the bank for written restriction details and the ordering authority. If you are reporting cybercrime, use the official portal or 1930. Unhold only organises information and drafts.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: isHi ? "Unhold क्या है?" : "What is Unhold?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: isHi
+              ? "Unhold (unhold.live) बैंक प्रतिबंध केस की जानकारी, सबूत, पत्र ड्राफ्ट और फॉलो-अप व्यवस्थित करने का टूल है। आप हर चीज़ की जाँच करके खुद भेजते हैं।"
+              : "Unhold (unhold.live) organises bank-restriction facts, evidence, letter drafts and follow-ups. You review and send everything yourself.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: isHi
+            ? "क्या पूरा खाता फ्रीज कानूनी है?"
+            : "Can the whole account stay frozen for a small disputed amount?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: isHi
+              ? "Unhold यह तय नहीं कर सकता। बैंक से लिखित में रुकी रकम, आदेश देने वाली अथॉरिटी और रेफरेंस नंबर माँगें; ज़रूरत हो तो स्वतंत्र कानूनी सलाह लें।"
+              : "Unhold cannot decide this. Ask the bank in writing for the amount held, the ordering authority, and the reference number; get independent legal advice if needed.",
           },
         },
       ],
@@ -117,30 +115,34 @@ export default async function HomePage({ params }: Props) {
       <JsonLd data={jsonLd} />
       <section className="u-hero animate-fade-up px-5 py-6">
         <div className="relative z-[1]">
-          <p className="type-eyebrow">{t('eyebrow')}</p>
-          <h1 className="type-display-xl mt-2.5 text-[1.8125rem] leading-[1.06]">{t('title')}</h1>
+          <p className="type-eyebrow">{t("eyebrow")}</p>
+          <h1 className="type-display-xl mt-2.5 text-[1.8125rem] leading-[1.06]">
+            {t("title")}
+          </h1>
           <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--ink-muted)]">
-            {t.rich('intro', {
-              strong: (chunks) => <strong className="text-[var(--ink)]">{chunks}</strong>,
+            {t.rich("intro", {
+              strong: (chunks) => (
+                <strong className="text-[var(--ink)]">{chunks}</strong>
+              ),
             })}
           </p>
           <Link
             href="/start"
             className="u-btn u-btn-primary mt-4 flex min-h-[52px] w-full text-base font-semibold"
           >
-            {t('startCta')}
+            {t("startCta")}
           </Link>
           <Link
             href="/my-case"
             className="u-btn u-btn-ghost mt-2.5 flex min-h-[44px] w-full text-sm font-medium"
           >
-            {t('openCaseCta')}
+            {t("openCaseCta")}
           </Link>
           <Link
             href="/open-case"
-            className="mt-2 block min-h-[40px] text-center text-[0.8125rem] font-semibold text-[var(--ink-muted)] no-underline"
+            className="mt-2 block min-h-[44px] text-center text-[0.8125rem] font-semibold text-[var(--ink-muted)] no-underline"
           >
-            {t('recoverCta')}
+            {t("recoverCta")}
           </Link>
           <Link
             href="/"
@@ -148,7 +150,7 @@ export default async function HomePage({ params }: Props) {
             lang={otherLocale}
             className="mt-3 block min-h-[44px] text-center text-sm font-semibold text-[var(--color-sky-deep)] no-underline"
           >
-            {t('otherLangCta')}
+            {t("otherLangCta")}
           </Link>
         </div>
       </section>
@@ -167,9 +169,11 @@ export default async function HomePage({ params }: Props) {
           ▶
         </span>
         <span className="flex-1">
-          <span className="block text-[0.9375rem] font-bold text-white">{t('demoTitle')}</span>
+          <span className="block text-[0.9375rem] font-bold text-white">
+            {t("demoTitle")}
+          </span>
           <span className="mt-0.5 block text-[0.8125rem] leading-normal text-white/80">
-            {t('demoDesc')}
+            {t("demoDesc")}
           </span>
         </span>
         <span className="flex-none text-lg text-white/90" aria-hidden="true">
@@ -178,7 +182,7 @@ export default async function HomePage({ params }: Props) {
       </Link>
 
       <section className="u-card animate-fade-up stagger-1 px-4 py-4">
-        <p className="type-eyebrow">{t('howItWorksLabel')}</p>
+        <p className="type-eyebrow">{t("howItWorksLabel")}</p>
         <div className="mt-3 flex flex-col gap-2.5">
           {steps.map((step, i) => (
             <div key={i} className="flex items-start gap-3">
@@ -186,8 +190,12 @@ export default async function HomePage({ params }: Props) {
                 {i + 1}
               </span>
               <div className="min-w-0">
-                <p className="mt-0.5 text-sm font-semibold text-[var(--ink)]">{step.title}</p>
-                <p className="mt-px text-[0.78125rem] leading-normal text-[var(--ink-faint)]">{step.desc}</p>
+                <p className="mt-0.5 text-sm font-semibold text-[var(--ink)]">
+                  {step.title}
+                </p>
+                <p className="mt-px text-[0.78125rem] leading-normal text-[var(--ink-faint)]">
+                  {step.desc}
+                </p>
               </div>
             </div>
           ))}
@@ -195,27 +203,36 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       <section className="u-card animate-fade-up stagger-1 px-4 py-4">
-        <p className="type-eyebrow">{t('storiesLabel')}</p>
+        <p className="type-eyebrow">{t("storiesLabel")}</p>
         <div className="mt-3 flex flex-col gap-2.5">
           {stories.map((s) => (
             <div
               key={s.who}
               className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5"
             >
-              <p className="text-[0.8125rem] font-bold text-[var(--ink)]">{s.who}</p>
-              <p className="mt-1 text-[0.78125rem] leading-relaxed text-[var(--ink-muted)]">{s.line}</p>
+              <p className="text-[0.8125rem] font-bold text-[var(--ink)]">
+                {s.who}
+              </p>
+              <p className="mt-1 text-[0.78125rem] leading-relaxed text-[var(--ink-muted)]">
+                {s.line}
+              </p>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[0.6875rem] leading-relaxed text-[var(--ink-faint)]">{t('storiesFoot')}</p>
+        <p className="mt-3 text-[0.6875rem] leading-relaxed text-[var(--ink-faint)]">
+          {t("storiesFoot")}
+        </p>
       </section>
 
       <section className="animate-fade-up stagger-2 rounded-[var(--radius-lg)] border border-[var(--saffron)]/35 bg-[var(--warn-muted)] px-4 py-3.5">
         <p className="text-[0.8125rem] leading-relaxed text-[var(--ink)]">
-          {t.rich('goodToKnow', {
+          {t.rich("goodToKnow", {
             strong: (chunks) => <strong>{chunks}</strong>,
             helpline: (chunks) => (
-              <a href="tel:1930" className="font-bold text-[var(--color-sky-deep)] no-underline">
+              <a
+                href="tel:1930"
+                className="font-bold text-[var(--color-sky-deep)] no-underline"
+              >
                 {chunks}
               </a>
             ),
@@ -229,7 +246,7 @@ export default async function HomePage({ params }: Props) {
         href="/guides/sop-2026"
         className="animate-fade-up stagger-3 block px-1 text-[0.8125rem] font-semibold text-[var(--color-sky-deep)] no-underline"
       >
-        {t('rightsLink')}
+        {t("rightsLink")}
       </Link>
     </div>
   );

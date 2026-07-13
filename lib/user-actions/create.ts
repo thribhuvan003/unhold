@@ -1,16 +1,17 @@
-import 'server-only';
+import "server-only";
 
-import { MISSING_DOC_LABELS } from '@/lib/agents/intake/rules';
-import { createAdminClient } from '@/lib/supabase/admin';
-import type { Database } from '@/supabase/database.types';
+import { MISSING_DOC_LABELS } from "@/lib/agents/intake/rules";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { Database } from "@/supabase/database.types";
 
-type UserActionType = Database['public']['Enums']['user_action_type'];
+type UserActionType = Database["public"]["Enums"]["user_action_type"];
 
-type UserActionInsert = Database['public']['Tables']['user_actions']['Insert'] & {
-  escalation_id?: string | null;
-  evidence_id?: string | null;
-  metadata_json?: Database['public']['Tables']['user_actions']['Row']['metadata_json'];
-};
+type UserActionInsert =
+  Database["public"]["Tables"]["user_actions"]["Insert"] & {
+    escalation_id?: string | null;
+    evidence_id?: string | null;
+    metadata_json?: Database["public"]["Tables"]["user_actions"]["Row"]["metadata_json"];
+  };
 
 export type CreateUserActionInput = {
   case_id: string;
@@ -24,22 +25,24 @@ export type CreateUserActionInput = {
   metadata?: Record<string, unknown>;
 };
 
-export async function createUserAction(input: CreateUserActionInput): Promise<string> {
+export async function createUserAction(
+  input: CreateUserActionInput,
+): Promise<string> {
   const supabase = createAdminClient();
 
   const { data: existing } = await supabase
-    .from('user_actions')
-    .select('id')
-    .eq('case_id', input.case_id)
-    .eq('action_type', input.action_type)
-    .is('completed_at', null)
-    .is('dismissed_at', null)
+    .from("user_actions")
+    .select("id")
+    .eq("case_id", input.case_id)
+    .eq("action_type", input.action_type)
+    .is("completed_at", null)
+    .is("dismissed_at", null)
     .maybeSingle();
 
   if (existing?.id) return existing.id;
 
   const { data, error } = await supabase
-    .from('user_actions')
+    .from("user_actions")
     .insert({
       case_id: input.case_id,
       action_type: input.action_type,
@@ -49,31 +52,27 @@ export async function createUserAction(input: CreateUserActionInput): Promise<st
       due_at: input.due_at ?? null,
       escalation_id: input.escalation_id ?? null,
       evidence_id: input.evidence_id ?? null,
-      metadata_json: (input.metadata ?? {}) as UserActionInsert['metadata_json'],
+      metadata_json: (input.metadata ??
+        {}) as UserActionInsert["metadata_json"],
     } satisfies UserActionInsert)
-    .select('id')
+    .select("id")
     .single();
 
   if (error || !data) {
-    throw new Error(`create_user_action_failed: ${error?.message ?? 'unknown'}`);
+    throw new Error(
+      `create_user_action_failed: ${error?.message ?? "unknown"}`,
+    );
   }
 
-  type CasePatch = Database['public']['Tables']['cases']['Update'] & {
-    user_action_required?: boolean;
-    next_user_action_type?: UserActionType | null;
-    next_user_action_due_at?: string | null;
-    last_activity_at?: string;
-  };
-
   await supabase
-    .from('cases')
+    .from("cases")
     .update({
       user_action_required: true,
       next_user_action_type: input.action_type,
       next_user_action_due_at: input.due_at ?? null,
       last_activity_at: new Date().toISOString(),
-    } as unknown as Database['public']['Tables']['cases']['Update'])
-    .eq('id', input.case_id);
+    } as unknown as Database["public"]["Tables"]["cases"]["Update"])
+    .eq("id", input.case_id);
 
   return data.id;
 }
@@ -100,7 +99,7 @@ export async function createUserActionsFromIntake(
 
     const id = await createUserAction({
       case_id: caseId,
-      action_type: 'upload_evidence',
+      action_type: "upload_evidence",
       title: label.title,
       description: `Required document: ${slug}`,
       priority: DOC_PRIORITY[slug] ?? 60,
@@ -122,19 +121,19 @@ export async function createUserActionFromMonitor(input: {
   priority?: number;
 }): Promise<string> {
   const actionTypeMap: Record<string, UserActionType> = {
-    upload_evidence: 'upload_evidence',
-    complete_checklist: 'complete_checklist',
-    review_letter: 'review_letter',
-    respond_monitoring: 'respond_monitoring',
+    upload_evidence: "upload_evidence",
+    complete_checklist: "complete_checklist",
+    review_letter: "review_letter",
+    respond_monitoring: "respond_monitoring",
   };
 
-  const action_type = actionTypeMap[input.action_code] ?? 'respond_monitoring';
+  const action_type = actionTypeMap[input.action_code] ?? "respond_monitoring";
 
   return createUserAction({
     case_id: input.case_id,
     action_type,
     title: input.action_title,
     priority: input.priority ?? 55,
-    metadata: { source: 'monitor_tick', action_code: input.action_code },
+    metadata: { source: "monitor_tick", action_code: input.action_code },
   });
 }

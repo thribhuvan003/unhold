@@ -1,26 +1,28 @@
-# Components — Presentation Layer
+# Presentation layer
 
-**Flexible.** Backend and API contracts are stable; this folder can be restyled anytime.
+Components render product state and call versioned API routes; they do not use the Supabase service role or
+write application tables directly.
 
-## Rules
+## Conventions
 
-1. **Props in, UI out** — no `createAdminClient()` in client components
-2. **No case status mutations** — call API routes only
-3. **Money** — use `components/ui/MoneyDisplay.tsx` (paise → en-IN)
-4. **Tokens** — prefer `lib/ui/tokens.ts` for colors/fonts
+- Keep a page's primary action visually dominant and progressively disclose supporting detail.
+- Use the shared UI tokens and primitives before adding one-off colours, spacing, or controls.
+- Format money from integer paise with `MoneyDisplay`.
+- Keep interactive targets at least 44 CSS pixels where layout permits.
+- Preserve visible focus, semantic labels, status announcements, and keyboard order.
+- Treat every letter as a review-before-send draft; never add a send-to-authority control.
+- Test public journeys at desktop and Pixel-sized viewports and run axe checks.
 
 ## Folders
 
-| Folder | Purpose |
-|--------|---------|
-| `case/` | NextStepsCard (primary), ActionInbox, SwarmLogPanel |
-| `evidence/` | EvidenceUploader |
-| `escalations/` | MarkSentForm + proof UX |
-| `letters/` | LetterPreview — copy only, no send |
-| `legal/` | DisclaimerModal, ConsentCheckbox |
-| `ops/` | QueueTable |
-| `ui/` | Shared primitives |
+| Folder         | Responsibility                                                 |
+| -------------- | -------------------------------------------------------------- |
+| `case/`        | Case status, next actions, papers, letter ladder, and activity |
+| `evidence/`    | Private upload and verification feedback                       |
+| `escalations/` | Approval and proof-gated mark-sent interactions                |
+| `letters/`     | Concise draft summary and progressive full-letter review       |
+| `legal/`       | Disclaimer and consent surfaces                                |
+| `ops/`         | Authenticated operations UI                                    |
+| `ui/`          | Reusable primitives                                            |
 
-## Policy
-
-`docs/FRONTEND_POLICY.md` — Phase 1 = flows correct, not pixel-perfect.
+Product language follows [`docs/PRODUCT_AND_SAFETY.md`](../docs/PRODUCT_AND_SAFETY.md).

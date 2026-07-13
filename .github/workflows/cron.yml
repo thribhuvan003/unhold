@@ -1,17 +1,20 @@
 name: Unhold cron (job queue + tick)
 
+permissions:
+  contents: read
+
 # Vercel's Hobby plan allows only 2 daily crons (used by reminders + rankings in
 # vercel.json). Frequent job processing + monitor ticks run here instead — free,
 # works on any Vercel plan. On Vercel Pro you may instead add these to
 # vercel.json "crons" and disable this workflow.
 #
 # Required repo secrets (Settings → Secrets and variables → Actions):
-#   APP_URL      e.g. https://unholdd.vercel.app   (no trailing slash)
+#   APP_URL      e.g. https://www.unhold.live   (no trailing slash)
 #   CRON_SECRET  same value as the Vercel env var
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # every 10 minutes (GitHub Actions minimum is 5)
+    - cron: "*/10 * * * *" # every 10 minutes (GitHub Actions minimum is 5)
   workflow_dispatch: {}
 
 concurrency:
@@ -24,15 +27,17 @@ jobs:
     steps:
       - name: Process job queue
         run: |
-          curl -fsS -m 280 -X POST "$APP_URL/api/v1/internal/jobs/process" \
-            -H "Authorization: Bearer $CRON_SECRET" || echo "jobs/process failed (non-fatal)"
+          curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors \
+            --max-time 280 -X POST "$APP_URL/api/v1/internal/jobs/process" \
+            -H "Authorization: Bearer $CRON_SECRET"
         env:
           APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
       - name: Monitor tick
         run: |
-          curl -fsS -m 280 -X POST "$APP_URL/api/v1/internal/cron/tick" \
-            -H "Authorization: Bearer $CRON_SECRET" || echo "cron/tick failed (non-fatal)"
+          curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors \
+            --max-time 280 -X POST "$APP_URL/api/v1/internal/cron/tick" \
+            -H "Authorization: Bearer $CRON_SECRET"
         env:
           APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}

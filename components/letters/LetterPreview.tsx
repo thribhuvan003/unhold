@@ -1,13 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
-import { Check, Loader2 } from 'lucide-react';
-import { PLACEHOLDER_FIELDS, localizePlaceholderField, placeholderExplanation } from '@/components/letters/placeholder-labels';
-import { HindiLetterCompanion } from '@/components/letters/HindiLetterCompanion';
-import type { UnfreezeTrack } from '@/lib/case/unfreeze-path';
-import { Button } from '@/components/ui/Button';
+import { useId, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { Check, ChevronDown, Loader2 } from "lucide-react";
+import {
+  PLACEHOLDER_FIELDS,
+  localizePlaceholderField,
+  placeholderExplanation,
+} from "@/components/letters/placeholder-labels";
+import { HindiLetterCompanion } from "@/components/letters/HindiLetterCompanion";
+import type { UnfreezeTrack } from "@/lib/case/unfreeze-path";
+import { Button } from "@/components/ui/Button";
 
 type LetterPreviewProps = {
   caseId?: string;
@@ -21,6 +25,12 @@ type LetterPreviewProps = {
   /** Freeze track — when set, a reviewed Hindi companion is shown below the
    *  English letter (on both /en and /hi). */
   track?: UnfreezeTrack;
+  /** Optional case facts shown before the long draft. */
+  factSummary?: string;
+  /** Optional scenario-specific asks; safe generic asks are used otherwise. */
+  summaryItems?: string[];
+  /** Keep false for mobile; tests may opt in. */
+  initiallyExpanded?: boolean;
   /** Lifts the review state so the send card can unlock. */
   onApproved?: () => void;
   /** Same proof gate the approve API enforces, checked up front so the user
@@ -44,14 +54,24 @@ export function LetterPreview({
   escalationId,
   evidenceReady,
   track,
+  factSummary,
+  summaryItems,
+  initiallyExpanded = false,
   onApproved,
   gateBlocked = false,
   gateBlockedReason,
   gateBlockedHref,
   gateBlockedLinkLabel,
 }: LetterPreviewProps) {
-  const t = useTranslations('LetterPreview');
+  const t = useTranslations("LetterPreview");
   const locale = useLocale();
+  const bodyId = useId();
+  const [expanded, setExpanded] = useState(initiallyExpanded);
+  const asks = summaryItems ?? [
+    t("summaryAsk1"),
+    t("summaryAsk2"),
+    t("summaryAsk3"),
+  ];
   const [isApproved, setIsApproved] = useState(approved);
   const [approving, setApproving] = useState(false);
   const [approveError, setApproveError] = useState<string | null>(null);
@@ -61,19 +81,22 @@ export function LetterPreview({
     setApproving(true);
     setApproveError(null);
     try {
-      const res = await fetch(`/api/v1/cases/${caseId}/escalations/${escalationId}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ consent_acknowledged: true }),
-      });
+      const res = await fetch(
+        `/api/v1/cases/${caseId}/escalations/${escalationId}/approve`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ consent_acknowledged: true }),
+        },
+      );
       if (!res.ok) {
         const json = await res.json().catch(() => ({}));
-        throw new Error(json.error?.message ?? t('approveError'));
+        throw new Error(json.error?.message ?? t("approveError"));
       }
       setIsApproved(true);
       onApproved?.();
     } catch (err) {
-      setApproveError(err instanceof Error ? err.message : t('approveError'));
+      setApproveError(err instanceof Error ? err.message : t("approveError"));
     } finally {
       setApproving(false);
     }
@@ -82,88 +105,172 @@ export function LetterPreview({
   if (!evidenceReady) {
     return (
       <article className="u-card border-[var(--warn)]/30 bg-[var(--warn-muted)] p-4 text-sm text-[var(--ink)]">
-        <p className="font-semibold">{t('papersFirstTitle')}</p>
-        <p className="mt-1 text-[var(--ink-muted)]">{t('papersFirstBody')}</p>
-        <a href={`/cases/${caseId}/papers`} className="mt-2 inline-block font-medium underline">
-          {t('addPapers')}
+        <p className="font-semibold">{t("papersFirstTitle")}</p>
+        <p className="mt-1 text-[var(--ink-muted)]">{t("papersFirstBody")}</p>
+        <a
+          href={`/cases/${caseId}/papers`}
+          className="mt-2 inline-block font-medium underline"
+        >
+          {t("addPapers")}
         </a>
       </article>
     );
   }
 
   return (
-    <article data-testid="letter-preview" className="u-card animate-fade-up p-4">
+    <article
+      data-testid="letter-preview"
+      className="u-card animate-fade-up p-4"
+    >
       <div className="mb-3.5 flex items-center justify-between gap-2">
         <span className="type-mono-data rounded-md border border-[var(--error)]/30 bg-[var(--error-muted)] px-2.5 py-1 text-[0.6875rem] font-bold tracking-wide text-[var(--error)]">
-          {t('draftOnly')}
+          {t("draftOnly")}
         </span>
       </div>
 
-      <div className="u-letter-disclaimer">{t('checkBeforeSend')}</div>
+      <div className="u-letter-disclaimer">{t("checkBeforeSend")}</div>
 
       {placeholdersMissing.length > 0 ? (
         <div className="mb-3.5 rounded-[var(--radius-md)] border border-[var(--warn)]/30 bg-[var(--warn-muted)] px-3.5 py-3 text-sm text-[var(--ink)]">
-          <p className="font-semibold">{t('stillNeeded')}</p>
+          <p className="font-semibold">{t("stillNeeded")}</p>
           <ul className="mt-1 list-inside list-disc space-y-0.5 text-[var(--ink-muted)]">
             {placeholdersMissing.map((p) => (
-              <li key={p}>{(PLACEHOLDER_FIELDS[p] && localizePlaceholderField(PLACEHOLDER_FIELDS[p], locale).label) ?? placeholderExplanation(p, locale) ?? p}</li>
+              <li key={p}>
+                {(PLACEHOLDER_FIELDS[p] &&
+                  localizePlaceholderField(PLACEHOLDER_FIELDS[p], locale)
+                    .label) ??
+                  placeholderExplanation(p, locale) ??
+                  p}
+              </li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-[var(--ink-muted)]">{t('completeHint')}</p>
+          <p className="mt-2 text-xs text-[var(--ink-muted)]">
+            {t("completeHint")}
+          </p>
         </div>
       ) : null}
 
-      <p className="type-mono-data text-xs text-ink-faint">{t('subject', { subject })}</p>
-      <pre className="u-letter-body mt-3 overflow-x-auto text-[0.8125rem]">{body}</pre>
+      {factSummary ? (
+        <p className="mb-3 rounded-[var(--radius-md)] bg-[var(--surface)] px-3 py-2 text-xs leading-relaxed text-[var(--ink-muted)]">
+          <strong className="text-[var(--ink)]">{t("basedOn")}</strong>{" "}
+          {factSummary}
+        </p>
+      ) : null}
 
-      {track ? <HindiLetterCompanion track={track} /> : null}
+      <section aria-labelledby={`${bodyId}-summary`}>
+        <h3
+          id={`${bodyId}-summary`}
+          className="text-sm font-semibold text-[var(--ink)]"
+        >
+          {t("summaryTitle")}
+        </h3>
+        <ul className="mt-2 space-y-2 text-[0.8125rem] leading-normal text-[var(--ink-muted)]">
+          {asks.map((item) => (
+            <li key={item} className="flex gap-2">
+              <Check
+                className="mt-0.5 h-4 w-4 flex-none text-[var(--success)]"
+                aria-hidden="true"
+              />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <div className="mt-4 border-t border-[var(--surface)] pt-3.5">
-        {isApproved ? (
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--success-muted)] px-3 py-1 text-xs font-semibold text-[var(--success)]">
-            <Check className="h-3.5 w-3.5" aria-hidden="true" />
-            {t('reviewedByYou')}
-          </span>
-        ) : (
-          <>
-            <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{t('readAndCheck')}</p>
-            {gateBlocked ? (
-              <div role="alert" className="u-alert u-alert-warn mt-3">
-                <p>{gateBlockedReason ?? t('gateBlockedFallback')}</p>
-                {gateBlockedHref ? (
-                  <Link href={gateBlockedHref} className="mt-1 inline-block font-medium underline">
-                    {gateBlockedLinkLabel ?? t('fixThis')}
-                  </Link>
+      <p className="type-mono-data mt-3 text-xs text-ink-faint">
+        {t("subject", { subject })}
+      </p>
+      <button
+        type="button"
+        aria-expanded={expanded}
+        aria-controls={bodyId}
+        onClick={() => setExpanded((open) => !open)}
+        className="u-btn u-btn-secondary mt-3 min-h-[44px] w-full justify-between text-sm font-semibold"
+      >
+        {expanded ? t("hideFullDraft") : t("showFullDraft")}
+        <ChevronDown
+          className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        />
+      </button>
+      {!expanded ? (
+        <p className="mt-2 text-xs text-[var(--ink-faint)]">
+          {t("openToReview")}
+        </p>
+      ) : null}
+
+      {expanded ? (
+        <>
+          <div id={bodyId} className="mt-3">
+            <h3 className="sr-only">{t("fullDraftTitle")}</h3>
+            <pre className="u-letter-body overflow-x-auto text-[0.8125rem]">
+              {body}
+            </pre>
+            {track ? <HindiLetterCompanion track={track} /> : null}
+          </div>
+
+          <div className="mt-4 border-t border-[var(--surface)] pt-3.5">
+            {isApproved ? (
+              <span className="inline-flex items-center gap-2 rounded-full bg-[var(--success-muted)] px-3 py-1 text-xs font-semibold text-[var(--success)]">
+                <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                {t("reviewedByYou")}
+              </span>
+            ) : (
+              <>
+                <p className="text-sm leading-relaxed text-[var(--ink-muted)]">
+                  {t("readAndCheck")}
+                </p>
+                {gateBlocked ? (
+                  <div role="alert" className="u-alert u-alert-warn mt-3">
+                    <p>{gateBlockedReason ?? t("gateBlockedFallback")}</p>
+                    {gateBlockedHref ? (
+                      <Link
+                        href={gateBlockedHref}
+                        className="mt-1 inline-block font-medium underline"
+                      >
+                        {gateBlockedLinkLabel ?? t("fixThis")}
+                      </Link>
+                    ) : null}
+                  </div>
                 ) : null}
-              </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={
+                    approving ||
+                    gateBlocked ||
+                    placeholdersMissing.length > 0 ||
+                    !caseId ||
+                    !escalationId
+                  }
+                  onClick={handleApprove}
+                  className="mt-2.5 w-full gap-2"
+                >
+                  {approving ? (
+                    <Loader2
+                      className="h-4 w-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <Check className="h-4 w-4" aria-hidden="true" />
+                  )}
+                  {t("iReviewed")}
+                </Button>
+                {placeholdersMissing.length > 0 ? (
+                  <p className="mt-2 text-xs text-[var(--ink-faint)]">
+                    {t("fillMissing")}
+                  </p>
+                ) : null}
+              </>
+            )}
+            {approveError ? (
+              <p role="alert" className="u-alert u-alert-warn mt-3">
+                {approveError}
+              </p>
             ) : null}
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={
-                approving || gateBlocked || placeholdersMissing.length > 0 || !caseId || !escalationId
-              }
-              onClick={handleApprove}
-              className="mt-2.5 w-full gap-2"
-            >
-              {approving ? (
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              ) : (
-                <Check className="h-4 w-4" aria-hidden="true" />
-              )}
-              {t('iReviewed')}
-            </Button>
-            {placeholdersMissing.length > 0 ? (
-              <p className="mt-2 text-xs text-[var(--ink-faint)]">{t('fillMissing')}</p>
-            ) : null}
-          </>
-        )}
-        {approveError ? (
-          <p role="alert" className="u-alert u-alert-warn mt-3">
-            {approveError}
-          </p>
-        ) : null}
-      </div>
+          </div>
+        </>
+      ) : null}
     </article>
   );
 }

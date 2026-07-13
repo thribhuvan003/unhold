@@ -17,7 +17,7 @@ export type Database = {
         Row: {
           id: string;
           case_id: string;
-          actor_type: Database['public']['Enums']['actor_type'];
+          actor_type: Database["public"]["Enums"]["actor_type"];
           actor_id: string | null;
           action: string;
           payload_json: Json;
@@ -28,7 +28,7 @@ export type Database = {
         Insert: {
           id?: string;
           case_id: string;
-          actor_type: Database['public']['Enums']['actor_type'];
+          actor_type: Database["public"]["Enums"]["actor_type"];
           actor_id?: string | null;
           action: string;
           payload_json?: Json;
@@ -39,11 +39,11 @@ export type Database = {
         Update: never; // append-only
         Relationships: [
           {
-            foreignKeyName: 'action_logs_case_id_fkey';
-            columns: ['case_id'];
+            foreignKeyName: "action_logs_case_id_fkey";
+            columns: ["case_id"];
             isOneToOne: false;
-            referencedRelation: 'cases';
-            referencedColumns: ['id'];
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -52,8 +52,8 @@ export type Database = {
           id: string;
           case_id: string;
           job_type: string;
-          agent_role: Database['public']['Enums']['agent_role'] | null;
-          status: Database['public']['Enums']['job_status'];
+          agent_role: Database["public"]["Enums"]["agent_role"] | null;
+          status: Database["public"]["Enums"]["job_status"];
           idempotency_key: string;
           payload_json: Json;
           result_json: Json;
@@ -71,8 +71,8 @@ export type Database = {
           id?: string;
           case_id: string;
           job_type: string;
-          agent_role?: Database['public']['Enums']['agent_role'] | null;
-          status?: Database['public']['Enums']['job_status'];
+          agent_role?: Database["public"]["Enums"]["agent_role"] | null;
+          status?: Database["public"]["Enums"]["job_status"];
           idempotency_key: string;
           payload_json?: Json;
           result_json?: Json;
@@ -87,21 +87,22 @@ export type Database = {
           created_at?: string;
         };
         Update: {
-          status?: Database['public']['Enums']['job_status'];
+          status?: Database["public"]["Enums"]["job_status"];
           result_json?: Json;
           error_message?: string | null;
           attempts?: number;
+          scheduled_at?: string;
           started_at?: string | null;
           completed_at?: string | null;
           cost_usd?: number;
         };
         Relationships: [
           {
-            foreignKeyName: 'agent_jobs_case_id_fkey';
-            columns: ['case_id'];
+            foreignKeyName: "agent_jobs_case_id_fkey";
+            columns: ["case_id"];
             isOneToOne: false;
-            referencedRelation: 'cases';
-            referencedColumns: ['id'];
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -109,26 +110,26 @@ export type Database = {
         Row: {
           id: string;
           case_id: string | null;
-          seal_type: Database['public']['Enums']['seal_type'];
+          seal_type: Database["public"]["Enums"]["seal_type"];
           manifest_sha256: string;
           manifest_json: Json;
           sealed_content_path: string | null;
           sealed_content_bucket: string;
           sealed_by: string | null;
-          sealed_by_type: Database['public']['Enums']['actor_type'];
+          sealed_by_type: Database["public"]["Enums"]["actor_type"];
           metadata_json: Json;
           created_at: string;
         };
         Insert: {
           id?: string;
           case_id?: string | null;
-          seal_type: Database['public']['Enums']['seal_type'];
+          seal_type: Database["public"]["Enums"]["seal_type"];
           manifest_sha256: string;
           manifest_json?: Json;
           sealed_content_path?: string | null;
           sealed_content_bucket?: string;
           sealed_by?: string | null;
-          sealed_by_type?: Database['public']['Enums']['actor_type'];
+          sealed_by_type?: Database["public"]["Enums"]["actor_type"];
           metadata_json?: Json;
           created_at?: string;
         };
@@ -141,7 +142,7 @@ export type Database = {
           bank_id: string;
           bank_scores_id: string | null;
           dispute_type: string;
-          status: Database['public']['Enums']['dispute_status'];
+          status: Database["public"]["Enums"]["dispute_status"];
           reporter_email_hash: string | null;
           dispute_text: string;
           evidence_urls: string[];
@@ -157,7 +158,7 @@ export type Database = {
           bank_id: string;
           bank_scores_id?: string | null;
           dispute_type?: string;
-          status?: Database['public']['Enums']['dispute_status'];
+          status?: Database["public"]["Enums"]["dispute_status"];
           reporter_email_hash?: string | null;
           dispute_text: string;
           evidence_urls?: string[];
@@ -169,7 +170,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          status?: Database['public']['Enums']['dispute_status'];
+          status?: Database["public"]["Enums"]["dispute_status"];
           resolution_notes?: string | null;
           resolved_by?: string | null;
           resolved_at?: string | null;
@@ -217,7 +218,7 @@ export type Database = {
           computed_at?: string;
           created_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['bank_scores']['Insert']>;
+        Update: Partial<Database["public"]["Tables"]["bank_scores"]["Insert"]>;
         Relationships: [];
       };
       banks: {
@@ -226,7 +227,7 @@ export type Database = {
           slug: string;
           name: string;
           short_name: string | null;
-          bank_type: Database['public']['Enums']['bank_type'];
+          bank_type: Database["public"]["Enums"]["bank_type"];
           ifsc_prefix: string | null;
           nodal_email: string | null;
           nodal_phone: string | null;
@@ -245,7 +246,7 @@ export type Database = {
           slug: string;
           name: string;
           short_name?: string | null;
-          bank_type?: Database['public']['Enums']['bank_type'];
+          bank_type?: Database["public"]["Enums"]["bank_type"];
           ifsc_prefix?: string | null;
           nodal_email?: string | null;
           nodal_phone?: string | null;
@@ -259,7 +260,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['banks']['Insert']>;
+        Update: Partial<Database["public"]["Tables"]["banks"]["Insert"]>;
         Relationships: [];
       };
       cases: {
@@ -270,11 +271,13 @@ export type Database = {
           guest_session_id: string | null;
           bank_id: string | null;
           playbook_id: string | null;
-          status: Database['public']['Enums']['case_status'];
-          freeze_reason: Database['public']['Enums']['freeze_reason'] | null;
-          freeze_type: Database['public']['Enums']['freeze_type'] | null;
-          victim_role: Database['public']['Enums']['victim_role'] | null;
-          resolution_type: Database['public']['Enums']['resolution_type'] | null;
+          status: Database["public"]["Enums"]["case_status"];
+          freeze_reason: Database["public"]["Enums"]["freeze_reason"] | null;
+          freeze_type: Database["public"]["Enums"]["freeze_type"] | null;
+          victim_role: Database["public"]["Enums"]["victim_role"] | null;
+          resolution_type:
+            | Database["public"]["Enums"]["resolution_type"]
+            | null;
           frozen_amount_paise: number | null;
           released_amount_paise: number | null;
           account_last4: string | null;
@@ -286,13 +289,15 @@ export type Database = {
           narration_codes: string[];
           intake_json: Json;
           classification_confidence: number | null;
-          escalation_level: Database['public']['Enums']['escalation_level'];
+          escalation_level: Database["public"]["Enums"]["escalation_level"];
           swarm_paused: boolean;
           agent_cost_usd: number;
           agent_cost_cap_usd: number;
           user_action_required: boolean;
           next_check_at: string | null;
-          next_user_action_type: Database['public']['Enums']['user_action_type'] | null;
+          next_user_action_type:
+            | Database["public"]["Enums"]["user_action_type"]
+            | null;
           next_user_action_due_at: string | null;
           public_stats_opt_in: boolean;
           satisfaction_score: number | null;
@@ -317,10 +322,10 @@ export type Database = {
           guest_session_id?: string | null;
           bank_id?: string | null;
           playbook_id?: string | null;
-          status?: Database['public']['Enums']['case_status'];
-          freeze_reason?: Database['public']['Enums']['freeze_reason'] | null;
-          freeze_type?: Database['public']['Enums']['freeze_type'] | null;
-          victim_role?: Database['public']['Enums']['victim_role'] | null;
+          status?: Database["public"]["Enums"]["case_status"];
+          freeze_reason?: Database["public"]["Enums"]["freeze_reason"] | null;
+          freeze_type?: Database["public"]["Enums"]["freeze_type"] | null;
+          victim_role?: Database["public"]["Enums"]["victim_role"] | null;
           frozen_amount_paise?: number | null;
           intake_json?: Json;
           narration_codes?: string[];
@@ -328,9 +333,11 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['cases']['Insert']> & {
-          status?: Database['public']['Enums']['case_status'];
-          resolution_type?: Database['public']['Enums']['resolution_type'] | null;
+        Update: Partial<Database["public"]["Tables"]["cases"]["Insert"]> & {
+          status?: Database["public"]["Enums"]["case_status"];
+          resolution_type?:
+            | Database["public"]["Enums"]["resolution_type"]
+            | null;
           metadata_json?: Json;
           last_activity_at?: string;
         };
@@ -342,7 +349,7 @@ export type Database = {
           user_id: string | null;
           guest_session_id: string | null;
           case_id: string | null;
-          consent_type: Database['public']['Enums']['consent_type'];
+          consent_type: Database["public"]["Enums"]["consent_type"];
           granted: boolean;
           consent_text_version: string;
           consent_text_hash: string;
@@ -356,7 +363,7 @@ export type Database = {
           user_id?: string | null;
           guest_session_id?: string | null;
           case_id?: string | null;
-          consent_type: Database['public']['Enums']['consent_type'];
+          consent_type: Database["public"]["Enums"]["consent_type"];
           granted: boolean;
           consent_text_version: string;
           consent_text_hash: string;
@@ -372,9 +379,9 @@ export type Database = {
         Row: {
           id: string;
           case_id: string;
-          level: Database['public']['Enums']['escalation_level'];
-          channel: Database['public']['Enums']['escalation_channel'];
-          status: Database['public']['Enums']['escalation_status'];
+          level: Database["public"]["Enums"]["escalation_level"];
+          channel: Database["public"]["Enums"]["escalation_channel"];
+          status: Database["public"]["Enums"]["escalation_status"];
           letter_template_id: string | null;
           letter_subject: string | null;
           letter_body: string | null;
@@ -388,7 +395,7 @@ export type Database = {
           response_received_at: string | null;
           response_evidence_id: string | null;
           wait_days: number;
-          created_by_agent: Database['public']['Enums']['agent_role'] | null;
+          created_by_agent: Database["public"]["Enums"]["agent_role"] | null;
           metadata_json: Json;
           created_at: string;
           updated_at: string;
@@ -396,17 +403,19 @@ export type Database = {
         Insert: {
           id?: string;
           case_id: string;
-          level: Database['public']['Enums']['escalation_level'];
-          channel: Database['public']['Enums']['escalation_channel'];
-          status?: Database['public']['Enums']['escalation_status'];
+          level: Database["public"]["Enums"]["escalation_level"];
+          channel: Database["public"]["Enums"]["escalation_channel"];
+          status?: Database["public"]["Enums"]["escalation_status"];
           letter_template_id?: string | null;
           letter_body?: string | null;
           wait_days?: number;
           created_at?: string;
           updated_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['escalations']['Insert']> & {
-          status?: Database['public']['Enums']['escalation_status'];
+        Update: Partial<
+          Database["public"]["Tables"]["escalations"]["Insert"]
+        > & {
+          status?: Database["public"]["Enums"]["escalation_status"];
           sent_at?: string | null;
           sent_proof_evidence_id?: string | null;
         };
@@ -416,7 +425,7 @@ export type Database = {
         Row: {
           id: string;
           case_id: string;
-          evidence_type: Database['public']['Enums']['evidence_type'];
+          evidence_type: Database["public"]["Enums"]["evidence_type"];
           storage_path: string;
           storage_bucket: string;
           original_filename: string | null;
@@ -442,7 +451,7 @@ export type Database = {
         Insert: {
           id?: string;
           case_id: string;
-          evidence_type: Database['public']['Enums']['evidence_type'];
+          evidence_type: Database["public"]["Enums"]["evidence_type"];
           storage_path: string;
           storage_bucket?: string;
           sha256: string;
@@ -464,8 +473,8 @@ export type Database = {
           case_id: string;
           input_kind: string;
           evidence_id: string | null;
-          freeze_reason: Database['public']['Enums']['freeze_reason'];
-          severity: Database['public']['Enums']['notice_severity'];
+          freeze_reason: Database["public"]["Enums"]["freeze_reason"];
+          severity: Database["public"]["Enums"]["notice_severity"];
           confidence: number;
           plain_english: string;
           what_this_means: string;
@@ -484,8 +493,8 @@ export type Database = {
           case_id: string;
           input_kind: string;
           evidence_id?: string | null;
-          freeze_reason: Database['public']['Enums']['freeze_reason'];
-          severity: Database['public']['Enums']['notice_severity'];
+          freeze_reason: Database["public"]["Enums"]["freeze_reason"];
+          severity: Database["public"]["Enums"]["notice_severity"];
           confidence: number;
           plain_english: string;
           what_this_means: string;
@@ -508,20 +517,22 @@ export type Database = {
         Row: {
           id: string;
           case_id: string;
-          tier: Database['public']['Enums']['fee_tier'];
+          tier: Database["public"]["Enums"]["fee_tier"];
           contingency_rate: number;
           contingency_cap_paise: number;
           contingency_min_paise: number;
           amount_released_paise: number | null;
           fee_due_paise: number | null;
           fee_collected_paise: number;
-          invoice_status: Database['public']['Enums']['invoice_status'];
+          invoice_status: Database["public"]["Enums"]["invoice_status"];
           invoice_number: string | null;
           invoice_issued_at: string | null;
           invoice_paid_at: string | null;
           e_signed_at: string | null;
           e_sign_ip_hash: string | null;
-          resolution_type: Database['public']['Enums']['resolution_type'] | null;
+          resolution_type:
+            | Database["public"]["Enums"]["resolution_type"]
+            | null;
           metadata_json: Json;
           created_at: string;
           updated_at: string;
@@ -529,13 +540,15 @@ export type Database = {
         Insert: {
           id?: string;
           case_id: string;
-          tier?: Database['public']['Enums']['fee_tier'];
+          tier?: Database["public"]["Enums"]["fee_tier"];
           contingency_rate?: number;
           e_signed_at?: string | null;
         };
-        Update: Partial<Database['public']['Tables']['fee_agreements']['Insert']> & {
+        Update: Partial<
+          Database["public"]["Tables"]["fee_agreements"]["Insert"]
+        > & {
           fee_due_paise?: number | null;
-          invoice_status?: Database['public']['Enums']['invoice_status'];
+          invoice_status?: Database["public"]["Enums"]["invoice_status"];
         };
         Relationships: [];
       };
@@ -579,7 +592,7 @@ export type Database = {
           case_id: string;
           queue_reason: string;
           priority: number;
-          status: Database['public']['Enums']['human_gate_status'];
+          status: Database["public"]["Enums"]["human_gate_status"];
           assigned_to: string | null;
           assigned_at: string | null;
           resolved_at: string | null;
@@ -594,10 +607,12 @@ export type Database = {
           case_id: string;
           queue_reason: string;
           priority?: number;
-          status?: Database['public']['Enums']['human_gate_status'];
+          status?: Database["public"]["Enums"]["human_gate_status"];
         };
-        Update: Partial<Database['public']['Tables']['human_gate_queue']['Insert']> & {
-          status?: Database['public']['Enums']['human_gate_status'];
+        Update: Partial<
+          Database["public"]["Tables"]["human_gate_queue"]["Insert"]
+        > & {
+          status?: Database["public"]["Enums"]["human_gate_status"];
           assigned_to?: string | null;
           resolved_at?: string | null;
         };
@@ -608,7 +623,7 @@ export type Database = {
           id: string;
           case_id: string;
           grantee_user_id: string;
-          permission_level: Database['public']['Enums']['permission_level'];
+          permission_level: Database["public"]["Enums"]["permission_level"];
           granted_by: string | null;
           expires_at: string | null;
           revoked_at: string | null;
@@ -618,12 +633,12 @@ export type Database = {
           id?: string;
           case_id: string;
           grantee_user_id: string;
-          permission_level?: Database['public']['Enums']['permission_level'];
+          permission_level?: Database["public"]["Enums"]["permission_level"];
           granted_by?: string | null;
           expires_at?: string | null;
         };
         Update: {
-          permission_level?: Database['public']['Enums']['permission_level'];
+          permission_level?: Database["public"]["Enums"]["permission_level"];
           revoked_at?: string | null;
         };
         Relationships: [];
@@ -633,8 +648,8 @@ export type Database = {
           id: string;
           slug: string;
           bank_id: string | null;
-          freeze_reason: Database['public']['Enums']['freeze_reason'];
-          victim_role: Database['public']['Enums']['victim_role'];
+          freeze_reason: Database["public"]["Enums"]["freeze_reason"];
+          victim_role: Database["public"]["Enums"]["victim_role"];
           title: string;
           description: string | null;
           steps_json: Json;
@@ -650,15 +665,15 @@ export type Database = {
         Insert: {
           id?: string;
           slug: string;
-          freeze_reason: Database['public']['Enums']['freeze_reason'];
-          victim_role: Database['public']['Enums']['victim_role'];
+          freeze_reason: Database["public"]["Enums"]["freeze_reason"];
+          victim_role: Database["public"]["Enums"]["victim_role"];
           title: string;
           steps_json?: Json;
           checklist_json?: Json;
           timeline_copy_json?: Json;
           templates_json?: Json;
         };
-        Update: Partial<Database['public']['Tables']['playbooks']['Insert']>;
+        Update: Partial<Database["public"]["Tables"]["playbooks"]["Insert"]>;
         Relationships: [];
       };
       profiles: {
@@ -667,7 +682,7 @@ export type Database = {
           phone: string | null;
           email: string | null;
           full_name: string | null;
-          role: Database['public']['Enums']['user_role'];
+          role: Database["public"]["Enums"]["user_role"];
           locale: string;
           timezone: string;
           consent_at: string | null;
@@ -683,18 +698,18 @@ export type Database = {
           phone?: string | null;
           email?: string | null;
           full_name?: string | null;
-          role?: Database['public']['Enums']['user_role'];
+          role?: Database["public"]["Enums"]["user_role"];
         };
-        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
+        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
         Relationships: [];
       };
       swarm_events: {
         Row: {
           id: string;
           case_id: string;
-          agent_role: Database['public']['Enums']['agent_role'];
+          agent_role: Database["public"]["Enums"]["agent_role"];
           event_type: string;
-          severity: Database['public']['Enums']['swarm_event_severity'];
+          severity: Database["public"]["Enums"]["swarm_event_severity"];
           message: string;
           message_hi: string | null;
           metadata_json: Json;
@@ -706,10 +721,10 @@ export type Database = {
         Insert: {
           id?: string;
           case_id: string;
-          agent_role: Database['public']['Enums']['agent_role'];
+          agent_role: Database["public"]["Enums"]["agent_role"];
           event_type: string;
           message: string;
-          severity?: Database['public']['Enums']['swarm_event_severity'];
+          severity?: Database["public"]["Enums"]["swarm_event_severity"];
           automated?: boolean;
           created_at?: string;
         };
@@ -720,7 +735,7 @@ export type Database = {
         Row: {
           id: string;
           case_id: string;
-          action_type: Database['public']['Enums']['user_action_type'];
+          action_type: Database["public"]["Enums"]["user_action_type"];
           title: string;
           description: string | null;
           title_hi: string | null;
@@ -736,7 +751,7 @@ export type Database = {
         Insert: {
           id?: string;
           case_id: string;
-          action_type: Database['public']['Enums']['user_action_type'];
+          action_type: Database["public"]["Enums"]["user_action_type"];
           title: string;
           description?: string | null;
           priority?: number;
@@ -756,7 +771,7 @@ export type Database = {
           public_id: string;
           event_at: string;
           action: string;
-          actor_type: Database['public']['Enums']['actor_type'];
+          actor_type: Database["public"]["Enums"]["actor_type"];
           payload_json: Json;
         };
         Relationships: [];
@@ -784,10 +799,10 @@ export type Database = {
       append_swarm_event: {
         Args: {
           p_case_id: string;
-          p_agent_role: Database['public']['Enums']['agent_role'];
+          p_agent_role: Database["public"]["Enums"]["agent_role"];
           p_event_type: string;
           p_message: string;
-          p_severity?: Database['public']['Enums']['swarm_event_severity'];
+          p_severity?: Database["public"]["Enums"]["swarm_event_severity"];
           p_message_hi?: string;
           p_metadata_json?: Json;
           p_automated?: boolean;
@@ -810,18 +825,18 @@ export type Database = {
       transition_case: {
         Args: {
           p_case_id: string;
-          p_to_status: Database['public']['Enums']['case_status'];
+          p_to_status: Database["public"]["Enums"]["case_status"];
           p_trigger: string;
-          p_actor_type?: Database['public']['Enums']['actor_type'];
+          p_actor_type?: Database["public"]["Enums"]["actor_type"];
           p_actor_id?: string;
           p_payload_json?: Json;
         };
-        Returns: Database['public']['Tables']['cases']['Row'];
+        Returns: Database["public"]["Tables"]["cases"]["Row"];
       };
       has_case_access: {
         Args: {
           p_case_id: string;
-          p_min_level?: Database['public']['Enums']['permission_level'];
+          p_min_level?: Database["public"]["Enums"]["permission_level"];
         };
         Returns: boolean;
       };
@@ -866,115 +881,162 @@ export type Database = {
       };
     };
     Enums: {
-      actor_type: 'user' | 'guest' | 'agent' | 'operator' | 'system' | 'cron';
-      agent_role: 'INTAKE' | 'MONITOR' | 'EVIDENCE' | 'DRAFTER' | 'ESCALATOR' | 'VERIFIER' | 'PRESSURE' | 'HUMAN_OPS';
-      bank_type: 'public_sector' | 'private' | 'cooperative' | 'payment_bank' | 'small_finance' | 'foreign' | 'other';
+      actor_type: "user" | "guest" | "agent" | "operator" | "system" | "cron";
+      agent_role:
+        | "INTAKE"
+        | "MONITOR"
+        | "EVIDENCE"
+        | "DRAFTER"
+        | "ESCALATOR"
+        | "VERIFIER"
+        | "PRESSURE"
+        | "HUMAN_OPS";
+      bank_type:
+        | "public_sector"
+        | "private"
+        | "cooperative"
+        | "payment_bank"
+        | "small_finance"
+        | "foreign"
+        | "other";
       case_status:
-        | 'new'
-        | 'intake_scoping'
-        | 'monitoring'
-        | 'evidence_building'
-        | 'escalation'
-        | 'awaiting_response'
-        | 'verified'
-        | 'resolved'
-        | 'stalled'
-        | 'retried'
-        | 'human_escalation'
-        | 'closed'
-        | 'public_pressure';
+        | "new"
+        | "intake_scoping"
+        | "monitoring"
+        | "evidence_building"
+        | "escalation"
+        | "awaiting_response"
+        | "verified"
+        | "resolved"
+        | "stalled"
+        | "retried"
+        | "human_escalation"
+        | "closed"
+        | "public_pressure";
       consent_type:
-        | 'terms_privacy'
-        | 'case_data_processing'
-        | 'evidence_upload'
-        | 'ai_ocr_processing'
-        | 'cross_border_ai'
-        | 'public_stats_opt_in'
-        | 'whatsapp_sms_reminders'
-        | 'email_reminders'
-        | 'fee_agreement'
-        | 'escalation_send';
-      dispute_status: 'open' | 'under_review' | 'upheld' | 'rejected' | 'withdrawn';
+        | "terms_privacy"
+        | "case_data_processing"
+        | "evidence_upload"
+        | "ai_ocr_processing"
+        | "cross_border_ai"
+        | "public_stats_opt_in"
+        | "whatsapp_sms_reminders"
+        | "email_reminders"
+        | "fee_agreement"
+        | "escalation_send";
+      dispute_status:
+        | "open"
+        | "under_review"
+        | "upheld"
+        | "rejected"
+        | "withdrawn";
       escalation_channel:
-        | 'branch_manager'
-        | 'nodal_officer'
-        | 'principal_nodal_officer'
-        | 'internal_ombudsman'
-        | 'rbi_cms'
-        | 'consumer_commission'
-        | 'rti'
-        | 'cpgrams'
-        | 'high_court_writ';
-      escalation_level: 'L1' | 'L2' | 'L3' | 'L4';
-      escalation_status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'response_received' | 'timeout' | 'skipped';
+        | "branch_manager"
+        | "nodal_officer"
+        | "principal_nodal_officer"
+        | "internal_ombudsman"
+        | "rbi_cms"
+        | "consumer_commission"
+        | "rti"
+        | "cpgrams"
+        | "high_court_writ";
+      escalation_level: "L1" | "L2" | "L3" | "L4";
+      escalation_status:
+        | "draft"
+        | "pending_approval"
+        | "approved"
+        | "sent"
+        | "response_received"
+        | "timeout"
+        | "skipped";
       evidence_type:
-        | 'freeze_sms'
-        | 'bank_statement'
-        | 'passbook_screenshot'
-        | 'ncrp_acknowledgement'
-        | 'police_fir'
-        | 'pan_card'
-        | 'aadhaar_masked'
-        | 'chat_screenshot'
-        | 'letter_sent_proof'
-        | 'bank_release_letter'
-        | 'court_order'
-        | 'other';
-      fee_tier: 'free' | 'escalate_999' | 'rbi_1499';
+        | "freeze_sms"
+        | "bank_statement"
+        | "passbook_screenshot"
+        | "ncrp_acknowledgement"
+        | "police_fir"
+        | "pan_card"
+        | "aadhaar_masked"
+        | "chat_screenshot"
+        | "letter_sent_proof"
+        | "bank_release_letter"
+        | "court_order"
+        | "other";
+      fee_tier: "free" | "escalate_999" | "rbi_1499";
       freeze_reason:
-        | 'cyber_upi_chain'
-        | 'suspected_mule'
-        | 'kyc_expired'
-        | 'tax_gst_attachment'
-        | 'court_order'
-        | 'police_notice_bnss106'
-        | 'bank_str'
-        | 'cheque_dishonour'
-        | 'death_nomination_dispute';
-      freeze_type: 'debit_freeze' | 'credit_freeze' | 'total_freeze' | 'partial_lien';
-      human_gate_status: 'pending' | 'assigned' | 'resolved' | 'dismissed';
-      invoice_status: 'none' | 'issued' | 'paid' | 'waived' | 'disputed';
-      job_status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'dead_letter';
-      notice_severity: 'low' | 'medium' | 'high' | 'critical';
-      permission_level: 'owner' | 'editor' | 'viewer' | 'parent_readonly';
+        | "cyber_upi_chain"
+        | "suspected_mule"
+        | "kyc_expired"
+        | "tax_gst_attachment"
+        | "court_order"
+        | "police_notice_bnss106"
+        | "bank_str"
+        | "cheque_dishonour"
+        | "death_nomination_dispute";
+      freeze_type:
+        | "debit_freeze"
+        | "credit_freeze"
+        | "total_freeze"
+        | "partial_lien";
+      human_gate_status: "pending" | "assigned" | "resolved" | "dismissed";
+      invoice_status: "none" | "issued" | "paid" | "waived" | "disputed";
+      job_status:
+        | "pending"
+        | "running"
+        | "completed"
+        | "failed"
+        | "cancelled"
+        | "dead_letter";
+      notice_severity: "low" | "medium" | "high" | "critical";
+      permission_level: "owner" | "editor" | "viewer" | "parent_readonly";
       resolution_type:
-        | 'full_unfreeze'
-        | 'partial_release'
-        | 'lien_lifted_innocent_receiver'
-        | 'stalled'
-        | 'closed_user_abandoned'
-        | 'referred_legal'
-        | 'rejected';
-      seal_type: 'evidence_bundle' | 'action_log_export' | 'data_export' | 'audit_manifest';
-      swarm_event_severity: 'debug' | 'info' | 'warn' | 'error' | 'human_required';
+        | "full_unfreeze"
+        | "partial_release"
+        | "lien_lifted_innocent_receiver"
+        | "stalled"
+        | "closed_user_abandoned"
+        | "referred_legal"
+        | "rejected";
+      seal_type:
+        | "evidence_bundle"
+        | "action_log_export"
+        | "data_export"
+        | "audit_manifest";
+      swarm_event_severity:
+        | "debug"
+        | "info"
+        | "warn"
+        | "error"
+        | "human_required";
       user_action_type:
-        | 'upload_evidence'
-        | 'complete_checklist'
-        | 'review_letter'
-        | 'approve_escalation'
-        | 'mark_letter_sent'
-        | 'upload_send_proof'
-        | 'confirm_unfreeze'
-        | 'confirm_resolution'
-        | 'sign_fee_agreement'
-        | 'respond_monitoring'
-        | 'reopen_case'
-        | 'acknowledge_disclaimer'
-        | 'contact_human_ops';
-      user_role: 'citizen' | 'operator' | 'admin' | 'guest';
-      victim_role: 'victim' | 'innocent_receiver';
+        | "upload_evidence"
+        | "complete_checklist"
+        | "review_letter"
+        | "approve_escalation"
+        | "mark_letter_sent"
+        | "upload_send_proof"
+        | "confirm_unfreeze"
+        | "confirm_resolution"
+        | "sign_fee_agreement"
+        | "respond_monitoring"
+        | "reopen_case"
+        | "acknowledge_disclaimer"
+        | "contact_human_ops";
+      user_role: "citizen" | "operator" | "admin" | "guest";
+      victim_role: "victim" | "innocent_receiver";
     };
     CompositeTypes: Record<string, never>;
   };
 };
 
 // Convenience exports
-export type Tables<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
-export type Case = Tables<'cases'>;
-export type CaseStatus = Enums<'case_status'>;
-export type Bank = Tables<'banks'>;
-export type Playbook = Tables<'playbooks'>;
-export type SwarmEvent = Tables<'swarm_events'>;
-export type UserAction = Tables<'user_actions'>;
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
+export type Enums<T extends keyof Database["public"]["Enums"]> =
+  Database["public"]["Enums"][T];
+export type Case = Tables<"cases">;
+export type CaseStatus = Enums<"case_status">;
+export type Bank = Tables<"banks">;
+export type Playbook = Tables<"playbooks">;
+export type SwarmEvent = Tables<"swarm_events">;
+export type UserAction = Tables<"user_actions">;

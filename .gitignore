@@ -10,6 +10,7 @@ out/
 .env
 .env.local
 .env.*.local
+config/vercel-env-paste.template
 
 # debug
 npm-debug.log*
@@ -23,6 +24,7 @@ pnpm-debug.log*
 
 # supabase local
 .supabase/
+supabase/.temp/
 
 # playwright
 test-results/
@@ -33,6 +35,9 @@ blob-report/
 .DS_Store
 coverage/
 .vercel
+.cache/
+.local/
+.pnpm-home/
 
 # crash dumps
 *.stackdump

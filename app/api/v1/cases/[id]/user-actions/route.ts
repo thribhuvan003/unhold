@@ -1,17 +1,17 @@
-import type { NextRequest } from 'next/server';
-import { createUserAction } from '@/lib/user-actions/create';
-import { createClient } from '@/lib/supabase/server';
-import { assertCaseAccess, requireRequestAuth } from '@/lib/api/case-access';
+import type { NextRequest } from "next/server";
+import { createUserAction } from "@/lib/user-actions/create";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { assertCaseAccess, requireRequestAuth } from "@/lib/api/case-access";
 import {
   getRequestId,
   handleRouteError,
   jsonSuccess,
   parseJsonBody,
-} from '@/lib/api/response';
-import { ApiError } from '@/lib/api/errors';
-import type { Database } from '@/supabase/database.types';
+} from "@/lib/api/response";
+import { ApiError } from "@/lib/api/errors";
+import type { Database } from "@/supabase/database.types";
 
-type UserActionType = Database['public']['Enums']['user_action_type'];
+type UserActionType = Database["public"]["Enums"]["user_action_type"];
 
 export async function GET(
   request: NextRequest,
@@ -21,17 +21,17 @@ export async function GET(
   try {
     const { id: caseId } = await context.params;
     const auth = await requireRequestAuth(request);
-    await assertCaseAccess(caseId, auth, 'viewer');
-    const supabase = await createClient();
+    await assertCaseAccess(caseId, auth, "viewer");
+    const admin = createAdminClient();
 
-    const { data, error } = await supabase
-      .from('user_actions')
-      .select('*')
-      .eq('case_id', caseId)
-      .order('priority', { ascending: false });
+    const { data, error } = await admin
+      .from("user_actions")
+      .select("*")
+      .eq("case_id", caseId)
+      .order("priority", { ascending: false });
 
     if (error) {
-      throw new ApiError(500, 'internal_error', error.message);
+      throw new ApiError(500, "internal_error", error.message);
     }
 
     return jsonSuccess({ actions: data ?? [] });
@@ -48,7 +48,7 @@ export async function POST(
   try {
     const { id: caseId } = await context.params;
     const auth = await requireRequestAuth(request);
-    await assertCaseAccess(caseId, auth, 'editor');
+    await assertCaseAccess(caseId, auth, "editor");
 
     const body = (await parseJsonBody(request, requestId)) as {
       action_type: UserActionType;
@@ -59,7 +59,7 @@ export async function POST(
     };
 
     if (!body.action_type || !body.title) {
-      throw new ApiError(400, 'validation_failed', 'Missing required fields');
+      throw new ApiError(400, "validation_failed", "Missing required fields");
     }
 
     const actionId = await createUserAction({
@@ -85,8 +85,8 @@ export async function PATCH(
   try {
     const { id: caseId } = await context.params;
     const auth = await requireRequestAuth(request);
-    await assertCaseAccess(caseId, auth, 'editor');
-    const supabase = await createClient();
+    await assertCaseAccess(caseId, auth, "editor");
+    const admin = createAdminClient();
 
     const body = (await parseJsonBody(request, requestId)) as {
       action_id: string;
@@ -95,21 +95,21 @@ export async function PATCH(
     };
 
     if (!body.action_id) {
-      throw new ApiError(400, 'validation_failed', 'Missing action_id');
+      throw new ApiError(400, "validation_failed", "Missing action_id");
     }
 
-    const update: Database['public']['Tables']['user_actions']['Update'] = {};
+    const update: Database["public"]["Tables"]["user_actions"]["Update"] = {};
     if (body.completed) update.completed_at = new Date().toISOString();
     if (body.dismissed) update.dismissed_at = new Date().toISOString();
 
-    const { error } = await supabase
-      .from('user_actions')
+    const { error } = await admin
+      .from("user_actions")
       .update(update)
-      .eq('id', body.action_id)
-      .eq('case_id', caseId);
+      .eq("id", body.action_id)
+      .eq("case_id", caseId);
 
     if (error) {
-      throw new ApiError(500, 'internal_error', error.message);
+      throw new ApiError(500, "internal_error", error.message);
     }
 
     return jsonSuccess({ ok: true });

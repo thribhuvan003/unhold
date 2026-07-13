@@ -1,24 +1,24 @@
-import { useTranslations } from 'next-intl';
-import type { UnfreezePath } from '@/lib/case/unfreeze-path';
+import { useTranslations } from "next-intl";
+import type { UnfreezePath } from "@/lib/case/unfreeze-path";
 
-/**
- * "Your real path to unfreeze" — the product's centrepiece. It tells the user
- * the honest truth about who actually controls their unfreeze (often NOT their
- * branch) and the real ordered steps, instead of pretending a letter to the
- * branch fixes everything. Chrome is localized; the path content itself arrives
- * already localized from getUnfreezePath(reason, locale).
- */
+/** Scenario-aware suggested route. The recorded reason chooses a cautious set
+ * of information-gathering steps; it is never presented as a guaranteed remedy.
+ * Chrome is localised, while path content arrives from getUnfreezePath(). */
 export function UnfreezePathCard({ path }: { path: UnfreezePath }) {
-  const t = useTranslations('UnfreezePathCard');
+  const t = useTranslations("UnfreezePathCard");
   return (
-    <section id="unfreeze-path" data-testid="unfreeze-path" className="u-card scroll-mt-20 p-4">
-      <p className="type-eyebrow">{t('eyebrow')}</p>
+    <section
+      id="unfreeze-path"
+      data-testid="unfreeze-path"
+      className="u-card scroll-mt-20 p-4"
+    >
+      <p className="type-eyebrow">{t("eyebrow")}</p>
 
       <div
         className={
           path.branchCanFix
-            ? 'mt-2.5 rounded-[var(--radius-md)] border border-[var(--success)]/30 bg-[var(--success)]/8 px-3.5 py-3'
-            : 'mt-2.5 rounded-[var(--radius-md)] border border-[var(--saffron)]/40 bg-[var(--warn-muted)] px-3.5 py-3'
+            ? "mt-2.5 rounded-[var(--radius-md)] border border-[var(--success)]/30 bg-[var(--success)]/8 px-3.5 py-3"
+            : "mt-2.5 rounded-[var(--radius-md)] border border-[var(--saffron)]/40 bg-[var(--warn-muted)] px-3.5 py-3"
         }
       >
         <p className="text-[0.84375rem] font-semibold leading-relaxed text-[var(--ink)]">
@@ -27,8 +27,10 @@ export function UnfreezePathCard({ path }: { path: UnfreezePath }) {
       </div>
 
       <div className="mt-3">
-        <p className="type-eyebrow text-ink-faint">{t('keyStepLabel')}</p>
-        <p className="mt-1 text-[0.90625rem] font-bold text-[var(--ink)]">{path.keyStep}</p>
+        <p className="type-eyebrow text-ink-faint">{t("keyStepLabel")}</p>
+        <p className="mt-1 text-[0.90625rem] font-bold text-[var(--ink)]">
+          {path.keyStep}
+        </p>
       </div>
 
       <ol className="mt-3.5 flex flex-col gap-3">
@@ -38,7 +40,9 @@ export function UnfreezePathCard({ path }: { path: UnfreezePath }) {
               {step.n}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[0.875rem] font-semibold text-[var(--ink)]">{step.title}</p>
+              <p className="text-[0.875rem] font-semibold text-[var(--ink)]">
+                {step.title}
+              </p>
               <p className="mt-0.5 text-[0.8125rem] leading-normal text-[var(--ink-muted)]">
                 {step.detail}
               </p>
@@ -52,7 +56,7 @@ export function UnfreezePathCard({ path }: { path: UnfreezePath }) {
       </ol>
 
       <p className="mt-3 border-t border-[var(--surface)] pt-2.5 text-xs leading-relaxed text-[var(--ink-faint)]">
-        {t('disclaimer')}
+        {t("disclaimer")}
       </p>
     </section>
   );

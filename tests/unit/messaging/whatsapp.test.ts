@@ -1,48 +1,52 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { normalizeIndiaMobile, buildDeadlineWhatsAppBody } from '@/lib/messaging/whatsapp';
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import {
+  normalizeIndiaMobile,
+  buildDeadlineWhatsAppBody,
+} from "@/lib/messaging/whatsapp";
 
-describe('normalizeIndiaMobile', () => {
-  it('accepts 10-digit Indian mobiles', () => {
-    expect(normalizeIndiaMobile('7893238850')).toBe('+917893238850');
-    expect(normalizeIndiaMobile('78932 38850')).toBe('+917893238850');
+describe("normalizeIndiaMobile", () => {
+  it("accepts 10-digit Indian mobiles", () => {
+    expect(normalizeIndiaMobile("7893238850")).toBe("+917893238850");
+    expect(normalizeIndiaMobile("78932 38850")).toBe("+917893238850");
   });
 
-  it('accepts +91 and 91 prefixes', () => {
-    expect(normalizeIndiaMobile('+917893238850')).toBe('+917893238850');
-    expect(normalizeIndiaMobile('917893238850')).toBe('+917893238850');
+  it("accepts +91 and 91 prefixes", () => {
+    expect(normalizeIndiaMobile("+917893238850")).toBe("+917893238850");
+    expect(normalizeIndiaMobile("917893238850")).toBe("+917893238850");
   });
 
-  it('rejects invalid shapes', () => {
-    expect(normalizeIndiaMobile('12345')).toBeNull();
-    expect(normalizeIndiaMobile('0123456789')).toBeNull(); // landline-ish
+  it("rejects invalid shapes", () => {
+    expect(normalizeIndiaMobile("12345")).toBeNull();
+    expect(normalizeIndiaMobile("0123456789")).toBeNull(); // landline-ish
   });
 });
 
-describe('buildDeadlineWhatsAppBody', () => {
-  it('includes due date and no-bank promise in English', () => {
+describe("buildDeadlineWhatsAppBody", () => {
+  it("includes due date and no-bank promise in English", () => {
     const body = buildDeadlineWhatsAppBody({
-      dueAt: '2026-07-15T00:00:00.000Z',
-      caseUrl: 'https://example.com/cases/abc',
+      dueAt: "2026-07-15T00:00:00.000Z",
+      caseUrl: "https://example.com/cases/abc",
     });
     expect(body).toMatch(/Unhold reminder/i);
-    expect(body).toContain('https://example.com/cases/abc');
+    expect(body).toContain("https://example.com/cases/abc");
     expect(body).toMatch(/never message your bank/i);
   });
 
-  it('supports Hindi locale', () => {
+  it("supports Hindi locale", () => {
     const body = buildDeadlineWhatsAppBody({
-      dueAt: '2026-07-15T00:00:00.000Z',
-      locale: 'hi',
+      dueAt: "2026-07-15T00:00:00.000Z",
+      locale: "hi",
     });
     expect(body).toMatch(/रिमाइंडर/);
   });
 });
 
-describe('sendWhatsApp env gate', () => {
+describe("sendWhatsApp env gate", () => {
   const original = { ...process.env };
 
   beforeEach(() => {
     vi.resetModules();
+    vi.unstubAllGlobals();
     delete process.env.TWILIO_ACCOUNT_SID;
     delete process.env.TWILIO_AUTH_TOKEN;
   });
@@ -51,10 +55,37 @@ describe('sendWhatsApp env gate', () => {
     process.env = { ...original };
   });
 
-  it('no-ops when Twilio is not configured', async () => {
-    const { sendWhatsApp } = await import('@/lib/messaging/whatsapp');
-    const result = await sendWhatsApp({ toE164: '+917893238850', body: 'hi' });
+  it("no-ops when Twilio is not configured", async () => {
+    const { sendWhatsApp } = await import("@/lib/messaging/whatsapp");
+    const result = await sendWhatsApp({ toE164: "+917893238850", body: "hi" });
     expect(result.sent).toBe(false);
-    if (!result.sent) expect(result.skipped).toBe('not_configured');
+    if (!result.sent) expect(result.skipped).toBe("not_configured");
+  });
+
+  it("does not read or log Twilio response bodies on failure", async () => {
+    process.env.TWILIO_ACCOUNT_SID = "AC123";
+    process.env.TWILIO_AUTH_TOKEN = "secret";
+    const text = vi.fn(async () => "sensitive provider detail");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: false, status: 400, text }),
+    );
+    const errorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const { sendWhatsApp } = await import("@/lib/messaging/whatsapp");
+
+    const result = await sendWhatsApp({
+      toE164: "+917893238850",
+      body: "hello",
+    });
+
+    expect(result).toEqual({ sent: false, skipped: "twilio_400" });
+    expect(text).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith("[whatsapp] send failed", {
+      provider: "twilio",
+      status: 400,
+    });
+    errorSpy.mockRestore();
   });
 });

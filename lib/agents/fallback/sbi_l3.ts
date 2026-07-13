@@ -1,10 +1,10 @@
 /** Bank-agnostic RBI Ombudsman / CMS draft (any bank). */
-export const SBI_L3_TEMPLATE_SLUG = 'rbi_ombudsman';
+export const SBI_L3_TEMPLATE_SLUG = "rbi_ombudsman";
 /** @deprecated alias — same as SBI_L3_TEMPLATE_SLUG */
 export const L3_TEMPLATE_SLUG = SBI_L3_TEMPLATE_SLUG;
 
 export const SBI_L3_SUBJECT =
-  'Complaint for Banking Ombudsman (RBI CMS) — {{BANK_NAME}} — Unresolved lien on A/c XXXXXX{{ACCOUNT_LAST4}} — Deficiency in service';
+  "Complaint for Banking Ombudsman (RBI CMS) — {{BANK_NAME}} — Unresolved lien on A/c XXXXXX{{ACCOUNT_LAST4}} — Deficiency in service";
 
 export const SBI_L3_BODY = `COMPLAINT FOR RBI BANKING OMBUDSMAN / CMS
 (File online at: cms.rbi.org.in | Helpline: 14448)
@@ -16,7 +16,7 @@ Account      : XXXXXX{{ACCOUNT_LAST4}}, {{BANK_NAME}}, {{BRANCH_CITY}}
 
 Nature of complaint: Alleged deficiency in service by {{BANK_NAME}} — the bank has not given an adequate written response to my requests for the restriction details and its grievance handling. I understand RBI CMS cannot override a restriction ordered by a police, court or tax authority; this draft concerns only the bank's own service and must meet the current RBI scheme's eligibility rules.
 
-Facts: On {{FREEZE_DATE}}, my account was frozen (NCRP ref {{NCRP_ID}}, disputed amount approx. Rs. {{AMOUNT_INR}}). I wrote to the branch on {{L1_SENT_DATE}} and escalated to the Nodal Officer on {{L2_SENT_DATE}}. {{SITUATION_LINE}} I have received no satisfactory response since.
+Facts: On {{FREEZE_DATE}}, my account was restricted{{NCRP_REFERENCE_LINE}}; the amount currently shown as affected is approximately Rs. {{AMOUNT_INR}}. I wrote to the branch on {{L1_SENT_DATE}} and escalated to the Nodal Officer on {{L2_SENT_DATE}}. {{SITUATION_LINE}} I have received no satisfactory response since.
 
 {{LEGAL_GROUNDING}}
 
@@ -33,14 +33,13 @@ Complainant: {{USER_NAME}}
 Date: {{TODAY_DATE}}`;
 
 export const SBI_L3_REQUIRED_PLACEHOLDERS = [
-  'USER_NAME',
-  'BANK_NAME',
-  'BRANCH_CITY',
-  'ACCOUNT_LAST4',
-  'AMOUNT_INR',
-  'FREEZE_DATE',
-  'NCRP_ID',
-  'L1_SENT_DATE',
-  'L2_SENT_DATE',
-  'USER_PHONE',
+  "USER_NAME",
+  "BANK_NAME",
+  "BRANCH_CITY",
+  "ACCOUNT_LAST4",
+  "AMOUNT_INR",
+  "FREEZE_DATE",
+  "L1_SENT_DATE",
+  "L2_SENT_DATE",
+  "USER_PHONE",
 ] as const;

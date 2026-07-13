@@ -1,25 +1,31 @@
-import { NextRequest, after } from 'next/server';
-import { assertCaseAccess, requireRequestAuth } from '@/lib/api/case-access';
-import { enqueueAgentJob } from '@/lib/jobs/enqueue';
-import { processAgentJobs } from '@/lib/jobs/process';
-import { isValidSha256 } from '@/lib/evidence/sha256';
-import { EVIDENCE_BUCKET, MAX_EVIDENCE_BYTES } from '@/lib/evidence/storage-path';
-import { detectEvidenceMime, evidenceMimeMatches } from '@/lib/evidence/file-signature';
-import { evidenceConfirmSchema } from '@/lib/validation/api-schemas';
-import { createAdminClient } from '@/lib/supabase/admin';
-import { appendActionLog } from '@/lib/action-logs/append';
-import { tryAutoTransitionOnEvidence } from '@/lib/state-machine/transitions';
-import { ApiError } from '@/lib/api/errors';
-import type { Database } from '@/supabase/database.types';
+import { NextRequest, after } from "next/server";
+import { assertCaseAccess, requireRequestAuth } from "@/lib/api/case-access";
+import { enqueueAgentJob } from "@/lib/jobs/enqueue";
+import { processAgentJobs } from "@/lib/jobs/process";
+import { isValidSha256 } from "@/lib/evidence/sha256";
+import {
+  EVIDENCE_BUCKET,
+  MAX_EVIDENCE_BYTES,
+} from "@/lib/evidence/storage-path";
+import {
+  detectEvidenceMime,
+  evidenceMimeMatches,
+} from "@/lib/evidence/file-signature";
+import { evidenceConfirmSchema } from "@/lib/validation/api-schemas";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { appendActionLog } from "@/lib/action-logs/append";
+import { tryAutoTransitionOnEvidence } from "@/lib/state-machine/transitions";
+import { ApiError } from "@/lib/api/errors";
+import type { Database } from "@/supabase/database.types";
 import {
   getRequestId,
   handleRouteError,
   jsonSuccess,
   parseJsonBody,
-} from '@/lib/api/response';
+} from "@/lib/api/response";
 
 type RouteContext = { params: Promise<{ id: string; eid: string }> };
-type AgentJobRow = Database['public']['Tables']['agent_jobs']['Row'];
+type AgentJobRow = Database["public"]["Tables"]["agent_jobs"]["Row"];
 
 async function rejectUploadedObject(input: {
   admin: ReturnType<typeof createAdminClient>;
@@ -30,11 +36,13 @@ async function rejectUploadedObject(input: {
 }): Promise<never> {
   await input.admin.storage.from(EVIDENCE_BUCKET).remove([input.storagePath]);
   await input.admin
-    .from('evidence')
+    .from("evidence")
     .update({ deleted_at: new Date().toISOString() })
-    .eq('id', input.evidenceId)
-    .eq('case_id', input.caseId);
-  throw new ApiError(422, 'guard_failed', input.message, { guard: 'evidence_file_valid' });
+    .eq("id", input.evidenceId)
+    .eq("case_id", input.caseId);
+  throw new ApiError(422, "guard_failed", input.message, {
+    guard: "evidence_file_valid",
+  });
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
@@ -42,30 +50,58 @@ export async function POST(request: NextRequest, context: RouteContext) {
   try {
     const { id: caseId, eid: evidenceId } = await context.params;
     const auth = await requireRequestAuth(request);
-    await assertCaseAccess(caseId, auth, 'editor');
+    await assertCaseAccess(caseId, auth, "editor");
 
     const body = await parseJsonBody(request, requestId);
     const parsed = evidenceConfirmSchema.safeParse(body);
     if (!parsed.success) {
-      throw new ApiError(400, 'validation_failed', parsed.error.issues[0]?.message ?? 'Invalid body');
+      throw new ApiError(
+        400,
+        "validation_failed",
+        parsed.error.issues[0]?.message ?? "Invalid body",
+      );
     }
 
     if (!isValidSha256(parsed.data.sha256)) {
-      throw new ApiError(400, 'validation_failed', 'Invalid SHA-256 hash');
+      throw new ApiError(400, "validation_failed", "Invalid SHA-256 hash");
     }
 
     const admin = createAdminClient();
     const { data: evidence, error: fetchError } = await admin
-      .from('evidence')
+      .from("evidence")
       .select(
-        'id, case_id, storage_path, storage_bucket, mime_type, file_size_bytes, sha256, sha256_verified_at, deleted_at',
+        "id, case_id, evidence_type, storage_path, storage_bucket, mime_type, file_size_bytes, sha256, sha256_verified_at, deleted_at",
       )
-      .eq('id', evidenceId)
-      .eq('case_id', caseId)
+      .eq("id", evidenceId)
+      .eq("case_id", caseId)
       .maybeSingle();
 
     if (fetchError || !evidence || evidence.deleted_at) {
-      throw new ApiError(404, 'not_found', 'Evidence not found');
+      throw new ApiError(404, "not_found", "Evidence not found");
+    }
+
+    if (evidence.sha256_verified_at) {
+      if (evidence.sha256 !== parsed.data.sha256) {
+        throw new ApiError(
+          422,
+          "guard_failed",
+          "Evidence was already confirmed with a different SHA-256 hash",
+          { guard: "sha256_match" },
+        );
+      }
+      const response = jsonSuccess({
+        evidence: {
+          id: evidence.id,
+          case_id: evidence.case_id,
+          evidence_type: evidence.evidence_type,
+          sha256: evidence.sha256,
+          sha256_verified_at: evidence.sha256_verified_at,
+        },
+        transition: null,
+        replayed: true,
+      });
+      response.headers.set("x-request-id", requestId);
+      return response;
     }
 
     const { data: fileData, error: downloadError } = await admin.storage
@@ -73,7 +109,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
       .download(evidence.storage_path);
 
     if (downloadError || !fileData) {
-      throw new ApiError(400, 'validation_failed', 'Uploaded file not found in storage');
+      throw new ApiError(
+        400,
+        "validation_failed",
+        "Uploaded file not found in storage",
+      );
     }
 
     if (
@@ -87,7 +127,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         caseId,
         evidenceId,
         storagePath: evidence.storage_path,
-        message: 'Uploaded file size does not match the requested upload',
+        message: "Uploaded file size does not match the requested upload",
       });
     }
 
@@ -99,44 +139,87 @@ export async function POST(request: NextRequest, context: RouteContext) {
         caseId,
         evidenceId,
         storagePath: evidence.storage_path,
-        message: 'Uploaded file content does not match its file type',
+        message: "Uploaded file content does not match its file type",
       });
     }
 
-    const { computeSha256Hex } = await import('@/lib/evidence/sha256');
+    const { computeSha256Hex } = await import("@/lib/evidence/sha256");
     const serverHash = computeSha256Hex(buffer);
 
     if (serverHash !== parsed.data.sha256) {
-      throw new ApiError(422, 'guard_failed', 'SHA-256 mismatch', { guard: 'sha256_match' });
+      throw new ApiError(422, "guard_failed", "SHA-256 mismatch", {
+        guard: "sha256_match",
+      });
     }
 
     const now = new Date().toISOString();
     const { data: updated, error: updateError } = await admin
-      .from('evidence')
+      .from("evidence")
       .update({
         sha256: parsed.data.sha256,
         sha256_verified_at: now,
       })
-      .eq('id', evidenceId)
-      .select('id, case_id, evidence_type, sha256, sha256_verified_at')
-      .single();
+      .eq("id", evidenceId)
+      .eq("case_id", caseId)
+      .is("sha256_verified_at", null)
+      .select("id, case_id, evidence_type, sha256, sha256_verified_at")
+      .maybeSingle();
 
-    if (updateError || !updated) {
-      throw updateError ?? new ApiError(500, 'internal_error', 'Failed to confirm evidence');
+    if (updateError) {
+      throw updateError;
+    }
+
+    if (!updated) {
+      const { data: confirmed, error: confirmedError } = await admin
+        .from("evidence")
+        .select("id, case_id, evidence_type, sha256, sha256_verified_at")
+        .eq("id", evidenceId)
+        .eq("case_id", caseId)
+        .maybeSingle();
+
+      if (confirmedError || !confirmed?.sha256_verified_at) {
+        throw (
+          confirmedError ??
+          new ApiError(
+            409,
+            "conflict",
+            "Evidence confirmation is already in progress",
+          )
+        );
+      }
+      if (confirmed.sha256 !== parsed.data.sha256) {
+        throw new ApiError(
+          422,
+          "guard_failed",
+          "Evidence was already confirmed with a different SHA-256 hash",
+          { guard: "sha256_match" },
+        );
+      }
+      const response = jsonSuccess({
+        evidence: confirmed,
+        transition: null,
+        replayed: true,
+      });
+      response.headers.set("x-request-id", requestId);
+      return response;
     }
 
     await appendActionLog({
       caseId,
       actorType: auth.actorType,
       actorId: auth.actorId,
-      action: 'evidence.confirmed',
+      action: "evidence.confirmed",
       payload: { evidence_id: evidenceId, sha256: parsed.data.sha256 },
       requestId,
     });
 
     let transition = null;
     try {
-      transition = await tryAutoTransitionOnEvidence(caseId, auth.actorType, auth.actorId);
+      transition = await tryAutoTransitionOnEvidence(
+        caseId,
+        auth.actorType,
+        auth.actorId,
+      );
     } catch {
       // Transition may fail if guard not yet satisfied; evidence confirm still succeeds
     }
@@ -150,13 +233,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // fall back to the durable queue + cron sweeper.
     let verifiedInline = false;
     try {
-      const { runVerifierJob } = await import('@/lib/agents/verifier/runner');
+      const { runVerifierJob } = await import("@/lib/agents/verifier/runner");
       await Promise.race([
         runVerifierJob({
           id: `inline:${evidenceId}`,
           payload_json: { case_id: caseId, evidence_id: evidenceId },
         } as unknown as AgentJobRow),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('verify_timeout')), 20_000)),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("verify_timeout")), 20_000),
+        ),
       ]);
       verifiedInline = true;
     } catch {
@@ -167,8 +252,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
       try {
         await enqueueAgentJob({
           case_id: caseId,
-          job_type: 'verifier_extract',
-          agent_role: 'VERIFIER',
+          job_type: "verifier_extract",
+          agent_role: "VERIFIER",
           idempotency_key: `verifier:${evidenceId}:confirm`,
           payload: { case_id: caseId, evidence_id: evidenceId },
         });
@@ -192,7 +277,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       evidence: updated,
       transition,
     });
-    response.headers.set('x-request-id', requestId);
+    response.headers.set("x-request-id", requestId);
     return response;
   } catch (error) {
     return handleRouteError(error, requestId);

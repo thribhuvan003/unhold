@@ -2,10 +2,31 @@
   "name": "unhold",
   "version": "0.1.0",
   "private": true,
+  "description": "A guided case workspace for bank-account and UPI restrictions in India.",
+  "license": "MIT",
+  "homepage": "https://www.unhold.live",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thribhuvan003/unhold.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thribhuvan003/unhold/issues"
+  },
   "author": "thribhuvan003 <thribhuvan003@gmail.com>",
   "packageManager": "pnpm@10.12.1",
   "engines": {
     "node": ">=22.14.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp",
+      "supabase",
+      "unrs-resolver"
+    ]
   },
   "scripts": {
     "dev": "next dev",
@@ -13,6 +34,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test:unit && pnpm test:contract && pnpm verify:no-auto-send && pnpm build",
     "test:unit": "vitest run tests/unit",
     "test:contract": "vitest run tests/contract",
     "test:e2e:smoke": "playwright test tests/e2e --grep @smoke",
@@ -20,19 +42,11 @@
     "test:agents:golden": "vitest run tests/unit/agents/golden",
     "eval:notice": "node --env-file=.env.local scripts/eval/run.mjs",
     "eval:consistency": "node --env-file=.env.local scripts/eval/consistency.mjs",
-    "verify:no-auto-send": "bash scripts/verify-no-auto-send.sh",
-    "owner:git-config": "bash scripts/owner/git-config.sh",
-    "owner:push": "bash scripts/owner/git-push.sh",
-    "owner:deploy": "bash scripts/owner/vercel-deploy.sh",
-    "owner:deploy:prod": "bash scripts/owner/vercel-deploy.sh --prod",
-    "owner:supabase-link": "bash scripts/owner/supabase-link.sh"
+    "verify:no-auto-send": "bash scripts/verify-no-auto-send.sh"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.0.1",
-    "@sentry/nextjs": "9.47.1",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.49.8",
-    "@tanstack/react-virtual": "3.13.9",
     "@upstash/ratelimit": "2.0.5",
     "@upstash/redis": "1.34.9",
     "class-variance-authority": "0.7.1",
@@ -40,17 +54,12 @@
     "date-fns": "4.1.0",
     "date-fns-tz": "3.2.0",
     "jszip": "3.10.1",
-    "langfuse": "3.37.4",
     "lucide-react": "0.511.0",
     "next": "16.2.9",
-    "next-intl": "4.1.0",
+    "next-intl": "4.13.2",
     "pdf-lib": "1.17.1",
-    "posthog-js": "1.249.4",
-    "posthog-node": "4.18.0",
-    "razorpay": "2.9.6",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "react-hook-form": "7.57.0",
     "server-only": "0.0.1",
     "sharp": "0.34.2",
     "supermemory": "4.24.12",

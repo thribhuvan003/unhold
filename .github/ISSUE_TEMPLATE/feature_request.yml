@@ -1,0 +1,25 @@
+name: Feature request
+description: Propose a focused improvement to the user-controlled case workflow.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe the problem before proposing UI or implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Product boundary
+      options:
+        - label: This keeps external submissions review-before-send and makes no outcome guarantee.
+          required: true
