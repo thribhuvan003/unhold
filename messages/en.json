@@ -68,7 +68,11 @@
         "line": "Start with written restriction details. Then contact the authority the bank identifies and keep every acknowledgement."
       }
     ],
-    "storiesFoot": "These are preparation examples, not legal conclusions or outcome promises."
+    "storiesFoot": "These are preparation examples, not legal conclusions or outcome promises.",
+    "founderEyebrow": "Built by",
+    "founderTitle": "A small independent product — not a bank, not RBI, not a law firm.",
+    "founderBody": "Unhold is built by Thribhuvan so people stuck with a restricted account can organise facts, papers, and a draft letter without paying an “unfreeze agent.” You review and send everything yourself. Official cyber helpline: 1930.",
+    "founderDisclaimerLink": "Legal disclaimer →"
   },
   "IntakeWizard": {
     "back": "← Back",

@@ -8,7 +8,10 @@ test.describe("Phase 1 exit path @smoke", () => {
       page.getByRole("heading", { name: /bank account restricted/i }),
     ).toBeVisible();
     await expect(page.getByText(/not a law firm/i)).toBeVisible();
-    await expect(page.getByText(/1930/)).toBeVisible();
+    // Multiple tel:1930 links (header / body / footer) — assert footer link only.
+    await expect(
+      page.getByRole("contentinfo").getByRole("link", { name: "1930" }),
+    ).toBeVisible();
   });
 
   test("legal disclaimer page shows Blocks A–H", async ({ page }) => {
@@ -16,8 +19,13 @@ test.describe("Phase 1 exit path @smoke", () => {
     await expect(
       page.getByRole("heading", { name: "Legal disclaimer" }),
     ).toBeVisible();
-    await expect(page.getByText("Block A")).toBeVisible();
-    await expect(page.getByText("Block H")).toBeVisible();
+    // UI shows plain-language section titles, not "Block A" labels.
+    await expect(
+      page.getByRole("heading", { name: "Not a law firm or bank" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Human review" }),
+    ).toBeVisible();
   });
 
   test("ops queue page requires operator auth", async ({ page }) => {

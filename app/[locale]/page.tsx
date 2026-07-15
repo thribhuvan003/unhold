@@ -240,6 +240,22 @@ export default async function HomePage({ params }: Props) {
         </p>
       </section>
 
+      <section className="u-card animate-fade-up stagger-2 px-4 py-3.5">
+        <p className="type-eyebrow">{t("founderEyebrow")}</p>
+        <p className="mt-1.5 text-[0.875rem] font-semibold text-[var(--ink)]">
+          {t("founderTitle")}
+        </p>
+        <p className="mt-1.5 text-[0.78125rem] leading-relaxed text-[var(--ink-muted)]">
+          {t("founderBody")}
+        </p>
+        <Link
+          href="/legal/disclaimer"
+          className="mt-2 inline-block text-[0.78125rem] font-semibold text-[var(--color-sky-deep)] no-underline"
+        >
+          {t("founderDisclaimerLink")}
+        </Link>
+      </section>
+
       {/* The law is our edge, but it's a "learn more", not a competing action —
           a one-line link, not a full card. */}
       <Link
