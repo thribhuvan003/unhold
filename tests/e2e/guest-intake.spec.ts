@@ -7,7 +7,10 @@ test.describe("Phase 1 exit path @smoke", () => {
     await expect(
       page.getByRole("heading", { name: /bank account restricted/i }),
     ).toBeVisible();
-    await expect(page.getByText(/not a law firm/i)).toBeVisible();
+    // Footer is the stable legal anchor (founder strip also mentions "not a law firm").
+    await expect(
+      page.getByRole("contentinfo").getByText(/not a law firm/i),
+    ).toBeVisible();
     // Multiple tel:1930 links (header / body / footer) — assert footer link only.
     await expect(
       page.getByRole("contentinfo").getByRole("link", { name: "1930" }),
