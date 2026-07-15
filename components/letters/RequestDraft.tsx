@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Loader2 } from 'lucide-react';
 import { DraftPendingRefresh } from '@/components/letters/DraftPendingRefresh';
@@ -16,6 +17,7 @@ type RequestDraftProps = {
  * auto-refreshing pending state. Without this, the link was a 404 dead end.
  */
 export function RequestDraft({ caseId, level }: RequestDraftProps) {
+  const t = useTranslations('RequestDraft');
   const [phase, setPhase] = useState<'requesting' | 'pending' | 'error'>('requesting');
   const [error, setError] = useState<string | null>(null);
   const fired = useRef(false);
@@ -33,22 +35,15 @@ export function RequestDraft({ caseId, level }: RequestDraftProps) {
         });
         if (!res.ok) {
           const json = await res.json().catch(() => ({}));
-          throw new Error(
-            json.error?.message ??
-              'We could not start your letter right now. Your case is safe — please try again in a moment.',
-          );
+          throw new Error(json.error?.message ?? t('errorFallback'));
         }
         setPhase('pending');
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'We could not start your letter right now. Your case is safe — please try again in a moment.',
-        );
+        setError(err instanceof Error ? err.message : t('errorFallback'));
         setPhase('error');
       }
     })();
-  }, [caseId, level]);
+  }, [caseId, level, t]);
 
   if (phase === 'pending') {
     return <DraftPendingRefresh caseId={caseId} level={level} />;
@@ -57,7 +52,7 @@ export function RequestDraft({ caseId, level }: RequestDraftProps) {
   if (phase === 'error') {
     return (
       <div className="u-card space-y-4 p-5">
-        <h1 className="type-display text-xl">Your letter is not ready yet</h1>
+        <h1 className="type-display text-xl">{t('notReadyTitle')}</h1>
         <p role="alert" className="u-alert u-alert-warn">
           {error}
         </p>
@@ -67,10 +62,10 @@ export function RequestDraft({ caseId, level }: RequestDraftProps) {
             onClick={() => window.location.reload()}
             className="u-btn u-btn-primary min-h-[44px]"
           >
-            Try again
+            {t('tryAgain')}
           </button>
           <Link href={`/cases/${caseId}`} className="u-btn u-btn-ghost min-h-[44px]">
-            ← Back to my case
+            {t('backToCase')}
           </Link>
         </div>
       </div>
@@ -81,12 +76,9 @@ export function RequestDraft({ caseId, level }: RequestDraftProps) {
     <div className="u-card space-y-4 p-5">
       <div className="flex items-center gap-3">
         <Loader2 className="h-5 w-5 animate-spin text-[var(--color-sky-deep)]" aria-hidden="true" />
-        <h1 className="type-display text-xl">Starting your letter…</h1>
+        <h1 className="type-display text-xl">{t('startingTitle')}</h1>
       </div>
-      <p className="text-sm leading-relaxed text-[var(--ink-muted)]">
-        We are asking the drafter to write your formal, bank-ready letter from your answers. This
-        usually takes under a minute.
-      </p>
+      <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{t('startingBody')}</p>
     </div>
   );
 }

@@ -14,7 +14,7 @@ import { DISPUTED_AMOUNT_RULE } from "@/lib/legal/positions";
 export const metadata: Metadata = {
   title: "See a worked example — Unhold",
   description:
-    "A sample frozen-account case, worked end to end — the real letter, the honest unfreeze path, and the sourced law. No account or documents needed.",
+    "Sample walkthrough: suggested next steps, a review-before-send draft letter, and dated sources. Not your case. Nothing is sent. No account needed.",
 };
 
 // A realistic sample case so anyone — a curious visitor, a reviewer — can see
@@ -42,6 +42,7 @@ export default async function DemoPage({ params }: Props) {
     label: string;
     text: string;
   }>;
+  const truthPoints = t.raw("truthPoints") as string[];
   const caseLines = buildCaseAwareLines(
     { user_role: "receiver", freeze_type_hint: "total_freeze" },
     SAMPLE.AMOUNT_INR,
@@ -68,6 +69,20 @@ export default async function DemoPage({ params }: Props) {
           {t("sampleNote")}
         </p>
       </div>
+
+      <section
+        className="u-card animate-fade-up border-[var(--color-sky-deep)]/20 p-4"
+        aria-labelledby="demo-truth-title"
+      >
+        <h2 id="demo-truth-title" className="type-eyebrow text-[var(--color-sky-deep)]">
+          {t("truthTitle")}
+        </h2>
+        <ul className="mt-3 list-disc space-y-2 pl-4 text-[0.8125rem] leading-relaxed text-[var(--ink-muted)]">
+          {truthPoints.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+      </section>
 
       <section
         className="u-card animate-fade-up p-4"

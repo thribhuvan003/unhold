@@ -34,23 +34,23 @@
     "steps": [
       {
         "title": "Tell us what happened",
-        "desc": "5 easy questions. No account needed."
+        "desc": "A few short questions. No account needed. Save your recovery code when shown."
       },
       {
-        "title": "Add the papers relevant to your case",
-        "desc": "Clear photos or PDFs. Unhold checks readability and asks you to review the original."
+        "title": "Add the papers for your case",
+        "desc": "Clear photos or PDFs of what your checklist asks for. Unhold checks readability; you still review the original."
       },
       {
-        "title": "Prepare a draft + organise your proof",
-        "desc": "A factual draft based on what you entered, plus one proof pack to review and attach."
+        "title": "Get a draft letter + proof pack",
+        "desc": "A factual draft from your answers (not a lawyer letter). You edit blanks, then copy or print."
       },
       {
         "title": "You send it & follow up",
-        "desc": "By email from your phone, or at the branch. Keep the acknowledgement and use the stated response date."
+        "desc": "Email from your phone or visit the branch. Keep the acknowledgement. Unhold never contacts the bank."
       }
     ],
-    "demoTitle": "Just curious? Inspect a worked example",
-    "demoDesc": "See sample facts become a suggested route, a tailored draft, and dated sources. No account or documents needed.",
+    "demoTitle": "Just curious? See a worked example",
+    "demoDesc": "Sample facts → suggested next step → full draft letter. No account. Nothing is sent.",
     "goodToKnow": "<strong>Good to know:</strong> we never send anything to your bank. No one can promise an unfreeze. The official cyber helpline is <helpline>1930</helpline>.",
     "rightsLink": "See the practical next steps and official routes →",
     "storiesLabel": "Who this is for",
@@ -85,7 +85,7 @@
       },
       {
         "title": "Did you send the money, or did it come to you?",
-        "hint": "There is no wrong answer. This helps us write the right letter."
+        "hint": "There is no wrong answer. This changes how the draft describes your situation."
       },
       {
         "title": "How is your money blocked?",
@@ -93,11 +93,11 @@
       },
       {
         "title": "How much money is stuck?",
-        "hint": "A rough number is fine. It helps us set the right priority."
+        "hint": "A rough number is fine. You can correct it later."
       },
       {
         "title": "Do you know who ordered the freeze?",
-        "hint": "This decides your real path to unfreeze. \"Not sure\" is completely fine."
+        "hint": "This chooses the safest next checklist (cyber, court, tax, or bank). \"Not sure\" is completely fine."
       }
     ],
     "bankOtherLabel": "Other / not sure — my bank is not listed",
@@ -184,8 +184,8 @@
       "court": "In plain words: this letter asks your branch for the court-order details, so you can apply for relief before the right court. The branch cannot lift this hold itself.",
       "tax": "In plain words: this letter asks your branch for the tax/GST notice details, so you can take it up with the relevant officer."
     },
-    "papersFirstTitle": "Add your papers first to unlock your ready letter",
-    "papersFirstBody": "To get an accurate, ready-to-send letter, add your freeze notice/SMS and bank statement on the Papers page. This prevents errors and makes sure your proof is attached.",
+    "papersFirstTitle": "Add your papers first to unlock the letter",
+    "papersFirstBody": "Upload the papers your case checklist asks for (at least the required ones, clear photos). That unlocks a draft you can edit, review, and send yourself — Unhold never sends it.",
     "addPapersCta": "Add my papers →"
   },
   "Errors": {
@@ -211,7 +211,7 @@
     "aiProcessingDisclaimer": "Unhold can use AI to classify cases, check document readability, extract details for your review, and draft letters. With your optional consent, case data — including document images — may be processed by AI providers outside India. If you do not consent, you can still use the non-AI workflow.",
     "agreeRequired": "I have read and agree to the above. I understand Unhold is not a law firm and does not guarantee outcomes.",
     "agreeAi": "I consent to AI processing of my case data and documents, including by providers outside India.",
-    "aiSkipNote": "If you skip this, you can still use Unhold — but AI cannot read your documents or draft letters for you; you fill everything in yourself.",
+    "aiSkipNote": "If you skip this, you can still use Unhold. You get the same guided checklist and template-based letter drafts; optional AI only helps check documents and polish wording when you allow it.",
     "optional": "Optional",
     "continue": "Continue"
   },
@@ -388,9 +388,15 @@
   },
   "DemoPage": {
     "eyebrow": "Worked example · made-up facts",
-    "title": "See the input, the decision, and the proof — before starting a case.",
-    "intro": "This example shows exactly what Unhold records, what it suggests, and what the user must verify. It does not decide who can release funds or predict an outcome.",
+    "title": "See the input, the decision, and the draft — before starting a case.",
+    "intro": "This is a sample walkthrough, not your case. It shows what Unhold organises, what it suggests next, and the kind of letter draft you review. It does not decide who can release funds or predict an outcome.",
     "sampleNote": "Sample only: Asha Rao · ₹1,800 shown as affected · total restriction after an unexpected UPI credit · NCRP reference available. Nothing is sent.",
+    "truthTitle": "Read this once so the demo does not mislead",
+    "truthPoints": [
+      "This letter is a draft template filled with sample facts — not a lawyer-signed document.",
+      "Your real letter uses your answers (freeze type, role, authority type, amount). Court and tax drafts ask different things than cyber drafts.",
+      "You always send the letter yourself. Unhold never emails the bank or police."
+    ],
     "proofTitle": "What changed from input to output",
     "proofSteps": [
       {
@@ -409,11 +415,11 @@
     "sourcesTitle": "Official links and dated contact checks",
     "sourcesDesc": "Contacts are linked to their published source. Legal outcomes still depend on the actual order, facts and jurisdiction:",
     "sourceLabel": "SBI official page",
-    "letterTitle": "Draft generated from the sample facts",
-    "letterDesc": "The summary comes first. Open the full letter only when you want to inspect every line.",
+    "letterTitle": "Sample draft letter (you would review and send)",
+    "letterDesc": "Summary first. Open the full draft to see every line. On a real case you fill any blanks before sending.",
     "letterFactNote": "total restriction · ₹1,800 · unexpected UPI credit · NCRP reference provided",
     "ctaTitle": "Your case won’t look like Asha’s.",
-    "ctaBody": "The letter, papers, and next-step checklist adapt to the facts you enter. You can stop and reopen the case with your recovery code.",
+    "ctaBody": "The path and letter adapt to what you enter. After you start, write down the recovery code — that is how you reopen the case on another phone.",
     "startCta": "Start my own case",
     "backHome": "Back to home"
   },
@@ -600,22 +606,22 @@
     "notReadyTitle": "Your letter is not ready yet",
     "tryAgain": "Try again",
     "backToCase": "← Back to my case",
-    "startingTitle": "Starting your letter…",
-    "startingBody": "We are asking the drafter to write your formal, bank-ready letter from your answers. This usually takes under a minute.",
+    "startingTitle": "Preparing your draft…",
+    "startingBody": "Building a letter draft from your case answers. This usually takes under a minute. You will review and send it yourself.",
     "errorFallback": "We could not start your letter right now. Your case is safe — please try again in a moment."
   },
   "DraftPendingRefresh": {
-    "writingTitle": "Writing your {level} letter…",
-    "writingBody": "We are preparing a formal, bank-ready letter from your answers. This page checks for it automatically — you don’t need to refresh.",
-    "slowNote": "This is taking longer than usual. Your case is saved — you can leave this page and come back later, or continue collecting the documents on your checklist in the meantime.",
+    "writingTitle": "Preparing your {level} draft…",
+    "writingBody": "Filling a formal letter template from your answers. This page updates automatically — you do not need to refresh. You still review and send the letter yourself.",
+    "slowNote": "This is taking longer than usual. Your case is saved — you can leave and come back, or keep collecting documents on your checklist.",
     "backToCase": "← Back to your case"
   },
   "LetterDetailsForm": {
-    "evidenceFirst": "Add your freeze notice and bank statement first to unlock the letter details form.",
+    "evidenceFirst": "Add the required papers on the Papers page first to unlock letter details.",
     "completeTitle": "Complete your details",
-    "rewriteHint": "The letter rewrites itself with what you type.",
+    "rewriteHint": "Saving updates the draft with what you type.",
     "stillMissing": "{count, plural, one {# detail still missing.} other {# details still missing.}}",
-    "allFilled": "All filled — the letter is bank-ready.",
+    "allFilled": "All required fields filled — still review every line before you send.",
     "hide": "Hide ▲",
     "fillIn": "Fill in ▼",
     "saving": "Saving & rewriting letter…",
@@ -635,11 +641,11 @@
     "upNext": "Up next: {text}"
   },
   "PackageStatusCard": {
-    "eyebrow": "Your package — not just letters",
+    "eyebrow": "Your case package",
     "title": "{done} of {total} ready",
-    "intro": "Unfreeze is not a chat reply. Banks and police act on a sealed pack, a clear path, and written follow-up you control.",
+    "intro": "Release is decided by the bank or authority — not by a chat app. Prepare papers, a draft letter, and written follow-up that you control.",
     "papers": "Core papers",
-    "papersNote": "Freeze SMS/notice + bank statement",
+    "papersNote": "What your checklist requires (often freeze SMS + statement)",
     "pack": "Sealed proof pack",
     "packNote": "One PDF with checksum — attach when you send",
     "branchDetails": "Branch letter (get freeze details)",
@@ -667,9 +673,9 @@
     "disclaimer": "Not legal advice. No guaranteed outcome. You send and file everything yourself."
   },
   "AuthorityActionsCard": {
-    "eyebrow": "What actually unfreezes a cyber freeze",
-    "title": "Authority actions — IO letter & official reporting",
-    "intro": "Your branch may need instructions from the investigating authority before it can change a cyber-related hold. Use a written representation to the Investigating Officer (IO). If you need to report cybercrime or access NCRP, use the official citizen portal. You send everything yourself — Unhold never contacts the police or government systems.",
+    "eyebrow": "After the bank names the authority",
+    "title": "Authority steps — representation & official reporting",
+    "intro": "For many cyber-related holds, the branch only acts after written instructions from the investigating authority. Prepare a factual representation for that authority (often called the IO). Report cybercrime or open NCRP only on the official citizen portal. You send everything — Unhold never contacts police or government systems.",
     "grmTitle": "Official cybercrime portal (citizen access)",
     "grmBody": "Use this public government portal to report cybercrime or access your NCRP account. It is not a promise that filing there will release a hold. For a frozen account, also get written freeze details and acknowledgement from your bank.",
     "grmCta": "Open official citizen portal ↗",
@@ -712,7 +718,7 @@
     "fillMissing": "Fill the missing details above first.",
     "approveError": "Could not approve this draft yet",
     "papersFirstTitle": "Add your papers first",
-    "papersFirstBody": "Add your freeze notice and bank statement on the Papers page before using or copying this letter. This keeps the letter accurate and your proof ready to attach.",
+    "papersFirstBody": "Add the papers your case checklist requires on the Papers page before copying this letter. That keeps facts grounded and your proof ready to attach.",
     "addPapers": "Add my papers →"
   },
   "DisproportionateFreezeCard": {

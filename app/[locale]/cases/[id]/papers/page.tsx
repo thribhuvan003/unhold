@@ -164,13 +164,12 @@ export default async function PapersPage({ params }: PageProps) {
         href={`/cases/${id}`}
         className="min-h-[44px] self-start pt-2.5 text-sm font-medium text-[var(--ink-muted)] no-underline"
       >
-        ← My case
+        {t('backToCase')}
       </Link>
       <div className="animate-fade-up">
-        <h1 className="type-display-xl text-[1.625rem]">Add your papers</h1>
+        <h1 className="type-display-xl text-[1.625rem]">{t('title')}</h1>
         <p className="mt-2 text-[0.90625rem] leading-relaxed text-[var(--ink-muted)]">
-          Each paper makes your case stronger. A clear phone photo is fine (JPEG, PNG or PDF, up to
-          25MB). Never upload passwords, OTPs, UPI PINs or full Aadhaar.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -190,13 +189,13 @@ export default async function PapersPage({ params }: PageProps) {
           <BundleButton caseId={id} />
           <section className="rounded-[var(--radius-lg)] border border-[var(--success)]/22 bg-[var(--success)]/7 p-4">
             <p className="text-sm font-semibold text-[var(--ink)]">
-              Good work — your first letter is ready.
+              {t('readyTitle')}
             </p>
             <Link
               href={`/cases/${id}/letters/L1`}
               className="u-btn u-btn-primary mt-2.5 flex min-h-[48px] w-full text-[0.9375rem] font-semibold"
             >
-              Read my letter →
+              {t('readMyLetter')}
             </Link>
           </section>
         </>
