@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, FilePlus2 } from 'lucide-react';
+import { track } from '@/lib/analytics/events';
 
 interface DraftLetterButtonProps {
   caseId: string;
@@ -33,6 +34,7 @@ export function DraftLetterButton({ caseId, level }: DraftLetterButtonProps) {
         throw new Error(json.error?.message ?? json.error ?? 'Could not start your letter');
       }
       setPhase('requested');
+      track('letter_generated', { level });
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');

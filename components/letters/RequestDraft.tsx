@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Loader2 } from 'lucide-react';
 import { DraftPendingRefresh } from '@/components/letters/DraftPendingRefresh';
+import { track } from '@/lib/analytics/events';
 
 type RequestDraftProps = {
   caseId: string;
@@ -38,6 +39,7 @@ export function RequestDraft({ caseId, level }: RequestDraftProps) {
           throw new Error(json.error?.message ?? t('errorFallback'));
         }
         setPhase('pending');
+        track('letter_generated', { level });
       } catch (err) {
         setError(err instanceof Error ? err.message : t('errorFallback'));
         setPhase('error');
