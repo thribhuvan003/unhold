@@ -53,7 +53,7 @@ export default async function DemoPage({ params }: Props) {
   const path = getUnfreezePath("cyber_upi_chain", locale);
 
   return (
-    <div className="mx-auto flex max-w-[430px] flex-col gap-4">
+    <div className="mx-auto flex max-w-[430px] flex-col gap-4 lg:max-w-2xl">
       {/* Lead with the killer insight in plain words, not a caveat — all three
           comprehension reviewers (HRs + a normal user) said the value was buried
           under a legal briefing. State it first; let the cards below be the proof. */}
@@ -137,8 +137,13 @@ export default async function DemoPage({ params }: Props) {
         frozenAmountInr="1,800"
       />
 
-      <section className="u-card p-4">
-        <p className="type-eyebrow">{t("sourcesTitle")}</p>
+      {/* Reference material — collapsed by default so the demo leads with the
+          usable output instead of a wall of legal text. All content preserved. */}
+      <details className="u-card p-4">
+        <summary className="type-eyebrow flex cursor-pointer list-none items-center justify-between">
+          {t("sourcesTitle")}
+          <span aria-hidden="true" className="text-[var(--ink-faint)]">＋</span>
+        </summary>
         <p className="mt-2 text-[0.8125rem] leading-relaxed text-[var(--ink-muted)]">
           {t("sourcesDesc")}
         </p>
@@ -152,7 +157,7 @@ export default async function DemoPage({ params }: Props) {
         <div className="mt-3">
           <LegalPositionNote position={DISPUTED_AMOUNT_RULE} />
         </div>
-      </section>
+      </details>
 
       <section className="u-hero animate-fade-up px-5 py-6">
         <div className="relative z-[1]">
