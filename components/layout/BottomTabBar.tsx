@@ -39,14 +39,13 @@ export function BottomTabBar() {
   return (
     <nav
       aria-label="Main"
-      className="sm:hidden"
+      className="flex sm:hidden"
       style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
         zIndex: 50,
-        display: 'flex',
         background: '#fff',
         borderTop: '1px solid rgba(20,30,40,.08)',
         padding: '9px 20px 22px',
