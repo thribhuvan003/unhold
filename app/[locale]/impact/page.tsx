@@ -70,9 +70,8 @@ export default async function ImpactPage({ params }: Props) {
             />
             <StatCard
               label={t("unfrozenLabel")}
-              value={t("unfrozenSoon")}
+              value={fmt(stats.unfrozenReported)}
               sub={t("unfrozenNote")}
-              muted
             />
           </section>
           <p className="type-caption text-[var(--ink-faint)]">

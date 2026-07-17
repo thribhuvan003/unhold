@@ -12,6 +12,7 @@ import { EditCaseDetails, type EditCaseInitial } from '@/components/case/EditCas
 import { DeadlineRemindersCard } from '@/components/case/DeadlineRemindersCard';
 import { SaveCaseCard } from '@/components/case/SaveCaseCard';
 import { DataRightsCard } from '@/components/case/DataRightsCard';
+import { OutcomeCaptureCard } from '@/components/case/OutcomeCaptureCard';
 import { AuthorityActionsCard } from '@/components/case/AuthorityActionsCard';
 import { PackageStatusCard } from '@/components/case/PackageStatusCard';
 import {
@@ -56,6 +57,7 @@ type CaseDetailData =
       hasSealedBundle: boolean;
       microUpiPattern: boolean;
       directOwner: boolean;
+      latestOutcome: 'unfrozen' | 'partially_unfrozen' | 'response_received' | 'still_frozen' | null;
     };
 
 async function loadCaseDetailData(caseId: string, guestToken: string | undefined): Promise<CaseDetailData> {
@@ -90,6 +92,7 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
     { data: evidenceRows },
     { data: escalationRows },
     { data: bundleLog },
+    { data: outcomeRows },
   ] = await Promise.all([
     admin
       .from('cases')
@@ -116,6 +119,13 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
       .eq('action', 'evidence.bundle_generated')
       .limit(1)
       .maybeSingle(),
+    // Latest self-reported outcome (post-letter follow-through).
+    admin
+      .from('case_outcomes')
+      .select('outcome')
+      .eq('case_id', caseId)
+      .order('reported_at', { ascending: false })
+      .limit(1),
   ]);
 
   const intake = (caseRow?.intake_json ?? {}) as Record<string, unknown>;
@@ -184,6 +194,13 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
         : '') ||
       (typeof intake.freeze_date === 'string' ? intake.freeze_date : ''),
     hasSealedBundle: Boolean(bundleLog),
+    latestOutcome:
+      (outcomeRows?.[0]?.outcome as
+        | 'unfrozen'
+        | 'partially_unfrozen'
+        | 'response_received'
+        | 'still_frozen'
+        | undefined) ?? null,
     microUpiPattern:
       intake.micro_upi_pattern === true ||
       (typeof intake.amount_inr === 'number' && intake.amount_inr > 0 && intake.amount_inr <= 5000) ||
@@ -351,6 +368,12 @@ export default async function CaseDetailPage({ params }: PageProps) {
       />
 
       {data.l1Sent ? <WhatHappensNextCard /> : null}
+
+      {/* Post-letter follow-through: one-tap outcome logging once a letter
+          exists. This is where the funnel used to end — keep it effortless. */}
+      {data.l1Sent || data.letters.some((l) => l.hasDraft) ? (
+        <OutcomeCaptureCard caseId={id} initialOutcome={data.latestOutcome} />
+      ) : null}
 
       {/* Optional reminders for the user's own follow-up dates. */}
       <DeadlineRemindersCard
