@@ -1,4 +1,21 @@
 {
+  "ImpactPage": {
+    "eyebrow": "Live counts",
+    "title": "How Unhold is being used",
+    "intro": "These are real, live totals from the product — not estimates, and they update automatically. Outcomes still depend on each bank, authority, the facts and applicable law; Unhold never promises a release.",
+    "updatedPrefix": "Updated",
+    "usersLabel": "People who started",
+    "casesLabel": "Cases organised",
+    "lettersGeneratedLabel": "Draft letters prepared",
+    "lettersSentLabel": "Letters marked sent",
+    "unfrozenLabel": "Accounts reported unfrozen",
+    "unfrozenSoon": "Coming soon",
+    "unfrozenNote": "Shown once outcome tracking is live.",
+    "emptyTitle": "Just getting started",
+    "emptyBody": "Unhold recently launched. Live usage counts will appear here as people organise their cases.",
+    "startCta": "Start my case",
+    "disclaimer": "Aggregate counts only. No personal information, case details or documents are ever shown here."
+  },
   "SiteHeader": {
     "skipToContent": "Skip to content",
     "callHelpline": "Call the 1930 cyber-fraud helpline",
