@@ -37,7 +37,35 @@ export function ConsentScreen({ onContinue, onBack }: ConsentScreenProps) {
           <h1 className="type-display text-[1.375rem]">{t('title')}</h1>
         </div>
 
-        <p className="mt-4 text-[0.84375rem] leading-relaxed text-[var(--ink-muted)]">{t('whatToExpect')}</p>
+        {/* Progress framing: the consent screen is step 1 of a short journey,
+            not a standalone legal wall. */}
+        <ol
+          className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.6875rem] font-semibold text-[var(--ink-faint)]"
+          aria-label={t('stepNote')}
+        >
+          <li className="flex items-center gap-1.5 text-[var(--color-sky-deep)]">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--color-sky-deep)] text-[0.625rem] font-bold text-white">
+              1
+            </span>
+            {t('flowConsent')}
+          </li>
+          <span aria-hidden="true">›</span>
+          <li className="flex items-center gap-1.5">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full border border-[var(--border-strong)] text-[0.625rem] font-bold">
+              2
+            </span>
+            {t('flowQuestions')}
+          </li>
+          <span aria-hidden="true">›</span>
+          <li className="flex items-center gap-1.5">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full border border-[var(--border-strong)] text-[0.625rem] font-bold">
+              3
+            </span>
+            {t('flowPlan')}
+          </li>
+        </ol>
+
+        <p className="mt-3 text-[0.84375rem] leading-relaxed text-[var(--ink-muted)]">{t('whatToExpect')}</p>
         <details className="mt-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2">
           <summary className="cursor-pointer text-xs font-semibold text-[var(--color-sky-deep)]">
             {t('readDataDetails')}

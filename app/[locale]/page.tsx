@@ -111,8 +111,9 @@ export default async function HomePage({ params }: Props) {
   ];
 
   return (
-    <div className="mx-auto flex max-w-[430px] flex-col gap-4">
+    <div className="mx-auto w-full max-w-[430px] lg:max-w-5xl">
       <JsonLd data={jsonLd} />
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
       <section className="u-hero animate-fade-up px-5 py-6">
         <div className="relative z-[1]">
           <p className="type-eyebrow">{t("eyebrow")}</p>
@@ -155,6 +156,49 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
+      {/* Product preview (desktop): show the plan + a draft-letter excerpt so a
+          visitor sees the output before starting. Hidden on mobile, where the
+          worked-example block below already fills this role. */}
+      <aside className="hidden animate-fade-up stagger-1 lg:block">
+        <div className="u-card p-5">
+          <p className="type-eyebrow">{t("previewLabel")}</p>
+          <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-3">
+            <p className="text-[0.8125rem] font-bold text-[var(--ink)]">
+              {t("previewPlanTitle")}
+            </p>
+            <ol className="mt-2 flex flex-col gap-1.5">
+              {steps.map((step, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-2 text-[0.78125rem] text-[var(--ink-muted)]"
+                >
+                  <span className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[var(--color-sky-mist)] text-[0.6875rem] font-bold text-[var(--color-sky-deep)]">
+                    {i + 1}
+                  </span>
+                  {step.title}
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-3">
+            <p className="text-[0.8125rem] font-bold text-[var(--ink)]">
+              {t("previewLetterTitle")}
+            </p>
+            <p className="type-mono-data mt-1.5 text-[0.75rem] leading-relaxed text-[var(--ink-faint)]">
+              {t("previewLetterExcerpt")}
+            </p>
+          </div>
+          <Link
+            href="/demo"
+            className="mt-3 inline-block text-[0.8125rem] font-semibold text-[var(--color-sky-deep)] no-underline"
+          >
+            {t("demoTitle")} →
+          </Link>
+        </div>
+      </aside>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-4 lg:mx-auto lg:mt-8 lg:max-w-2xl">
       {/* The one loud block on the page: a reviewer/judge/curious visitor has no
           case or papers — this is the only thing they can click. Solid brand blue
           so it can't be scrolled past, placed in the first viewport. */}
@@ -264,6 +308,7 @@ export default async function HomePage({ params }: Props) {
       >
         {t("rightsLink")}
       </Link>
+      </div>
     </div>
   );
 }
