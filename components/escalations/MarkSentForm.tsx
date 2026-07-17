@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/ui/cn';
 import { computeSha256HexInBrowser } from '@/lib/evidence/sha256';
 import { validateUploadFile } from '@/lib/evidence/validate-file';
+import { track } from '@/lib/analytics/events';
 
 type MarkSentFormProps = {
   caseId: string;
@@ -121,6 +122,7 @@ export function MarkSentForm({
       }
 
       setSuccess(true);
+      track('letter_marked_sent', { level });
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : t('networkError'));

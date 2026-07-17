@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/navigation';
 import { ConsentScreen } from '@/components/legal/ConsentScreen';
 import { IntakeWizard, type IntakeWizardResult } from '@/components/intake/IntakeWizard';
 import { SAVE_CASE_STORAGE_KEY } from '@/lib/case/save-case-storage';
+import { track } from '@/lib/analytics/events';
 
 /**
  * The single intake entry point: consent (blocks B + F) → 5-question wizard →
@@ -70,6 +71,7 @@ export default function StartPage() {
         // sessionStorage full / private mode — save page still shows public_id if present
       }
 
+      track('intake_completed');
       router.push(`/cases/${json.id}/save`);
     } catch (err) {
       setError(
@@ -89,6 +91,7 @@ export default function StartPage() {
           onContinue={(aiConsentAccepted) => {
             setAiConsent(aiConsentAccepted);
             setPhase('questions');
+            track('case_started');
           }}
         />
       ) : (

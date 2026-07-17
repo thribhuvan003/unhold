@@ -9,6 +9,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import "../globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { Link } from "@/i18n/navigation";
@@ -204,6 +205,7 @@ export default async function LocaleLayout({
               </p>
             </div>
           </footer>
+          <Analytics />
         </NextIntlClientProvider>
       </body>
     </html>

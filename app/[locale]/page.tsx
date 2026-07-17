@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { TrackView } from "@/components/analytics/TrackView";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -113,6 +114,7 @@ export default async function HomePage({ params }: Props) {
   return (
     <div className="mx-auto w-full max-w-[430px] lg:max-w-5xl">
       <JsonLd data={jsonLd} />
+      <TrackView event="landing_view" />
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
       <section className="u-hero animate-fade-up px-5 py-6">
         <div className="relative z-[1]">
