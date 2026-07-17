@@ -5,7 +5,7 @@ test.describe("Phase 1 exit path @smoke", () => {
     await page.goto("/");
     await expect(page.getByRole("link", { name: "Unhold" })).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /bank account restricted/i }),
+      page.getByRole("heading", { name: /bank account frozen or restricted/i }),
     ).toBeVisible();
     // Footer is the stable legal anchor (founder strip also mentions "not a law firm").
     await expect(
