@@ -39,6 +39,35 @@ export function MarkSentForm({
   const [phase, setPhase] = useState<SubmitPhase>('idle');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [liteSaving, setLiteSaving] = useState(false);
+  const [liteDone, setLiteDone] = useState(false);
+
+  /** Lightweight "I sent it" — no proof photo; the next letter stays locked
+   *  until proof is added through the full flow. */
+  async function handleLiteSent() {
+    if (liteSaving || submitting || success) return;
+    setError(null);
+    setLiteSaving(true);
+    try {
+      const res = await fetch(
+        `/api/v1/cases/${caseId}/escalations/${escalationId}/mark-sent-lite`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' } },
+      );
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(payload?.error?.message ?? t('markSentError'));
+        return;
+      }
+      track('letter_marked_sent', { level, proof: false });
+      setLiteDone(true);
+      setSuccess(true);
+      onSuccess?.();
+    } catch {
+      setError(t('networkError'));
+    } finally {
+      setLiteSaving(false);
+    }
+  }
 
   const submitting = phase !== 'idle';
   const n = LEVEL_NUM[level] ?? 1;
@@ -193,6 +222,22 @@ export function MarkSentForm({
         )}
       </button>
 
+      <button
+        type="button"
+        onClick={handleLiteSent}
+        disabled={proofGateBlocked || submitting || liteSaving || success}
+        className="u-btn u-btn-ghost mt-2 flex min-h-[44px] w-full text-[0.84375rem] font-medium disabled:opacity-50"
+      >
+        {liteSaving ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            {t('saving')}
+          </>
+        ) : (
+          <>{t('liteSubmit')}</>
+        )}
+      </button>
+
       {error ? (
         <p role="alert" className="u-alert u-alert-error mt-2.5">
           {error}
@@ -201,7 +246,7 @@ export function MarkSentForm({
 
       {success ? (
         <p className="u-alert u-alert-success mt-2.5">
-          {t('successNote')}
+          {liteDone ? t('liteSuccess', { next }) : t('successNote')}
         </p>
       ) : null}
     </form>

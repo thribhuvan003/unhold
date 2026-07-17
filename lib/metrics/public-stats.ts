@@ -22,13 +22,14 @@ export type PublicStats = {
   casesStarted: number;
   lettersGenerated: number;
   lettersSent: number;
+  unfrozenReported: number;
   generatedAt: string;
 };
 
 export async function getPublicStats(): Promise<PublicStats> {
   const admin = createAdminClient();
 
-  const [users, cases, generated, sent] = await Promise.all([
+  const [users, cases, generated, sent, unfrozen] = await Promise.all([
     admin.from('guest_sessions').select('*', { count: 'exact', head: true }),
     admin.from('cases').select('*', { count: 'exact', head: true }),
     admin
@@ -39,6 +40,11 @@ export async function getPublicStats(): Promise<PublicStats> {
       .from('escalations')
       .select('*', { count: 'exact', head: true })
       .not('sent_at', 'is', null),
+    // Unique per case (unique index on case_id+outcome), user-reported.
+    admin
+      .from('case_outcomes')
+      .select('*', { count: 'exact', head: true })
+      .eq('outcome', 'unfrozen'),
   ]);
 
   return {
@@ -46,6 +52,7 @@ export async function getPublicStats(): Promise<PublicStats> {
     casesStarted: cases.count ?? 0,
     lettersGenerated: generated.count ?? 0,
     lettersSent: sent.count ?? 0,
+    unfrozenReported: unfrozen.count ?? 0,
     generatedAt: new Date().toISOString(),
   };
 }

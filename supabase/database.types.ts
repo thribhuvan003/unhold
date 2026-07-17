@@ -263,6 +263,41 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["banks"]["Insert"]>;
         Relationships: [];
       };
+      case_outcomes: {
+        Row: {
+          id: string;
+          case_id: string;
+          outcome: string;
+          testimonial_opt_in: boolean;
+          testimonial_text: string | null;
+          reported_at: string;
+        };
+        Insert: {
+          id?: string;
+          case_id: string;
+          outcome: string;
+          testimonial_opt_in?: boolean;
+          testimonial_text?: string | null;
+          reported_at?: string;
+        };
+        Update: {
+          id?: string;
+          case_id?: string;
+          outcome?: string;
+          testimonial_opt_in?: boolean;
+          testimonial_text?: string | null;
+          reported_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "case_outcomes_case_id_fkey";
+            columns: ["case_id"];
+            isOneToOne: false;
+            referencedRelation: "cases";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       cases: {
         Row: {
           id: string;
