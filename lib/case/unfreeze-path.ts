@@ -5,6 +5,18 @@ type FreezeReason = Database["public"]["Enums"]["freeze_reason"];
 /** Scenario track used to choose the safest next information-gathering route. */
 export type UnfreezeTrack = "branch" | "cyber" | "court" | "tax";
 
+/**
+ * Court / tax freezes cannot be lifted by the branch. Pure type-guard kept in
+ * this server-safe module so server components (the case page) can call it —
+ * it must NOT live in a `'use client'` file, or invoking it during server
+ * render throws "Attempted to call … from the server".
+ */
+export function isCourtOrTaxTrack(
+  track: UnfreezeTrack,
+): track is "court" | "tax" {
+  return track === "court" || track === "tax";
+}
+
 export type UnfreezeStep = {
   n: number;
   title: string;

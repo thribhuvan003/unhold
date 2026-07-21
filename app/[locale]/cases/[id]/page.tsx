@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { computeCaseStages } from '@/components/case/case-stages';
 import { DoThisNowCard } from '@/components/case/DoThisNowCard';
 import { UnfreezePathCard } from '@/components/case/UnfreezePathCard';
-import { getUnfreezePath } from '@/lib/case/unfreeze-path';
+import { getUnfreezePath, isCourtOrTaxTrack } from '@/lib/case/unfreeze-path';
 import { StageChecklist } from '@/components/case/StageChecklist';
 import { LettersLadderCard } from '@/components/case/LettersLadderCard';
 import { WhatHappensNextCard } from '@/components/case/WhatHappensNextCard';
@@ -14,10 +14,7 @@ import { SaveCaseCard } from '@/components/case/SaveCaseCard';
 import { DataRightsCard } from '@/components/case/DataRightsCard';
 import { AuthorityActionsCard } from '@/components/case/AuthorityActionsCard';
 import { PackageStatusCard } from '@/components/case/PackageStatusCard';
-import {
-  CourtTaxActionsCard,
-  isCourtOrTaxTrack,
-} from '@/components/case/CourtTaxActionsCard';
+import { CourtTaxActionsCard } from '@/components/case/CourtTaxActionsCard';
 import type { LetterSummary } from '@/components/case/LettersPanel';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { cn } from '@/lib/ui/cn';

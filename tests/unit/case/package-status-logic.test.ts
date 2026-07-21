@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getUnfreezePath } from '@/lib/case/unfreeze-path';
-import { isCourtOrTaxTrack } from '@/components/case/CourtTaxActionsCard';
+import { getUnfreezePath, isCourtOrTaxTrack } from '@/lib/case/unfreeze-path';
 
 describe('track routing for package / authority cards (mid-2026 domain)', () => {
   it('defaults unknown freezes to cyber (IO + GRM path)', () => {

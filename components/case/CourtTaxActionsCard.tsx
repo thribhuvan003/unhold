@@ -33,7 +33,3 @@ export function CourtTaxActionsCard({ track, l1Sent }: CourtTaxActionsCardProps)
     </section>
   );
 }
-
-export function isCourtOrTaxTrack(track: UnfreezeTrack): track is 'court' | 'tax' {
-  return track === 'court' || track === 'tax';
-}
