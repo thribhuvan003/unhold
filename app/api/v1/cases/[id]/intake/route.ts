@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, after } from 'next/server';
 import {
   assertCaseAccess,
   requireRequestAuth,
@@ -95,6 +95,47 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       await runCaseTick(caseId, { type: 'intake_submitted' });
     } catch {
       // swallow — classification will still run on the next cron tick
+    }
+
+    // A drafted letter bakes in the case values (amount, name, bank…) at draft
+    // time. When the user edits those details afterward, regenerate any letter
+    // they have NOT yet approved or sent so it reflects the new values instead
+    // of showing a stale amount. isDraftOverwritable inside the drafter protects
+    // approved/sent letters, and a failed regenerate leaves the existing draft
+    // untouched — so this is strictly safe. Runs after the response so the edit
+    // is never blocked on the drafter.
+    const regenerateOpenDrafts = async () => {
+      try {
+        const { data: escalations } = await admin
+          .from('escalations')
+          .select('level, status')
+          .eq('case_id', caseId);
+        if (!escalations || escalations.length === 0) return;
+        const { createDrafterDraftNow, isDraftOverwritable } = await import(
+          '@/lib/agents/drafter/runner'
+        );
+        const levels = escalations
+          .filter((e) => isDraftOverwritable(e.status))
+          .map((e) => e.level as 'L1' | 'L2' | 'L3');
+        for (const level of levels) {
+          try {
+            await createDrafterDraftNow(
+              caseId,
+              level,
+              `redraft:${caseId}:${level}:${Date.now()}`,
+            );
+          } catch {
+            // best-effort: keep the existing draft if regeneration fails
+          }
+        }
+      } catch {
+        // never fail the edit because drafts could not be regenerated
+      }
+    };
+    try {
+      after(regenerateOpenDrafts);
+    } catch {
+      await regenerateOpenDrafts();
     }
 
     const response = jsonSuccess(serializeCase(updated));

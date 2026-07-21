@@ -231,24 +231,29 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // leaving null confidence, which the gates treat as "trusted" — letting
     // blank/unreadable files through. If the inline run fails or times out, we
     // fall back to the durable queue + cron sweeper.
-    let verifiedInline = false;
-    try {
-      const { runVerifierJob } = await import("@/lib/agents/verifier/runner");
-      await Promise.race([
-        runVerifierJob({
-          id: `inline:${evidenceId}`,
-          payload_json: { case_id: caseId, evidence_id: evidenceId },
-        } as unknown as AgentJobRow),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("verify_timeout")), 20_000),
-        ),
-      ]);
-      verifiedInline = true;
-    } catch {
-      // fall through to the durable queue path below
-    }
-
-    if (!verifiedInline) {
+    // Verify THIS document WITHOUT blocking the response. The vision check can
+    // take many seconds; awaiting it inline made a successfully uploaded photo
+    // sit on a spinner (read as "the picture won't upload") and delayed the
+    // Review unlock. The bounded inline attempt — with a durable queue +
+    // processing fallback — now runs after the response is sent. Until it lands
+    // the gates treat the doc as trusted-pending (null confidence), exactly as
+    // the queue fallback already did, so the upload counts immediately.
+    const verifyEvidence = async () => {
+      try {
+        const { runVerifierJob } = await import("@/lib/agents/verifier/runner");
+        await Promise.race([
+          runVerifierJob({
+            id: `inline:${evidenceId}`,
+            payload_json: { case_id: caseId, evidence_id: evidenceId },
+          } as unknown as AgentJobRow),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("verify_timeout")), 20_000),
+          ),
+        ]);
+        return;
+      } catch {
+        // fall through to the durable queue path below
+      }
       try {
         await enqueueAgentJob({
           case_id: caseId,
@@ -261,16 +266,17 @@ export async function POST(request: NextRequest, context: RouteContext) {
         // Best-effort: the cron sweeper will enqueue via the router instead.
       }
       try {
-        after(async () => {
-          try {
-            await processAgentJobs({ limit: 5 });
-          } catch {
-            // Job stays pending for the cron sweeper.
-          }
-        });
+        await processAgentJobs({ limit: 5 });
       } catch {
-        // No request scope (direct invocation in tests) — cron sweeper handles it.
+        // Job stays pending for the cron sweeper.
       }
+    };
+
+    try {
+      after(verifyEvidence);
+    } catch {
+      // No request scope (direct invocation in tests) — run inline.
+      await verifyEvidence();
     }
 
     const response = jsonSuccess({
