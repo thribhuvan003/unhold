@@ -24,7 +24,9 @@ import { cn } from '@/lib/ui/cn';
 import { GUEST_COOKIE_NAME, resolveGuestToken } from '@/lib/auth/guest';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { withReadRetry } from '@/lib/supabase/retry';
 import { assertCaseAccess, type RequestAuth } from '@/lib/api/case-access';
+import { isApiError } from '@/lib/api/errors';
 import { isReadable } from '@/lib/evidence/readability';
 import { Link } from '@/i18n/navigation';
 import type { Database } from '@/supabase/database.types';
@@ -63,7 +65,7 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
   const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await withReadRetry(() => supabase.auth.getUser());
 
   const auth: RequestAuth = {
     userId: user?.id ?? null,
@@ -78,7 +80,11 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
 
   let directOwner = false;
   try {
-    const access = await assertCaseAccess(caseId, auth, 'viewer');
+    // Retry only transient blips — a deterministic ApiError (403/404/410) is a
+    // real access decision and must surface immediately, not after retries.
+    const access = await withReadRetry(() => assertCaseAccess(caseId, auth, 'viewer'), {
+      shouldRetry: (error) => !isApiError(error),
+    });
     directOwner = access === 'owner';
   } catch {
     return { authorized: false };
@@ -90,7 +96,7 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
     { data: evidenceRows },
     { data: escalationRows },
     { data: bundleLog },
-  ] = await Promise.all([
+  ] = await withReadRetry(() => Promise.all([
     admin
       .from('cases')
       .select(
@@ -116,7 +122,7 @@ async function loadCaseDetailData(caseId: string, guestToken: string | undefined
       .eq('action', 'evidence.bundle_generated')
       .limit(1)
       .maybeSingle(),
-  ]);
+  ]));
 
   const intake = (caseRow?.intake_json ?? {}) as Record<string, unknown>;
   // A sealed file that the vision check couldn't read (e.g. a blank photo) must

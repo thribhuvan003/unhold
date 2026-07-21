@@ -1,8 +1,21 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
 
-export default function CaseError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function CaseError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    // Surface the snag so a persistent failure (vs. a one-off hiccup the reads
+    // now retry through) is actually diagnosable instead of silently swallowed.
+    console.error('[cases/[id]] failed to load case', error);
+  }, [error]);
+
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-[430px] flex-col items-center justify-center gap-4 px-4 text-center">
       <h1 className="type-display-xl text-[1.5rem]">We hit a snag loading your case</h1>
