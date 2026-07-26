@@ -24,20 +24,32 @@ concurrency:
 jobs:
   drain:
     runs-on: ubuntu-latest
+    env:
+      # Hobby Vercel: no sub-daily platform crons. This workflow is the drain.
+      APP_URL: ${{ secrets.APP_URL }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
     steps:
+      - name: Require APP_URL + CRON_SECRET
+        run: |
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "::error::Missing repo secrets APP_URL and/or CRON_SECRET (same CRON_SECRET as Vercel). See docs/DEPLOY_VERCEL_HOBBY.md"
+            exit 1
+          fi
+          # normalize: no trailing slash
+          echo "APP_URL=${APP_URL%/}" >> "$GITHUB_ENV"
+
       - name: Process job queue
         run: |
           curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors \
-            --max-time 280 -X POST "$APP_URL/api/v1/internal/jobs/process" \
-            -H "Authorization: Bearer $CRON_SECRET"
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+            --max-time 280 -X POST "${APP_URL%/}/api/v1/internal/jobs/process" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+
       - name: Monitor tick
         run: |
           curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors \
-            --max-time 280 -X POST "$APP_URL/api/v1/internal/cron/tick" \
-            -H "Authorization: Bearer $CRON_SECRET"
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+            --max-time 280 -X POST "${APP_URL%/}/api/v1/internal/cron/tick" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            -d '{}'
