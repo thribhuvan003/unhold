@@ -1,0 +1,62 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+
+# env
+.env
+.env.local
+.env.*.local
+config/vercel-env-paste.template
+
+# debug
+npm-debug.log*
+pnpm-debug.log*
+
+# typescript
+*.tsbuildinfo
+
+# harness session state (MANIFEST.json is committed)
+.claude/session/
+
+# supabase local
+.supabase/
+supabase/.temp/
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+
+# misc
+.DS_Store
+coverage/
+.vercel
+.cache/
+.local/
+.pnpm-home/
+
+# crash dumps
+*.stackdump
+
+# root-level screenshots / scratch captures (never commit dev screenshots)
+/*.jpeg
+/*.jpg
+/*.png
+
+# scratch / MCP tooling dirs
+.playwright-mcp/
+mcps/
+
+# local agent / IDE tooling (do not ship in the product tree)
+.agents/
+.claude/
+.cursor/
+.grok/
+skills-lock.json
+MEMORY.md
+ERRORS.md
+.mcp.json

@@ -1,0 +1,415 @@
+{
+  "version": 1,
+  "pass_threshold": 18,
+  "cases": [
+    {
+      "id": "G01",
+      "agent": "intake",
+      "description": "innocent receiver UPI chain",
+      "input": {
+        "case_id": "case-g01",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "UPI lien debit freeze innocent receiver",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "UPI lien debit freeze innocent receiver" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "victim_role": "innocent_receiver",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G02",
+      "agent": "intake",
+      "description": "victim fork",
+      "input": {
+        "case_id": "case-g02",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "I sent money via UPI and was defrauded",
+          "user_role": "victim",
+          "bank_slug": "sbi"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "user_role", "value": "victim" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "victim_role": "victim",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G03",
+      "agent": "intake",
+      "description": "KYC vs cyber",
+      "input": {
+        "case_id": "case-g03",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "Account frozen due to KYC expired re-kyc pending"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "KYC expired" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "kyc_expired",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G04",
+      "agent": "intake",
+      "description": "tax refusal human gate",
+      "input": {
+        "case_id": "case-g04",
+        "evidence_count": 0,
+        "intake_json": {
+          "freeze_reason_hint": "tax_attachment",
+          "narration": "Income tax attachment on account"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "freeze_reason_hint", "value": "tax_attachment" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "tax_attachment",
+        "human_review_required": true,
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G05",
+      "agent": "intake",
+      "description": "court order refusal",
+      "input": {
+        "case_id": "case-g05",
+        "evidence_count": 0,
+        "intake_json": {
+          "freeze_reason_hint": "court_order",
+          "narration": "Court order freeze"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "Court order freeze" }
+        ],
+        "evidence_types": []
+      },
+      "expected": {
+        "freeze_reason": "court_order",
+        "refuse_to_classify": true,
+        "human_review_required": true
+      }
+    },
+    {
+      "id": "G06",
+      "agent": "intake",
+      "description": "police notice BNSS",
+      "input": {
+        "case_id": "case-g06",
+        "evidence_count": 0,
+        "intake_json": { "narration": "Police notice under BNSS 106" },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "Police notice BNSS" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "police_notice_bnss106",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G07",
+      "agent": "intake",
+      "description": "amount mismatch refusal",
+      "input": {
+        "case_id": "case-g07",
+        "evidence_count": 1,
+        "intake_json": {
+          "narration": "UPI freeze",
+          "amount_inr": 50000,
+          "ocr_amount_inr": 10000
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "amount_inr", "value": "50000" }
+        ],
+        "evidence_types": ["freeze_sms"]
+      },
+      "expected": {
+        "refuse_to_classify": true,
+        "refuse_reason": "amount_mismatch_gt_10pct"
+      }
+    },
+    {
+      "id": "G08",
+      "agent": "intake",
+      "description": "suspected mule human gate",
+      "input": {
+        "case_id": "case-g08",
+        "evidence_count": 0,
+        "intake_json": {
+          "freeze_reason_hint": "suspected_mule",
+          "narration": "Bank flagged as suspected mule"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "freeze_reason_hint", "value": "suspected_mule" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "suspected_mule",
+        "human_review_required": true
+      }
+    },
+    {
+      "id": "G09",
+      "agent": "drafter",
+      "description": "L1 template fallback",
+      "level": "L1",
+      "input": {
+        "placeholderValues": {
+          "USER_NAME": "Rahul Sharma",
+          "BANK_NAME": "State Bank of India",
+          "BRANCH_CITY": "Mumbai",
+          "ACCOUNT_LAST4": "1234",
+          "AMOUNT_INR": "25000",
+          "FREEZE_DATE": "2025-01-15",
+          "NCRP_ID": "12345678901234",
+          "USER_PHONE": "9876543210"
+        },
+        "proofGateBlocked": false
+      },
+      "expected": {
+        "level": "L1",
+        "template_slug": "branch_lien_release",
+        "disclaimer_block": "DRAFT ONLY — REVIEW BEFORE USE",
+        "placeholders_missing_count": 0
+      }
+    },
+    {
+      "id": "G10",
+      "agent": "drafter",
+      "description": "L2 proof gate blocked",
+      "level": "L2",
+      "input": {
+        "placeholderValues": {
+          "USER_NAME": "Rahul Sharma",
+          "BANK_NAME": "State Bank of India",
+          "BRANCH_CITY": "Mumbai",
+          "ACCOUNT_LAST4": "1234",
+          "AMOUNT_INR": "25000",
+          "NCRP_ID": "12345678901234",
+          "NODAL_EMAIL": "nodal@sbi.co.in",
+          "L1_SENT_DATE": "",
+          "USER_PHONE": "9876543210"
+        },
+        "proofGateBlocked": true
+      },
+      "expected": {
+        "level": "L2",
+        "proof_gate_blocked": true,
+        "disclaimer_block": "DRAFT ONLY — REVIEW BEFORE USE"
+      }
+    },
+    {
+      "id": "G11",
+      "agent": "drafter",
+      "description": "L3 proof gate blocked",
+      "level": "L3",
+      "input": {
+        "placeholderValues": {
+          "USER_NAME": "Rahul Sharma",
+          "BANK_NAME": "State Bank of India",
+          "ACCOUNT_LAST4": "1234",
+          "AMOUNT_INR": "25000",
+          "NCRP_ID": "12345678901234",
+          "FREEZE_DATE": "2025-01-15",
+          "L1_SENT_DATE": "2025-02-01",
+          "L2_SENT_DATE": "",
+          "USER_PHONE": "9876543210"
+        },
+        "proofGateBlocked": true
+      },
+      "expected": {
+        "level": "L3",
+        "proof_gate_blocked": true,
+        "disclaimer_block": "DRAFT ONLY — REVIEW BEFORE USE"
+      }
+    },
+    {
+      "id": "G12",
+      "agent": "intake",
+      "description": "bank STR",
+      "input": {
+        "case_id": "case-g12",
+        "evidence_count": 0,
+        "intake_json": { "narration": "Suspicious transaction report STR freeze" },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "STR freeze" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "bank_str",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G13",
+      "agent": "intake",
+      "description": "cheque dishonour",
+      "input": {
+        "case_id": "case-g13",
+        "evidence_count": 0,
+        "intake_json": { "narration": "Cheque dishonour hold on account" },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "Cheque dishonour" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "cheque_dishonour",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G14",
+      "agent": "intake",
+      "description": "death nomination dispute",
+      "input": {
+        "case_id": "case-g14",
+        "evidence_count": 0,
+        "intake_json": { "narration": "Death nomination dispute freeze" },
+        "manifest": [
+          { "source_id": "intake_json", "field": "narration", "value": "nomination dispute" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "death_nomination_dispute",
+        "refuse_to_classify": false
+      }
+    },
+    {
+      "id": "G15",
+      "agent": "intake",
+      "description": "mule admitted unknown funds",
+      "input": {
+        "case_id": "case-g15",
+        "evidence_count": 0,
+        "intake_json": {
+          "freeze_reason_hint": "suspected_mule",
+          "admits_unknown_funds": true,
+          "narration": "Received unknown UPI transfer"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "admits_unknown_funds", "value": "true" }
+        ]
+      },
+      "expected": {
+        "refuse_to_classify": true,
+        "refuse_reason": "mule_admitted_unknown_funds"
+      }
+    },
+    {
+      "id": "G16",
+      "agent": "intake",
+      "description": "generic bank innocent receiver",
+      "input": {
+        "case_id": "case-g16",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "UPI cyber fraud lien",
+          "user_role": "innocent_receiver",
+          "bank_slug": "hdfc"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "bank_slug", "value": "hdfc" }
+        ]
+      },
+      "expected": {
+        "freeze_reason": "cyber_upi_chain",
+        "playbook_slug": "innocent_receiver_upi_chain_generic"
+      }
+    },
+    {
+      "id": "G17",
+      "agent": "intake",
+      "description": "SBI innocent receiver playbook",
+      "input": {
+        "case_id": "case-g17",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "UPI lien SBI",
+          "user_role": "innocent_receiver",
+          "bank_slug": "sbi"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "bank_slug", "value": "sbi" }
+        ]
+      },
+      "expected": {
+        "playbook_slug": "innocent_receiver_upi_chain_sbi"
+      }
+    },
+    {
+      "id": "G18",
+      "agent": "intake",
+      "description": "credit freeze type",
+      "input": {
+        "case_id": "case-g18",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "UPI issue",
+          "freeze_type_hint": "credit_freeze"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "freeze_type_hint", "value": "credit_freeze" }
+        ]
+      },
+      "expected": {
+        "freeze_type": "credit_freeze"
+      }
+    },
+    {
+      "id": "G19",
+      "agent": "intake",
+      "description": "partial lien type",
+      "input": {
+        "case_id": "case-g19",
+        "evidence_count": 0,
+        "intake_json": {
+          "narration": "partial lien on savings",
+          "freeze_type_hint": "partial_lien"
+        },
+        "manifest": [
+          { "source_id": "intake_json", "field": "freeze_type_hint", "value": "partial_lien" }
+        ]
+      },
+      "expected": {
+        "freeze_type": "partial_lien"
+      }
+    },
+    {
+      "id": "G20",
+      "agent": "drafter",
+      "description": "L1 missing placeholders",
+      "level": "L1",
+      "input": {
+        "placeholderValues": {
+          "USER_NAME": "Rahul Sharma",
+          "BANK_NAME": "State Bank of India"
+        },
+        "proofGateBlocked": false
+      },
+      "expected": {
+        "level": "L1",
+        "disclaimer_block": "DRAFT ONLY — REVIEW BEFORE USE",
+        "placeholders_missing_min": 1
+      }
+    }
+  ]
+}

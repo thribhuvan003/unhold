@@ -1,0 +1,849 @@
+{
+  "ImpactPage": {
+    "eyebrow": "Live counts",
+    "title": "How Unhold is being used",
+    "intro": "These are real, live totals from the product — not estimates, and they update automatically. Outcomes still depend on each bank, authority, the facts and applicable law; Unhold never promises a release.",
+    "updatedPrefix": "Updated",
+    "usersLabel": "People who started",
+    "casesLabel": "Cases organised",
+    "lettersGeneratedLabel": "Draft letters prepared",
+    "lettersSentLabel": "Letters marked sent",
+    "unfrozenLabel": "Accounts reported unfrozen",
+    "unfrozenSoon": "Coming soon",
+    "unfrozenNote": "Shown once outcome tracking is live.",
+    "emptyTitle": "Just getting started",
+    "emptyBody": "Unhold recently launched. Live usage counts will appear here as people organise their cases.",
+    "startCta": "Start my case",
+    "disclaimer": "Aggregate counts only. No personal information, case details or documents are ever shown here."
+  },
+  "SiteHeader": {
+    "skipToContent": "Skip to content",
+    "callHelpline": "Call the 1930 cyber-fraud helpline",
+    "nav": {
+      "report": "Report freeze",
+      "reportShort": "Report",
+      "cases": "My cases",
+      "casesShort": "Cases"
+    },
+    "switchLanguage": "Read in Hindi",
+    "languageName": "हिंदी"
+  },
+  "BottomNav": {
+    "home": "Home",
+    "myCase": "My case",
+    "help": "Help"
+  },
+  "Footer": {
+    "legalDisclaimer": "Legal disclaimer",
+    "privacyPolicy": "Privacy policy",
+    "notLawFirm": "Not a law firm. Not RBI. Cyber helpline",
+    "builtFor": "Built for people navigating bank freezes — you stay in control."
+  },
+  "HomePage": {
+    "eyebrow": "Free · no account · you stay in control",
+    "title": "Bank account frozen or restricted? Organise your case and prepare a letter you can send yourself.",
+    "intro": "Unhold helps you record what the bank told you, organise relevant papers, and prepare a factual draft for the official route identified in your records. <strong>You verify and send everything yourself.</strong> The bank, authority, or court decides what happens next; Unhold cannot promise a release.",
+    "startCta": "Start my case",
+    "previewLabel": "A preview of what you'll get",
+    "previewPlanTitle": "Your step-by-step plan",
+    "previewLetterTitle": "A ready-to-review draft letter",
+    "previewLetterExcerpt": "To: The Branch Manager … Subject: Request for written restriction details and review of account XXXXXX4417.",
+    "openCaseCta": "I already started — open my case",
+    "recoverCta": "Lost browser? Open with recovery code →",
+    "otherLangCta": "हिंदी में पढ़ें — आपके अधिकार और अगला कदम →",
+    "howItWorksLabel": "How it works",
+    "steps": [
+      {
+        "title": "Tell us what happened",
+        "desc": "A few short questions. No account needed. Save your recovery code when shown."
+      },
+      {
+        "title": "Add the papers for your case",
+        "desc": "Clear photos or PDFs of what your checklist asks for. You still re-read every file yourself."
+      },
+      {
+        "title": "Get a draft letter + proof pack",
+        "desc": "A factual draft from your answers (not a lawyer letter). You edit blanks, then copy or print."
+      },
+      {
+        "title": "You send it & follow up",
+        "desc": "Email from your phone or visit the branch. Keep the acknowledgement. Unhold never contacts the bank."
+      }
+    ],
+    "demoTitle": "Just curious? See a worked example",
+    "demoDesc": "Sample facts → suggested next step → full draft letter. No account. Nothing is sent.",
+    "goodToKnow": "<strong>Good to know:</strong> we never send anything to your bank. No one can promise an unfreeze. The official cyber helpline is <helpline>1930</helpline>.",
+    "rightsLink": "See the practical next steps and official routes →",
+    "storiesLabel": "Who this is for",
+    "stories": [
+      {
+        "who": "Student · Bangalore-style UPI chain",
+        "line": "An unknown UPI credit may appear near a restriction. First ask the bank for the amount held, ordering authority and reference in writing."
+      },
+      {
+        "who": "Shop / tea stall · North India",
+        "line": "Take a factual letter and only the requested documents. Keep a stamped acknowledgement or other proof that the bank received them."
+      },
+      {
+        "who": "Salary account · cyber freeze",
+        "line": "Start with written restriction details. Then contact the authority the bank identifies and keep every acknowledgement."
+      }
+    ],
+    "storiesFoot": "These are preparation examples, not legal conclusions or outcome promises.",
+    "founderEyebrow": "Built by",
+    "founderTitle": "A small independent product — not a bank, not RBI, not a law firm.",
+    "founderBody": "Unhold is built by Thribhuvan so people stuck with a restricted account can organise facts, papers, and a draft letter without paying an “unfreeze agent.” You review and send everything yourself. Official cyber helpline: 1930.",
+    "founderDisclaimerLink": "Legal disclaimer →"
+  },
+  "IntakeWizard": {
+    "back": "← Back",
+    "progress": "Question {current} of {total}",
+    "progressLabel": "Intake progress: question {current} of {total}",
+    "steps": [
+      {
+        "title": "What happened?",
+        "hint": "Optional — add a few words now, or continue and add your notice first."
+      },
+      {
+        "title": "Which bank froze your account?",
+        "hint": "Pick \"Other\" if your bank is not here — everything still works."
+      },
+      {
+        "title": "Did you send the money, or did it come to you?",
+        "hint": "There is no wrong answer. This changes how the draft describes your situation."
+      },
+      {
+        "title": "How is your money blocked?",
+        "hint": "Check the SMS from your bank. \"Not sure\" is fine."
+      },
+      {
+        "title": "How much money is stuck?",
+        "hint": "A rough number is fine. You can correct it later."
+      },
+      {
+        "title": "Do you know who ordered the freeze?",
+        "hint": "This chooses the safest next checklist (cyber, court, tax, or bank). \"Not sure\" is completely fine."
+      }
+    ],
+    "bankOtherLabel": "Other / not sure — my bank is not listed",
+    "roleOptions": {
+      "sender": "I sent money to someone",
+      "receiver": "Money came to me — I did not expect it",
+      "unsure": "I am not sure"
+    },
+    "freezeOptions": {
+      "full": {
+        "label": "Fully frozen — nothing works",
+        "help": "No money can go in or out."
+      },
+      "lien": {
+        "label": "Only some money is blocked",
+        "help": "The bank blocked a fixed amount, not the whole account."
+      },
+      "debit": {
+        "label": "Money comes in, but I cannot send or take out",
+        "help": "Only outgoing money is blocked."
+      },
+      "unsure": {
+        "label": "I am not sure",
+        "help": "That is fine — your bank must tell you in writing. Our letter asks for it."
+      }
+    },
+    "bankCallsThis": "bank calls this: {term}",
+    "reasonOptions": {
+      "cyber": {
+        "label": "A cyber / online-fraud complaint",
+        "help": "A police cyber cell or the 1930 helpline — the most common reason."
+      },
+      "court": { "label": "A court order", "help": "" },
+      "tax": { "label": "A tax or GST notice", "help": "" },
+      "kyc": {
+        "label": "The bank itself — KYC / documents pending",
+        "help": ""
+      },
+      "unsure": {
+        "label": "I am not sure",
+        "help": "That is fine — your letter asks the bank to confirm who ordered it."
+      }
+    },
+    "storyPlaceholder": "Optional — e.g. my SBI account was frozen after an unknown UPI payment…",
+    "storyCounter": "{count} characters",
+    "amountPlaceholder": "e.g. 25000",
+    "microUpiChip": "Tiny unknown UPI (e.g. ₹2)",
+    "amountHint": "Leave it blank if you are not sure yet. Ask the bank to confirm the exact amount held, the type of restriction, the ordering authority and its reference in writing.",
+    "ncrpLabel": "Cybercrime complaint number",
+    "ncrpOptional": "(if you have one)",
+    "ncrpPlaceholder": "14 digits — from cybercrime.gov.in",
+    "ncrpInvalid": "NCRP numbers are 14 digits — we’ll skip this for now if it doesn’t match.",
+    "ncrpSkip": "Skip this if you don’t have it. You can add it later.",
+    "errors": [
+      "You can add this later. Pick your bank to continue.",
+      "Please pick your bank, or \"Other / not sure\".",
+      "Please pick the one that fits you best.",
+      "Please pick one — \"Not sure\" is fine.",
+      "",
+      "Please pick one — \"Not sure\" is fine."
+    ],
+    "next": "Next →",
+    "startCase": "Start my case",
+    "starting": "Starting…",
+    "footerNote": "Nothing goes to your bank. You check everything first."
+  },
+  "LetterPage": {
+    "backToCase": "← My case",
+    "youSendIt": "<strong>You send it.</strong> We never send anything for you.",
+    "fallbackTitle": "Your letter",
+    "levelTitle": {
+      "L1": "Letter 1 — to your branch manager",
+      "L2": "Letter 2 — to the nodal officer",
+      "L3": "Letter 3 — to the RBI Ombudsman"
+    },
+    "levelChip": {
+      "L1": "officially: L1 / GRM grievance",
+      "L2": "officially: L2 / nodal officer",
+      "L3": "officially: L3 / RBI CMS complaint"
+    },
+    "summary": {
+      "cyber": "In plain words: this letter asks your bank to state the exact restriction, amount, ordering authority and reference in writing. Any request for review is then sent to the authority the bank identifies.",
+      "branch": "In plain words: this letter asks your branch to reactivate your account once it receives the required documents.",
+      "court": "In plain words: this letter asks your branch for the court-order details, so you can apply for relief before the right court. The branch cannot lift this hold itself.",
+      "tax": "In plain words: this letter asks your branch for the tax/GST notice details, so you can take it up with the relevant officer."
+    },
+    "papersFirstTitle": "Add your papers first to unlock the letter",
+    "papersFirstBody": "Upload the papers your case checklist asks for (at least the required ones, clear photos). That unlocks a draft you can edit, review, and send yourself — Unhold never sends it.",
+    "addPapersCta": "Add my papers →"
+  },
+  "Errors": {
+    "appError": {
+      "title": "Something went wrong on our side",
+      "body": "Your case is safe — nothing was lost. This is usually a brief hiccup. Please try again.",
+      "tryAgain": "Try again",
+      "backToCase": "Back to my case"
+    },
+    "notFound": {
+      "title": "We couldn’t find that page",
+      "body": "The link may be old, or you may be on a different phone or browser than the one you started on. Your case is safe.",
+      "goHome": "Go to home",
+      "openCase": "Open my case"
+    }
+  },
+  "ConsentScreen": {
+    "back": "← Back",
+    "title": "Before you continue",
+    "stepNote": "Takes about a minute — this is step 1 of 3.",
+    "flowConsent": "Consent",
+    "flowQuestions": "A few questions",
+    "flowPlan": "Your plan",
+    "whatToExpect": "We ask a few questions, help organise your documents, and prepare drafts for you to review. Nothing is sent to your bank automatically.",
+    "readDataDetails": "Read data and AI details",
+    "intakeDisclaimer": "I understand Unhold does not guarantee unfreezing of my account or release of funds. I am solely responsible for reviewing all drafts before sending them. I will not upload banking passwords, UPI PINs, or full Aadhaar numbers.",
+    "aiProcessingDisclaimer": "Unhold can use AI to classify cases, check document readability, extract details for your review, and draft letters. With your optional consent, case data — including document images — may be processed by AI providers outside India. If you do not consent, you can still use the non-AI workflow.",
+    "agreeRequired": "I have read and agree to the above. I understand Unhold is not a law firm and does not guarantee outcomes.",
+    "agreeAi": "I consent to AI processing of my case data and documents, including by providers outside India.",
+    "aiSkipNote": "If you skip this, you can still use Unhold. You get the same guided checklist and template-based letter drafts; optional AI only helps check documents and polish wording when you allow it.",
+    "optional": "Optional",
+    "continue": "Continue"
+  },
+  "LegalDisclaimer": {
+    "eyebrow": "The fine print, in plain words",
+    "title": "Legal disclaimer",
+    "privacyLink": "Privacy policy →",
+    "sectionFallback": "Section {id}",
+    "headings": {
+      "A": "Not a law firm or bank",
+      "B": "No guaranteed outcome",
+      "C": "Drafts only",
+      "D": "Fees",
+      "E": "Bank rankings",
+      "F": "How AI is used",
+      "G": "What to upload",
+      "H": "Human review"
+    }
+  },
+  "LegalPrivacy": {
+    "eyebrow": "Your data, handled minimally",
+    "title": "Privacy policy",
+    "disclaimerLink": "Legal disclaimer →",
+    "block1": "Unhold stores case and evidence data only to provide the case workspace, documents and follow-up tools. You can download your case data from the case page.",
+    "block4": "You can request deletion from the case page at any time. Access is blocked immediately; files and case records are then deleted after active jobs and storage checks finish. Do not upload full Aadhaar numbers, passwords, OTPs or PINs."
+  },
+  "DataRightsCard": {
+    "eyebrow": "Your case data",
+    "title": "Download or delete your case data",
+    "intro": "Download your case record and original files (up to 100 MB in this beta) before requesting deletion. A deletion request blocks access immediately; secure deletion finishes after required safety checks.",
+    "download": "Download case data (up to 100 MB)",
+    "downloading": "Preparing download…",
+    "downloadReady": "Your download has started.",
+    "downloadQueued": "Your export is being prepared. Try downloading again shortly.",
+    "exportError": "We could not prepare your download just now. Please try again.",
+    "showErase": "Delete my case data",
+    "eraseTitle": "Request deletion of this case",
+    "eraseBody": "This blocks access to this case immediately. Secure deletion may finish after required safety checks, so do not treat this as an instant deletion promise.",
+    "confirmLabel": "Type this case code exactly: {publicId}",
+    "confirmPlaceholder": "Case code",
+    "eraseHint": "Check the code carefully. This cannot be undone after deletion finishes.",
+    "cancel": "Cancel",
+    "erase": "Request deletion",
+    "erasing": "Requesting…",
+    "eraseQueued": "Your deletion request is recorded. Case access is blocked now; secure deletion will finish after required safety checks.",
+    "eraseComplete": "Your case data deletion is complete. This case can no longer be opened.",
+    "eraseError": "We could not request deletion just now. Please try again.",
+    "confirmationTitle": "Deletion request recorded",
+    "confirmationBody": "This case is blocked now and its data is no longer shown on this device. Secure deletion finishes after active work and temporary upload links have expired.",
+    "confirmationHome": "Return to home"
+  },
+  "HelpPage": {
+    "title": "Help & staying safe",
+    "call1930Title": "Call 1930 — official cyber helpline",
+    "call1930Desc": "Free, government-run. Call them first for any fraud.",
+    "rightsTitle": "Understand the restriction and your next step",
+    "rightsDesc": "What to ask the bank, which authority to contact, and what proof to keep.",
+    "recoverTitle": "Lost your case on a new phone?",
+    "recoverDesc": "Open with case code + recovery code →",
+    "whatsappTitle": "Optional WhatsApp follow-up reminders",
+    "whatsappDesc": "If production WhatsApp delivery is enabled, you can opt in on your case page. We message only you and never include sensitive case details.",
+    "officialTitle": "Official websites",
+    "links": {
+      "ncrp": "NCRP — cybercrime.gov.in",
+      "grm": "Grievance portal (GRM)",
+      "mrm": "Money restoration (MRM)",
+      "ombudsman": "RBI Ombudsman — cms.rbi.org.in"
+    },
+    "scamTitle": "Stay safe from scammers",
+    "scams": [
+      "Never pay anyone who promises a fast unfreeze. No one can promise it. Official routes are free.",
+      "Never share your OTP, UPI PIN or passwords.",
+      "Banks and police never ask for money to release your account.",
+      "Unhold never contacts your bank for you — you send everything yourself."
+    ],
+    "glossaryTitle": "Bank words, in plain words",
+    "glossary": [
+      {
+        "term": "debit freeze",
+        "plain": "Money can come in, but nothing can go out."
+      },
+      {
+        "term": "lien",
+        "plain": "The bank blocked a fixed amount, not the whole account."
+      },
+      {
+        "term": "GRM",
+        "plain": "A grievance-handling term used by banks and authorities. A staff login is not a public citizen filing portal."
+      },
+      {
+        "term": "MRM",
+        "plain": "An official money-restoration workflow for eligible cyber-fraud victims, not a general account-unfreeze route."
+      },
+      {
+        "term": "NCRP number",
+        "plain": "Your cybercrime complaint number (14 digits)."
+      },
+      {
+        "term": "L1 / L2 / L3",
+        "plain": "Letter 1, 2, 3 — each one goes to a higher officer."
+      },
+      {
+        "term": "IO",
+        "plain": "The police officer handling the complaint behind your freeze."
+      },
+      {
+        "term": "nodal officer",
+        "plain": "A senior bank officer who handles complaints the branch ignored."
+      }
+    ]
+  },
+  "BankVisitScript": {
+    "toggleTitle": "🏦 Help me prepare for my bank visit",
+    "toggleDesc": "What to say, what to bring, what to ask — step by step.",
+    "intro": "Go to your <strong>home branch</strong> in person. Bring everything below and stay calm. Your goal today: submit the letter, get a written acknowledgement, and note the grievance reference number.",
+    "disclaimer": "Unhold does not contact the bank, police, or GRM for you. This guide is for information only — not legal advice.",
+    "docsTitle": "Documents to bring",
+    "docs": [
+      "Freeze SMS or notice from the bank (printed or on phone)",
+      "Bank account passbook or statement showing the freeze / lien entry",
+      "NCRP acknowledgement copy (if you filed a cybercrime complaint)",
+      "NCRP acknowledgement copy (Ref: {ncrpId})",
+      "Aadhaar card — show only, mask all but last 4 digits when photocopying",
+      "PAN card — masked copy",
+      "Salary slips or income proof (last 2–3 months)",
+      "Any UPI/transaction proof showing the disputed payment",
+      "Printed copy of this L1 letter (sign it before you go)",
+      "Blank paper and pen to note names and reference numbers"
+    ],
+    "sayTitle": "What to say at the counter",
+    "say": [
+      "\"My account has a debit freeze / lien. I am here to submit a formal written representation.\"",
+      "\"Please give me the freeze details in writing — the exact amount, the authority that ordered it, and the NCRP complaint number.\"",
+      "\"I am an innocent account holder and I did not send or receive this money knowingly.\"",
+      "\"Please confirm the exact amount held, the type of restriction, the ordering authority and its reference in writing.\"",
+      "\"The amount I was told about is Rs. {amountInr}. Please confirm whether that is correct and explain the scope of the restriction.\"",
+      "\"Please register this as a bank grievance and give me the official reference and next escalation channel.\"",
+      "\"Please give me a written acknowledgement with a grievance reference number.\""
+    ],
+    "dontTitle": "What NOT to say",
+    "dont": [
+      "Do not argue or raise your voice — stay calm and professional.",
+      "Do not sign any document you have not read carefully.",
+      "Do not pay any \"fees\" to the branch to unfreeze — there are no legal fees for this.",
+      "Do not hand over your full Aadhaar, PIN, OTP, or net banking password to anyone.",
+      "Do not leave without a written acknowledgement or receipt."
+    ],
+    "questionsTitle": "Questions to ask the branch manager",
+    "questions": [
+      "1. Which authority issued the freeze order (NCRP, cyber cell, IO name)?",
+      "2. What exact amount is held? Is this a full debit restriction or a lien on a stated amount?",
+      "3. What is the NCRP / FIR complaint number?",
+      "4. Under which legal section was the freeze applied (e.g., BNSS Section 106)?",
+      "5. Who is the Investigating Officer (IO) and how do I contact them?",
+      "6. Has my grievance been forwarded to any authority or internal official workflow, and how can I track it?",
+      "7. When should I expect a response?"
+    ],
+    "timelineTitle": "Follow-up checklist — use the dates you actually receive",
+    "timeline": [
+      "Submit your branch letter and keep a dated acknowledgement or reference number.",
+      "Ask the bank when it will respond and record the date it gives you.",
+      "If the bank identifies a police, cyber, court or tax authority, contact that authority through a verified official channel.",
+      "If the bank does not address a bank-service grievance, use its published nodal or grievance escalation route.",
+      "RBI CMS may consider an eligible bank-service complaint after the bank process; it cannot replace a police or court decision.",
+      "For urgent hardship or a disputed authority action, seek independent legal aid."
+    ],
+    "warningsTitle": "Scam warnings",
+    "warnings": [
+      "NEVER pay any agent, lawyer, or caller who promises to unfreeze your account for a fee. Official routes are free.",
+      "The police will NOT call you asking for payment to release your account.",
+      "Do not share OTPs, PINs, card numbers, or net-banking passwords with anyone.",
+      "Use cybercrime.gov.in / 1930 for citizen cybercrime reporting. MRM is for eligible fraud victims; RBI CMS is for eligible bank-service complaints."
+    ]
+  },
+  "DemoPage": {
+    "eyebrow": "Worked example · made-up facts",
+    "title": "What Unhold produces — before you start a real case.",
+    "intro": "Sample walkthrough only. Not your case. Shows facts → next step → a letter draft you would review. Does not decide who can release funds.",
+    "sampleNote": "Sample: Asha Rao · ₹1,800 held · total freeze after an unexpected UPI credit · NCRP on file. Nothing is sent.",
+    "truthTitle": "So the demo is not misleading",
+    "truthPoints": [
+      "The letter is a filled template with sample facts — not a lawyer document.",
+      "A real draft uses your answers. Court and tax freezes ask different things than cyber freezes.",
+      "You send every letter yourself. Unhold never emails the bank or police."
+    ],
+    "proofTitle": "From input to output",
+    "proofSteps": [
+      {
+        "label": "INPUT",
+        "text": "Asha’s facts: freeze type, amount, date, NCRP reference."
+      },
+      {
+        "label": "DECISION",
+        "text": "Ask in writing for scope, ordering authority, and the official next step — do not assume the branch can release the money."
+      },
+      {
+        "label": "OUTPUT",
+        "text": "L1 draft, paper checklist, dated official contact sources for her to verify."
+      }
+    ],
+    "sourcesTitle": "Official links (dated)",
+    "sourcesDesc": "Each contact points at its published source. Outcomes still depend on the real order and facts:",
+    "sourceLabel": "SBI official page",
+    "letterTitle": "Sample draft (review before send)",
+    "letterDesc": "Summary first. Open the full draft for every line. On a real case you fill blanks before sending.",
+    "letterFactNote": "total freeze · ₹1,800 · unexpected UPI credit · NCRP provided",
+    "ctaTitle": "Your case will not match Asha’s.",
+    "ctaBody": "Path and letter follow what you enter. After you start, save the recovery code — that is how you reopen on another phone.",
+    "startCta": "Start my own case",
+    "backHome": "Back to home"
+  },
+  "OpsMetrics": {
+    "eyebrow": "Operations",
+    "title": "System metrics",
+    "loading": "Loading…",
+    "authTitle": "Operator authentication required",
+    "authHint": "{error}. Sign in with an operator account to view metrics.",
+    "statCasesTotal": "Cases (total)",
+    "statCasesSub": "{count} in last 7d",
+    "statJobs": "Jobs",
+    "statJobsSub": "{ok} ok · {failed} failed",
+    "statErrorRate": "Error rate",
+    "statErrorRateSub": "window: {days}d",
+    "statAvgLatency": "Avg latency",
+    "statAvgLatencySub": "p95 {p95}",
+    "statTotalCost": "Total cost",
+    "statTotalCostSub": "agent jobs",
+    "statGenerated": "Generated",
+    "byJobType": "By job type",
+    "colType": "Type",
+    "colCount": "Count",
+    "colFailed": "Failed",
+    "colAvgLatency": "Avg latency",
+    "noJobs": "No jobs in this window yet.",
+    "recentFailures": "Recent failures",
+    "noFailures": "No recent failures. 🎉",
+    "noMessage": "no message"
+  },
+  "OpsQueue": {
+    "title": "Human ops queue",
+    "subtitle": "Operator JWT required. Cases are never auto-resolved — human review only."
+  },
+  "PapersPage": {
+    "accessDeniedTitle": "You don’t have access to this case.",
+    "accessDeniedBody": "If you started this case as a guest, open it from the same browser where you created it.",
+    "backToCase": "← My case",
+    "title": "Add your papers",
+    "subtitle": "Each paper makes your case stronger. A clear phone photo is fine (JPEG, PNG or PDF, up to 25MB). Never upload passwords, OTPs, UPI PINs or full Aadhaar.",
+    "readyTitle": "Good work — your first letter is ready.",
+    "readMyLetter": "Read my letter →"
+  },
+  "CaseWorkspace": {
+    "accessDeniedTitle": "You don’t have access to this case.",
+    "accessDeniedBody": "If you started as a guest, use the same browser — or open with your case code and recovery code.",
+    "accessDeniedRecover": "I lost my case — open with recovery code →",
+    "eyebrow": "My case",
+    "caseCodeLabel": "Case code",
+    "copyLink": "Copy case link",
+    "linkCopied": "Link copied",
+    "frozenSuffix": "frozen",
+    "frozenFallback": "Your frozen account",
+    "stepOf": "Step {num} of 5 — {title}",
+    "aiActivityTitle": "System log (optional)",
+    "aiActivitySub": "Technical checks for support — not required for your next step.",
+    "show": "Show",
+    "hide": "Hide",
+    "microUpiNote": "For a small or unknown UPI credit, ask the bank to confirm the exact amount held, the ordering authority, and the complaint/FIR/NCRP reference in writing."
+  },
+  "LettersLadderCard": {
+    "eyebrow": "Bank letters (if you need them)",
+    "l1Name": "Branch letter",
+    "l1Note": "First factual letter to your branch. Keep its acknowledgement and stated response date.",
+    "l2Name": "Senior bank officer letter",
+    "l2NoteOpen": "Use if the branch does not give an adequate written response through its stated grievance process.",
+    "l2NoteLocked": "Locked — send the branch letter with proof first.",
+    "l3Name": "RBI free complaint",
+    "l3Note": "For eligible bank-service complaints after using the bank's complaint process. It cannot override police or court action.",
+    "sent": "Sent",
+    "locked": "Locked",
+    "open": "Open"
+  },
+  "SaveCasePage": {
+    "eyebrow": "Save this before you continue",
+    "title": "Write down your case code",
+    "body": "If you clear this browser or change phones, you will need the code and recovery secret below to open your case again.",
+    "caseCode": "Case code",
+    "recoveryCode": "Recovery code (show once)",
+    "recoveryHint": "Treat this like a password. We cannot show it again.",
+    "recoveryMissing": "Your recovery code was only shown right after you started. Use “Open with recovery code” only if you saved it.",
+    "linkLabel": "Your case link",
+    "copyCode": "Copy case code",
+    "copyRecovery": "Copy recovery code",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "continue": "I’ve saved it — continue to my case",
+    "warning": "We never send letters for you. Saving this code does not unfreeze your account — it only lets you reopen your case.",
+    "smsTitle": "Optional: SMS these codes to yourself",
+    "smsHint": "Trial Twilio only delivers to verified numbers. Always write codes on paper too.",
+    "smsPlaceholder": "10-digit mobile",
+    "smsSend": "SMS codes to my phone",
+    "smsSending": "Sending…",
+    "smsSent": "✓ SMS sent",
+    "smsError": "Could not send SMS. Write the codes down."
+  },
+  "OpenCasePage": {
+    "eyebrow": "Lost your case?",
+    "title": "Open with case code + recovery code",
+    "body": "Enter the codes you saved when you started. This works from a new browser or phone.",
+    "publicIdLabel": "Case code",
+    "publicIdPlaceholder": "e.g. LL-10001",
+    "recoveryLabel": "Recovery code",
+    "recoveryPlaceholder": "8 characters",
+    "submit": "Open my case",
+    "submitting": "Opening…",
+    "errorGeneric": "We could not open that case. Check the codes and try again.",
+    "startFresh": "Start a new case instead →"
+  },
+  "WhatHappensNextCard": {
+    "title": "What happens next",
+    "timeline": [
+      {
+        "when": "Now",
+        "title": "Get the restriction details in writing",
+        "desc": "Ask for the amount, restriction type, ordering authority, reference and bank grievance number."
+      },
+      {
+        "when": "After acknowledgement",
+        "title": "Follow the bank's stated response date",
+        "desc": "Keep proof of every submission and ask for status through the bank's published channel."
+      },
+      {
+        "when": "If a separate authority is named",
+        "title": "Use a verified official channel",
+        "desc": "Send a factual representation to the police, cyber, court or tax authority identified by the bank."
+      },
+      {
+        "when": "If bank service remains unresolved",
+        "title": "Use the eligible grievance route",
+        "desc": "Escalate through the bank's published process. RBI CMS may consider eligible bank-service complaints; it does not override authority orders."
+      }
+    ]
+  },
+  "EditCaseDetails": {
+    "summaryTitle": "Edit your case details",
+    "summarySub": "Picked the wrong option, or “not sure”? Fix it here anytime.",
+    "edit": "Edit",
+    "hide": "Hide",
+    "reasonLabel": "Who ordered the freeze?",
+    "reasonOptions": {
+      "cyber": "A cyber / online-fraud complaint",
+      "court": "A court order",
+      "tax": "A tax or GST notice",
+      "kyc": "The bank itself — KYC / documents pending",
+      "unsure": "I am not sure"
+    },
+    "freezeTypeLabel": "How is your money blocked?",
+    "freezeTypeOptions": {
+      "total": "Fully frozen — nothing works",
+      "lien": "Only some money is blocked",
+      "debit": "Money comes in, but I cannot take it out",
+      "unsure": "I am not sure"
+    },
+    "roleLabel": "Did you send the money, or did it come to you?",
+    "roleOptions": {
+      "sender": "I sent money to someone",
+      "receiver": "Money came to me — I did not expect it"
+    },
+    "amountLabel": "Frozen / disputed amount (₹)",
+    "amountPlaceholder": "e.g. 25000",
+    "bankLabel": "Your bank",
+    "bankPlaceholder": "e.g. State Bank of India",
+    "nameLabel": "Your full name",
+    "namePlaceholder": "As in the bank account",
+    "addressLabel": "Your address",
+    "phoneLabel": "Your phone number",
+    "phonePlaceholder": "10-digit mobile number",
+    "committedNote": "A letter you already approved or sent won’t change. Your new details are used for any letters you draft from now on.",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "saveChanges": "Save changes",
+    "saveError": "We could not save your changes just now. Your case is safe — please try again."
+  },
+  "LetterWorkspace": {
+    "sentTitle": "✓ Letter {n} sent — proof saved.",
+    "sentBody": "Keep the acknowledgement and follow the response date the recipient gives you.",
+    "sentBodyL1": " Letter 2 is available if the branch does not give an adequate written response.",
+    "sentBodyL2": " RBI CMS is only for eligible bank-service complaints after the bank process.",
+    "backToCase": "Back to my case",
+    "reviewFirst": "Review the letter above and click \"I reviewed this draft\" first."
+  },
+  "RequestDraft": {
+    "notReadyTitle": "Your letter is not ready yet",
+    "tryAgain": "Try again",
+    "backToCase": "← Back to my case",
+    "startingTitle": "Preparing your draft…",
+    "startingBody": "Building a letter draft from your case answers. This usually takes under a minute. You will review and send it yourself.",
+    "errorFallback": "We could not start your letter right now. Your case is safe — please try again in a moment."
+  },
+  "DraftPendingRefresh": {
+    "writingTitle": "Preparing your {level} draft…",
+    "writingBody": "Filling a formal letter template from your answers. This page updates automatically — you do not need to refresh. You still review and send the letter yourself.",
+    "slowNote": "This is taking longer than usual. Your case is saved — you can leave and come back, or keep collecting documents on your checklist.",
+    "stuckTitle": "Still preparing your {level} draft",
+    "stuckBody": "This is taking longer than expected. Your case is saved. Try again, or open your case and return in a minute.",
+    "tryAgain": "Try again",
+    "backToCase": "← Back to your case"
+  },
+  "LetterDetailsForm": {
+    "evidenceFirst": "Add the required papers on the Papers page first to unlock letter details.",
+    "completeTitle": "Complete your details",
+    "rewriteHint": "Saving updates the draft with what you type.",
+    "stillMissing": "{count, plural, one {# detail still missing.} other {# details still missing.}}",
+    "allFilled": "All required fields filled — still review every line before you send.",
+    "hide": "Hide ▲",
+    "fillIn": "Fill in ▼",
+    "saving": "Saving & rewriting letter…",
+    "saveUpdate": "Save details & update letter",
+    "fillOneField": "Fill at least one field, then save.",
+    "saveError": "We could not save your details right now. Your case is safe — please try again.",
+    "checkValue": "Please check this value.",
+    "redraftError": "Your details were saved, but the letter could not be rewritten yet. Refresh this page in a moment."
+  },
+  "UnfreezePathCard": {
+    "eyebrow": "Suggested route from the recorded reason",
+    "keyStepLabel": "Safest next step",
+    "disclaimer": "This is practical information, not legal advice or an outcome guarantee. Verify the authority and current official route before sending anything."
+  },
+  "DoThisNowCard": {
+    "label": "Do this now",
+    "upNext": "Up next: {text}"
+  },
+  "PackageStatusCard": {
+    "eyebrow": "Your case package",
+    "title": "{done} of {total} ready",
+    "intro": "Release is decided by the bank or authority — not by a chat app. Prepare papers, a draft letter, and written follow-up that you control.",
+    "papers": "Core papers",
+    "papersNote": "What your checklist requires (often freeze SMS + statement)",
+    "pack": "Sealed proof pack",
+    "packNote": "One PDF with checksum — attach when you send",
+    "branchDetails": "Branch letter (get freeze details)",
+    "branchLetter": "Branch letter",
+    "branchNote": "You send it — we never do",
+    "branchNoteDraft": "Draft ready — send + save proof",
+    "authority": "Ordering authority",
+    "authorityNoteReady": "Use the written restriction details to contact the named authority",
+    "authorityNoteWait": "First get the authority name and reference from the bank",
+    "court": "Court path",
+    "tax": "Tax officer path",
+    "courtTaxNote": "Branch cannot release this hold alone"
+  },
+  "CourtTaxActionsCard": {
+    "eyebrow": "Who can actually release this",
+    "courtTitle": "Court attachment — not a bank letter fix",
+    "taxTitle": "Tax / GST attachment — not a bank letter fix",
+    "courtBody": "Your branch only holds the account under a court order. Only that court (or the end of that case) can release it. Unhold helps you get order details in writing and stay organised — it does not file court applications for you.",
+    "taxBody": "Your branch only holds the account under a tax/GST attachment. The tax officer who attached it must release it. Unhold helps you get the notice details — it does not contact the tax department for you.",
+    "step1": "Send the branch letter asking for the exact order / notice details in writing.",
+    "step1Done": "You have a branch letter on record — use the written order/notice details you received.",
+    "courtStep2": "Take those details to a lawyer and ask what relief is available from the same court on the facts and order.",
+    "taxStep2": "Approach the tax / GST officer named in the notice with your identity and account proof; ask for written release or correction.",
+    "step3": "When you have a release order, hand it to your bank’s nodal / branch officer and keep a stamped acknowledgement.",
+    "disclaimer": "Not legal advice. No guaranteed outcome. You send and file everything yourself."
+  },
+  "AuthorityActionsCard": {
+    "eyebrow": "After the bank names the authority",
+    "title": "Authority steps — representation & official reporting",
+    "intro": "For many cyber-related holds, the branch only acts after written instructions from the investigating authority. Prepare a factual representation for that authority (often called the IO). Report cybercrime or open NCRP only on the official citizen portal. You send everything — Unhold never contacts police or government systems.",
+    "grmTitle": "Official cybercrime portal (citizen access)",
+    "grmBody": "Use this public government portal to report cybercrime or access your NCRP account. It is not a promise that filing there will release a hold. For a frozen account, also get written freeze details and acknowledgement from your bank.",
+    "grmCta": "Open official citizen portal ↗",
+    "ioTitle": "Representation to the authority identified by your bank",
+    "ioBodyReady": "Use the freeze details from your bank letter. Fill any blanks (police station name). Attach your proof pack. Send by post/email/hand delivery to that cyber cell.",
+    "ioBodyEarly": "You can draft this early — but you need the cyber cell / station name from the bank (Letter 1 asks for it). Blanks stay until you fill them.",
+    "ioHintEarly": "Tip: send the branch letter first so you know which station ordered the freeze.",
+    "showLetter": "Show authority representation",
+    "hideLetter": "Hide letter",
+    "subjectLabel": "Subject",
+    "copy": "Copy letter text",
+    "copied": "✓ Copied",
+    "print": "Print letter (clean A4)",
+    "youSend": "You send this yourself. We never contact the police or bank for you. No one can promise an unfreeze."
+  },
+  "StageChecklist": {
+    "open": "Open",
+    "locked": "(locked)"
+  },
+  "LetterPreview": {
+    "draftOnly": "DRAFT ONLY — REVIEW BEFORE USE",
+    "checkBeforeSend": "Check the names, dates and amounts before you send it.",
+    "stillNeeded": "Still needed before sending:",
+    "completeHint": "Use the “Complete your details” box above — the letter rewrites itself.",
+    "subject": "Subject: {subject}",
+    "basedOn": "Based on:",
+    "summaryTitle": "What this draft asks for",
+    "summaryAsk1": "Confirm the amount, type and scope of the restriction in writing.",
+    "summaryAsk2": "Identify the ordering authority and FIR/NCRP reference, if any.",
+    "summaryAsk3": "Register the grievance and give an acknowledgement plus the official next step.",
+    "showFullDraft": "Read the full draft",
+    "hideFullDraft": "Hide full draft",
+    "openToReview": "Open the full draft to check every line before approval.",
+    "fullDraftTitle": "Full letter draft",
+    "reviewedByYou": "Reviewed by you",
+    "readAndCheck": "Read the letter and check your details. Unhold never sends it for you.",
+    "gateBlockedFallback": "This letter cannot be approved yet.",
+    "fixThis": "Fix this →",
+    "iReviewed": "I reviewed this draft",
+    "fillMissing": "Fill the missing details above first.",
+    "approveError": "Could not approve this draft yet",
+    "papersFirstTitle": "Add your papers first",
+    "papersFirstBody": "Add the papers your case checklist requires on the Papers page before copying this letter. That keeps facts grounded and your proof ready to attach.",
+    "addPapers": "Add my papers →"
+  },
+  "DisproportionateFreezeCard": {
+    "title": "Get the exact hold details in writing",
+    "totalFreezeIntro": "Your case shows your whole account is blocked (a total freeze).",
+    "debitFreezeIntro": "Your case indicates outgoing payments from your account are blocked (a debit freeze) — confirm the exact type with your bank in writing.",
+    "positionLead": "Unhold cannot tell you whether this restriction is lawful in your specific case. Get the facts and the official route in writing before you escalate.",
+    "demandLabel": "Ask your branch for this in writing:",
+    "quote": "Please confirm {holdClause}, the authority that ordered the restriction, the NCRP/FIR or other reference number, and the documents or review needed for my case. Please provide a grievance reference and acknowledgement of this request.",
+    "holdClauseWithAmount": "whether the amount currently held is approximately ₹{amount}",
+    "holdClauseNoAmount": "the exact amount currently held",
+    "knowYourRights": "read the official-process guide →"
+  },
+  "LegalPositionNote": {
+    "contested": "Contested — under Supreme Court appeal",
+    "caution": "Needs legal confirmation",
+    "current": "Current law"
+  },
+  "PapersChecklist": {
+    "reasonBanner": "For your <strong>{reason}</strong>, these are the papers that help most.",
+    "added": "{done} of {total} added",
+    "extraSuffix": " · {extra} extra",
+    "bankCallsThis": "bank calls this: {term}",
+    "saving": "Saving…",
+    "checking": "Checking…",
+    "replacePhoto": "Replace photo",
+    "savedChip": "✓ Saved",
+    "checkedChip": "✓ Checked",
+    "addPhoto": "Add photo",
+    "addPhotoAria": "Add photo — {label}",
+    "aiChecking": "Checking this document…",
+    "sealedOnly": "Saved with its digital seal. Optional AI reading is off for this case.",
+    "aiCheckingSub": "✓ File saved with its digital seal (proves no one changed it) · running the document check — usually under a minute.",
+    "pdfNoText": "We can't auto-check a PDF that has no readable text (a scan or photo saved as PDF). Please upload a clear photo (JPEG or PNG) of this page instead.",
+    "wrongDoc": "This doesn't look like {article} {kindLabel}. Please upload the right paper here — a clear photo or PDF of your {kindLabel}.",
+    "unreadable": "We couldn't read this clearly — please add a sharper, well-lit photo of the full page. Make sure all four corners and the text are visible.",
+    "flaggedIntro": "Saved with its digital seal. One thing is worth a quick check before you use it:",
+    "flaggedMismatch": "the {field} here ({found}) looks different from your notice ({expected}). It may be fine — just make sure you uploaded the right document.",
+    "savedHuman": "Saved with its digital seal. The file was not auto-read; review the original carefully before you use it in a letter.",
+    "noIssues": "No issues found automatically ({pct}% confidence — a first check, not a guarantee). Review the original document yourself before you use it.",
+    "replaceDifferent": "Replace with a different photo",
+    "extrasTitle": "Have more? These also help",
+    "optional": "(optional)",
+    "addedChip": "✓ Added",
+    "add": "Add",
+    "addAria": "Add — {label}",
+    "fileReadError": "We could not read that file — please pick it again.",
+    "uploadUrlError": "Failed to get upload URL",
+    "storageError": "Storage upload failed",
+    "confirmError": "Confirm failed",
+    "uploadError": "Upload failed",
+    "sameFile": "This is the same file you added as \"{usedLabel}\". Each paper should be a different document — please choose the real {realLabel}."
+  },
+  "MarkSentForm": {
+    "title": "Sent it? Save your proof.",
+    "subtitle": "A photo of the bank's stamp, a screenshot of your sent email, or the post receipt. Proof unlocks Letter {next}.",
+    "subtitleFinal": "A photo of the bank's stamp, a screenshot of your sent email, or the post receipt. This locks in your send record.",
+    "blockedDefault": "Prior level send proof is required before marking this letter sent.",
+    "blockedSubmit": "Complete prior level proof before marking sent.",
+    "addProofFirst": "Add a proof photo first — the bank stamp, your sent email, or the post receipt. Proof is what unlocks Letter {next}.",
+    "addProofFirstFinal": "Add a proof photo first — the bank stamp, your sent email, or the post receipt.",
+    "proofAdded": "✓ Proof added — {name}",
+    "addProofLabel": "+ Add proof photo (any phone photo or PDF)",
+    "uploading": "Uploading proof…",
+    "saving": "Saving…",
+    "submit": "✓ I sent Letter {n} — save proof",
+    "uploadStartError": "Could not start the proof upload",
+    "uploadFailed": "Proof upload failed — please try again.",
+    "confirmError": "Could not save the proof upload",
+    "markSentError": "We could not mark this letter as sent just yet. Your case is safe — please try again.",
+    "networkError": "Network error — please try again.",
+    "successNote": "✓ Letter marked sent. Keep the acknowledgement; we can remind you on the recorded follow-up date."
+  },
+  "SendByEmailCard": {
+    "eyebrow": "Send it by email — from your phone",
+    "branchLabel": "Your branch's email address",
+    "branchAria": "Your branch email",
+    "branchHelp": "It's printed on your passbook / bank statement (or ask your branch). This is the best address — it's your own branch, and it stays the same even if the manager changes.",
+    "to": "To:",
+    "yourBranch": "your branch",
+    "officialPage": "{bankName} official page",
+    "fallbackNote": "No branch email yet? Falling back to {bankName}'s general complaint inbox above.",
+    "fallbackDefault": "Submitting at your home branch first works best.",
+    "noEmailHelp": "Enter your branch email above (from your passbook), or <strong>copy the letter</strong> and take a printout to your branch in person.",
+    "portalSentence": "You can also use <link>{bankName}'s official complaint page ↗</link>.",
+    "openMail": "Open my email app — letter filled in",
+    "openMailHelp": "Your mail app opens with the letter already typed in. Check it, attach your proof pack, press send.",
+    "gmail": "Open in Gmail instead",
+    "copied": "✓ Copied — paste it anywhere",
+    "copy": "Copy the letter text",
+    "print": "Print the letter (clean A4)",
+    "unlock": "To unlock sending: <strong>fill your details</strong>, tick <strong>“I reviewed this draft”</strong>, and make your <strong>proof pack</strong> above.",
+    "attachReminder": "Before you press send: download the proof pack PDF and attach it to the email (or print it for the branch).",
+    "strongest": "<strong>Keep proof:</strong> print the letter, take it with your proof pack to your branch, and get a stamped acknowledgement or official reference number."
+  }
+}

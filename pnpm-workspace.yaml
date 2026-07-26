@@ -1,0 +1,8 @@
+allowBuilds:
+  "@parcel/watcher": true
+  "@swc/core": true
+  "@tailwindcss/oxide": true
+  esbuild: true
+  sharp: true
+  supabase: true
+  unrs-resolver: true
