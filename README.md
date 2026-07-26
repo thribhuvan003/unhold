@@ -1,162 +1,182 @@
 # Unhold
 
-**A case workspace for bank-account and UPI freezes in India.**
+**Case workspace for bank-account and UPI freezes in India.**
 
-Live: [unhold.live](https://www.unhold.live) · Demo (no account): [unhold.live/demo](https://www.unhold.live/demo)
-
-You record what happened, keep papers in one place, and get a letter draft to review. **You send everything.** Unhold never emails a bank or authority and never promises an unfreeze.
+| | |
+|---|---|
+| **Home** | [unhold.live](https://www.unhold.live) |
+| **Demo** (no account) | [unhold.live/demo](https://www.unhold.live/demo) |
 
 [![CI](https://github.com/thribhuvan003/unhold/actions/workflows/ci.yml/badge.svg)](https://github.com/thribhuvan003/unhold/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-If someone is losing money to fraud right now: **1930**.
+You record what the bank told you, keep papers in one place, and prepare a letter draft. **You review and send everything yourself.** Unhold never emails a bank or authority, and never promises an unfreeze.
+
+If money is being stolen right now: **1930**.
 
 ---
 
-## Why this exists
+## Problem
 
-A freeze is confusing: SMS jargon, missing papers, no clear next step. Unhold is a **structured file** for that moment — not a law firm, not a bank tool, not an “unfreeze agent.”
+A freeze hits with unclear SMS language, missing documents, and no clear “what next.” People either freeze (do nothing) or pay random “unfreeze agents.”
 
-Built as a solo product (public beta) to practise full-stack shipping under real constraints: privacy, honest copy, and no unsafe automation.
+Unhold is a **structured case file** for that moment: facts → papers → draft → proof of send → next step. It is not a law firm, bank product, or government service.
 
 ---
 
-## Product flow
+## User journey
 
 ```text
-Start (guest) → Papers → Draft letter → You review → You send → Mark sent + proof → Next level if needed
+Guest start → intake facts → upload papers → draft letter
+    → you edit & send → mark sent + proof photo → optional next level
 ```
 
-| Stage | What the system does | What you do |
+| Stage | System | User |
 | --- | --- | --- |
-| Intake | Short questions → structured case facts | Answer honestly |
-| Evidence | Private storage, hash check, readability flags | Upload; re-read every file |
-| Draft | Case-aware letter text (template path always works) | Edit blanks, copy/print |
-| Escalation | Later levels locked until prior send-proof exists | Mark sent with proof photo |
-| Follow-up | Optional reminders if you opt in | Keep acknowledgements |
+| Intake | Short questions → structured case record | Answer in plain language |
+| Papers | Private storage, SHA-256 confirm, readability flags | Upload; re-read every file |
+| Letter | Case-aware draft (templates always work) | Fill blanks, copy / print / mail |
+| Escalation | Later levels locked until prior send-proof exists | Mark sent with proof |
+| Follow-up | Optional reminders if opted in | Keep acknowledgements |
 
-Safety contract: [`docs/PRODUCT_AND_SAFETY.md`](docs/PRODUCT_AND_SAFETY.md).
+Product rules: [`docs/PRODUCT_AND_SAFETY.md`](docs/PRODUCT_AND_SAFETY.md).
 
 ---
 
 ## Architecture
 
 ```text
-┌─────────────┐     HTTPS      ┌──────────────────────┐
-│   Browser   │ ─────────────► │  Next.js (App Router) │
-│  session UI │                │  + /api/v1 routes     │
-└─────────────┘                └──────────┬───────────┘
-                                          │
-                    ┌─────────────────────┼─────────────────────┐
-                    ▼                     ▼                     ▼
-            ┌──────────────┐    ┌─────────────────┐    ┌──────────────┐
-            │  Supabase    │    │  agent_jobs     │    │ Private      │
-            │  Postgres    │    │  (claim/retry)  │    │ object store │
-            │  Auth only*  │    └────────┬────────┘    └──────────────┘
-            └──────────────┘             │
-                                         ▼
-                               Intake · Verifier · Drafter
-                               Bundle · Monitor
+                 ┌─────────────────────────────────────┐
+  Browser  ────► │  Next.js 16 (App Router + /api/v1)   │
+  (session UI)   └──────────────┬──────────────────────┘
+                                │
+           ┌────────────────────┼────────────────────┐
+           ▼                    ▼                    ▼
+   ┌───────────────┐   ┌────────────────┐   ┌────────────────┐
+   │ Supabase Auth │   │ Postgres       │   │ Private        │
+   │ (browser OK)  │   │ cases, jobs,   │   │ object storage │
+   └───────────────┘   │ escalations…   │   │ (evidence)     │
+                       │ via service    │   └────────────────┘
+                       │ role only*     │
+                       └───────┬────────┘
+                               │
+                       agent_jobs queue
+                       claim → run → complete / retry / dead-letter
+                               │
+              Intake · Verifier · Drafter · Bundle · Monitor
 ```
 
-\* Browser Supabase client is for **auth only**. Case tables and RPCs are not exposed to `anon`/`authenticated`. Server routes use the service role after owner/guest/operator checks.
+\* Application tables and RPCs are **not** granted to `anon` / `authenticated`. The browser client is for **auth only**. Case data goes through server routes after access checks.
 
-### Design choices (short)
+### Request path (simplified)
 
-| Decision | Rationale |
+1. Guest or user hits UI under `app/[locale]/…`
+2. Mutations go to `/api/v1/...` with session or guest JWT
+3. Route checks ownership / guest access → service-role Supabase client
+4. Side work (OCR, draft) enqueues `agent_jobs`; cron + request-time kick drain the queue
+5. State changes go through guarded transitions (TypeScript + SQL `transition_case`)
+
+### Design decisions
+
+| Choice | Why |
 | --- | --- |
-| No auto-send to banks | Legal + trust: user must own the send |
-| Guest + recovery code | Low friction when someone is stressed; no forced signup |
-| Deterministic proof gates | Later letters unlock only after prior send proof |
-| Job queue + reclaim | Survives Hobby function timeouts and deploy kills |
-| EN + HI | Matches real users in India |
-| Mumbai (`bom1`) | Latency and data-residency posture |
+| No auto-send to banks | Legal + trust; user owns every send |
+| Guest + recovery code | Low friction when someone is stressed |
+| Proof gates | L2/L3 unlock only after prior send proof |
+| Job reclaim | Hobby functions can time out; work must not stick forever |
+| Template fallback | Letter path works if a model provider is down |
+| EN + HI | Real users in India |
+| Region `bom1` | Latency and India-first deploy |
 
 ### Stack
 
-| Layer | Choice |
+| Layer | Tech |
 | --- | --- |
-| Frontend | Next.js 16, React 19, TypeScript (strict), next-intl |
-| API | Route handlers under `/api/v1` |
-| Data | Supabase Postgres + private Storage + RLS |
-| Jobs | Postgres-backed queue; GitHub Actions every 5m + request-time kick |
-| Hosting | Vercel (region `bom1`) |
+| UI | Next.js 16, React 19, TypeScript (strict), next-intl |
+| API | App Router route handlers (`/api/v1`) |
+| Data | Supabase Postgres, private Storage, RLS |
+| Jobs | Postgres queue + GitHub Actions (5m) + kick on enqueue |
+| Host | Vercel, Mumbai (`bom1`) |
 | Tests | Vitest (unit + contract), Playwright (e2e smoke) |
 
 ---
 
-## Repository layout
+## Repository structure
 
 ```text
-app/                 App Router UI + versioned API
-  [locale]/          Pages (en default, hi under /hi)
-  api/v1/            Public and internal HTTP routes
-  healthz/           Uptime JSON
-components/          Mobile-first case UI
-lib/
-  agents/            Intake, verifier, drafter, evidence, monitor
-  api/               Authz, errors, response helpers
-  escalations/       Proof gates (deterministic)
-  jobs/              Enqueue, claim, process, stale reclaim
-  evidence/          Hash, mime, compress, vision prep
-  state-machine/     Case status transitions (TS + SQL)
-messages/            en.json · hi.json product copy
-supabase/migrations/ Schema, policies, functions
-tests/
-  unit/              Domain + component tests
-  contract/          API / migration contracts
-  e2e/               Browser journeys
-docs/                Product safety, deploy notes
-config/              Env key catalogue
-scripts/             Verify helpers, evals
-proxy.ts             Next routing (locale + healthz)
+unhold/
+├── app/
+│   ├── [locale]/          # Pages (en default; hi at /hi/…)
+│   ├── api/v1/            # Versioned HTTP API
+│   └── healthz/           # Uptime JSON
+├── components/            # Case UI (papers, letters, intake, …)
+├── lib/
+│   ├── agents/            # Intake, verifier, drafter, evidence, monitor
+│   ├── api/               # Authz, errors, response helpers
+│   ├── escalations/       # Deterministic proof gates
+│   ├── jobs/              # Enqueue, process, reclaim, kick
+│   ├── evidence/          # Hash, mime, compress
+│   ├── state-machine/     # Case status rules (TS; SQL is source of truth)
+│   └── …                  # auth, banks, legal, llm, ratelimit, …
+├── messages/              # en.json · hi.json
+├── supabase/
+│   └── migrations/        # Schema, policies, transition_case, storage
+├── tests/
+│   ├── unit/
+│   ├── contract/
+│   └── e2e/
+├── docs/                  # Safety contract, deploy notes
+├── config/                # Env key catalogue
+├── scripts/               # verify-no-auto-send, evals
+├── proxy.ts               # Locale + healthz routing
+├── vercel.json
+└── package.json
 ```
+
+Root config only: `next.config.ts`, `tsconfig.json`, `vitest.config.ts`, `playwright.config.ts`, `eslint.config.mjs`, `.env.example`, `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`.
 
 ---
 
-## Local development
+## Run locally
 
-**Requires:** Node.js ≥ 22.14, pnpm 10.12.1
+**Node ≥ 22.14 · pnpm 10.12.1**
 
 ```bash
 git clone https://github.com/thribhuvan003/unhold.git
 cd unhold
 pnpm install --frozen-lockfile
-cp .env.example .env.local   # never commit secrets
-# apply supabase/migrations/ to your project
+cp .env.example .env.local    # never commit secrets
+# apply supabase/migrations/ to your Supabase project
 pnpm dev
 ```
 
 ```bash
-pnpm verify             # lint · types · unit · contracts · no-auto-send · build
-pnpm test:e2e:smoke     # Playwright
+pnpm verify           # lint · types · unit · contracts · no-auto-send · build
+pnpm test:e2e:smoke   # Playwright
 ```
 
-Env reference: [`config/VERCEL_ENV_KEYS.md`](config/VERCEL_ENV_KEYS.md).
+Env keys: [`config/VERCEL_ENV_KEYS.md`](config/VERCEL_ENV_KEYS.md).
 
 ---
 
-## Security posture
+## Security (short)
 
-- No service-role keys in the browser
-- Case data only via authenticated server routes
-- Private evidence buckets; size/type limits on upload
-- Optional AI/OCR only with consent; template path works without it
-- Report vulnerabilities privately: [`SECURITY.md`](SECURITY.md)
+- No service-role key in the browser
+- Server checks case access before data operations
+- Private evidence buckets; size and type limits
+- Optional document AI only with consent; non-AI path still works
+- Report issues privately: [`SECURITY.md`](SECURITY.md)
 
 ---
 
 ## Status
 
-Public beta **0.1.0**. Sharp edges expected.
-
-Document extraction can be wrong. Process guidance can go stale. Outcomes are decided only by the bank and ordering authority.
+Public beta **0.1.0**. Extraction can be wrong. Guidance can go stale. Only the bank and ordering authority decide if an account moves.
 
 ---
 
 ## Author
 
-Built and maintained by [thribhuvan003](https://github.com/thribhuvan003).  
-Contributing: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+[thribhuvan003](https://github.com/thribhuvan003) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 MIT License
